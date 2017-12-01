@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2009
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Security", "Pipaslot.Infrastructure.Security\Pipaslot.Infrastructure.Security.csproj", "{DB13E6AD-761D-4459-9B06-A8FA1EBEBD25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.SecurityTests", "Pipaslot.Infrastructure.SecurityUnitTests\Pipaslot.Infrastructure.SecurityTests.csproj", "{CF4B5713-58E2-448F-A5E8-E6006F5AF577}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DB13E6AD-761D-4459-9B06-A8FA1EBEBD25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB13E6AD-761D-4459-9B06-A8FA1EBEBD25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB13E6AD-761D-4459-9B06-A8FA1EBEBD25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB13E6AD-761D-4459-9B06-A8FA1EBEBD25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF4B5713-58E2-448F-A5E8-E6006F5AF577}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF4B5713-58E2-448F-A5E8-E6006F5AF577}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF4B5713-58E2-448F-A5E8-E6006F5AF577}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF4B5713-58E2-448F-A5E8-E6006F5AF577}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B7E45BFF-3BEB-4B8F-8D1A-4C8194399F1D}
+	EndGlobalSection
+EndGlobal
