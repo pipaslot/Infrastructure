@@ -37,5 +37,19 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// <param name="permission"></param>
         /// <param name="isAllowed"></param>
         void SetPrivilege(TKey roleId, string resource, TKey resourceId, string permission, bool isAllowed);
+
+        /// <summary>
+        /// Count all resource instances, but ignores default key value
+        /// </summary>
+        /// <param name="resourceName"></param>
+        /// <returns></returns>
+        int GetResourceInstanceCount(string resourceName);
+
+        /// <summary>
+        /// Returns all stored Instance Ids for resource
+        /// </summary>
+        /// <param name="resource"></param>
+        /// <returns></returns>
+        List<TKey> GetAllResourceInstancesIds(string resource);
     }
 }

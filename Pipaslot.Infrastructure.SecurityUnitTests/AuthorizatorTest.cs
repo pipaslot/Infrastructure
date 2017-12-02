@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Pipaslot.Infrastructure.Security;
@@ -181,7 +182,17 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 return RESOURCE;
             }
 
+            public Type GetResourceTypeByUniqueName(string uniqueName)
+            {
+                return Type.GetType(uniqueName);
+            }
+
             public string GetPermissionUniqueIdentifier(IConvertible permissionEnum)
+            {
+                return PERMISSION;
+            }
+
+            public string GetPermissionUniqueIdentifier(Type permissionClass, PropertyInfo property)
             {
                 return PERMISSION;
             }

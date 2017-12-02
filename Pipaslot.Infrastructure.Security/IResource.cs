@@ -5,7 +5,7 @@
     /// </summary>
     /// <typeparam name="TKey">Storege primary key type</typeparam>
     /// <typeparam name="IConvertible">Permissions which can be used for this object</typeparam>
-    public interface IResource<TKey, IConvertible>//TODO specifikovat který enum tento resource využívá
+    public interface IResource<TKey, IConvertible>
     {
         /// <summary>
         /// Resource Unique Identifier which allows recognize object or their instance for security check. 

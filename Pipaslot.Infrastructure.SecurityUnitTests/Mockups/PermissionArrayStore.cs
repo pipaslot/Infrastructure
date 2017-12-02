@@ -37,10 +37,20 @@ namespace Pipaslot.Infrastructure.SecurityTests.Mockups
                                           d.Permission == permission);
             if (existing == null)
             {
-                existing = new Record(roleId, resource, resourceId,  permission, isAllowed);
+                existing = new Record(roleId, resource, resourceId, permission, isAllowed);
                 _data.Add(existing);
             }
             existing.IsAllowed = isAllowed;
+        }
+
+        public int GetResourceInstanceCount(string resourceName)
+        {
+            return 2;
+        }
+
+        public List<int> GetAllResourceInstancesIds(string resource)
+        {
+            return new List<int> { 1, 2 };
         }
 
         internal class Record
@@ -60,6 +70,6 @@ namespace Pipaslot.Infrastructure.SecurityTests.Mockups
                 IsAllowed = isAllowed;
             }
         }
-        
+
     }
 }

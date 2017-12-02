@@ -7,11 +7,6 @@ namespace Pipaslot.Infrastructure.Security.Data.Queries
     public class PermissionInfo<TKey>
     {
         /// <summary>
-        /// Assigned role ID
-        /// </summary>
-        public TKey RoleId { get; set; }
-
-        /// <summary>
         /// Unique name for object inherited from IResource
         /// </summary>
         public string ResourceUniquedName { get; set; }
@@ -29,12 +24,12 @@ namespace Pipaslot.Infrastructure.Security.Data.Queries
         /// <summary>
         /// User friendly name
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// User friendly description
         /// </summary>
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// Is allowed or is deny

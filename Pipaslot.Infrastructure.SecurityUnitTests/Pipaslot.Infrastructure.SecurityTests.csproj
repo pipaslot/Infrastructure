@@ -59,10 +59,12 @@
     <Compile Include="AuthorizatorTest.cs" />
     <Compile Include="Mockups\PermissionArrayStore.cs" />
     <Compile Include="Models\FirstPermissions.cs" />
+    <Compile Include="Models\FirstResource2.cs" />
     <Compile Include="Models\SecondResource.cs" />
     <Compile Include="Models\SecondPermissions.cs" />
     <Compile Include="Models\FirstResource.cs" />
     <Compile Include="Models\UserRole.cs" />
+    <Compile Include="ResourceRegistryTest.cs" />
     <Compile Include="UserIdentityTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
