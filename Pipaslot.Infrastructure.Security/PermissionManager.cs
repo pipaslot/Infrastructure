@@ -78,8 +78,9 @@ namespace Pipaslot.Infrastructure.Security
         public IEnumerable<ResourceInstanceInfo<TKey>> GetAllResourceInstancess(string resource)
         {
             var result = new List<ResourceInstanceInfo<TKey>>();
+            var resourceType = _namingConvertor.GetResourceTypeByUniqueName(resource);
             var instances = _permissionStore.GetAllResourceInstancesIds(resource);
-            var instanceDetails = _resourceDetailProvider.GetResourceDetails(instances);
+            var instanceDetails = _resourceDetailProvider.GetResourceDetails(resourceType, instances);
             foreach (var detail in instanceDetails)
             {
                 result.Add(new ResourceInstanceInfo<TKey>

@@ -9,6 +9,6 @@ namespace Pipaslot.Infrastructure.Security
     /// </summary>
     public interface IResourceDetailProvider<TKey>
     {
-        IEnumerable<ResourceDetail<TKey>> GetResourceDetails(List<TKey> identifiers);
+        IEnumerable<ResourceDetail<TKey>> GetResourceDetails(Type resource, List<TKey> identifiers);
     }
 }

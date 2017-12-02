@@ -12,7 +12,7 @@ namespace Pipaslot.Infrastructure.Security
     /// <typeparam name="TKey"></typeparam>
     public class DefaultResourceDetailProvider<TKey> : IResourceDetailProvider<TKey>
     {
-        public IEnumerable<ResourceDetail<TKey>> GetResourceDetails(List<TKey> identifiers)
+        public IEnumerable<ResourceDetail<TKey>> GetResourceDetails(Type resource, List<TKey> identifiers)
         {
             return identifiers.Select(id => new ResourceDetail<TKey>(id, id.ToString(), string.Empty));
         }
