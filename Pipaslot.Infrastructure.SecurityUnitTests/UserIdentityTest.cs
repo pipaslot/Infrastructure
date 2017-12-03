@@ -12,6 +12,8 @@ namespace Pipaslot.Infrastructure.SecurityTests
     [TestClass]
     public class UserIdentityTest
     {
+        #region Constructor
+
         [TestMethod]
         public void Constructor_MinimuParameters_UserIsUnauthorizedAndWithoutRolesByDefaultAndWithoutPermissions()
         {
@@ -23,7 +25,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             Assert.IsFalse(user.IsAllowed(FirstPermissions.Edit));
             Assert.IsFalse(user.IsAllowed(new FirstResource(1), FirstPermissions.Edit));
             Assert.IsFalse(user.IsAllowed(typeof(FirstResource), 1, FirstPermissions.Edit));
-            //Does not have any permissions for resource
+            //Does not have any permissions for resourceInstance
             Assert.AreEqual(0, user.GetAllowedKeys(typeof(FirstResource), FirstPermissions.Edit).Count());
         }
 
@@ -38,7 +40,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             Assert.IsFalse(user.IsAllowed(FirstPermissions.Edit));
             Assert.IsFalse(user.IsAllowed(new FirstResource(1), FirstPermissions.Edit));
             Assert.IsFalse(user.IsAllowed(typeof(FirstResource), 1, FirstPermissions.Edit));
-            //Does not have any permissions for resource
+            //Does not have any permissions for resourceInstance
             Assert.AreEqual(0, user.GetAllowedKeys(typeof(FirstResource), FirstPermissions.Edit).Count());
         }
 
@@ -53,9 +55,11 @@ namespace Pipaslot.Infrastructure.SecurityTests
             Assert.IsFalse(user.IsAllowed(SecondPermissions.Edit));
             Assert.IsFalse(user.IsAllowed(new SecondResource("123"), SecondPermissions.Edit));
             Assert.IsFalse(user.IsAllowed(typeof(SecondResource), "123", SecondPermissions.Edit));
-            //Does not have any permissions for resource
+            //Does not have any permissions for resourceInstance
             Assert.AreEqual(0, user.GetAllowedKeys(typeof(SecondResource), SecondPermissions.Edit).Count());
         }
+
+        #endregion
 
         [TestMethod]
         public void IsAllowedWithPermissionOnly_AtLeastOneRoleMustHavePermission()
@@ -80,6 +84,33 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
                 //Act
                 Assert.AreEqual(valueTuple.expected, user.IsAllowed(FirstPermissions.Edit));
+            }
+        }
+
+        [TestMethod]
+        public void IsAllowedWithStaticResourceType_AtLeastOneRoleMustHavePermission()
+        {
+            var role1 = new UserRole(1);
+            var role2 = new UserRole(2);
+            var sequence = new List<(bool expected, bool role1, bool role2)>
+            {
+                (false, false, false),
+                (true, true, false),
+                (true, false, true),
+                (true, true, true),
+            };
+            var resource = typeof(FirstResource);
+            foreach (var valueTuple in sequence)
+            {
+                var authorizatorMock = new Mock<IAuthorizator<int>>();
+                authorizatorMock.Setup(a => a.IsAllowed(role1, resource, FirstPermissions.Edit))
+                    .Returns(valueTuple.role1);
+                authorizatorMock.Setup(a => a.IsAllowed(role2, resource, FirstPermissions.Edit))
+                    .Returns(valueTuple.role2);
+                var user = new UserIdentity<int>(authorizatorMock.Object, 1, new[] { role1, role2 });
+
+                //Act
+                Assert.AreEqual(valueTuple.expected, user.IsAllowed(resource,  FirstPermissions.Edit));
             }
         }
 

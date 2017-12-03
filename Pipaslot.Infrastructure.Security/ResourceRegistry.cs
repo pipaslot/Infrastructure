@@ -24,7 +24,7 @@ namespace Pipaslot.Infrastructure.Security
         /// <summary>
         /// Key is resource type and value is lis of assigned permission Enums
         /// </summary>
-        private readonly Dictionary<Type, List<Type>> _loadedResources = new Dictionary<Type, List<Type>>();
+        private readonly List<RegisteredResource> _loadedResources = new List<RegisteredResource>();
 
         /// <summary>
         /// Register new assembly to be scaned for resources
@@ -43,7 +43,7 @@ namespace Pipaslot.Infrastructure.Security
         /// Return all resources from registered assemblies implementing IResource interface with currently used generic type for TKey
         /// Key is resource type and value is lis of assigned permission Enums
         /// </summary>
-        public Dictionary<Type, List<Type>> ResourceTypes
+        public List<RegisteredResource> ResourceTypes
         {
             get
             {
@@ -56,26 +56,13 @@ namespace Pipaslot.Infrastructure.Security
         }
 
         /// <summary>
-        /// Returns all permission types for resource type
-        /// </summary>
-        /// <param name="resourceType"></param>
-        /// <returns></returns>
-        public List<Type> GetPermissionTypes(Type resourceType)
-        {
-            if (ResourceTypes.ContainsKey(resourceType))
-            {
-                return ResourceTypes[resourceType];
-            }
-            return new List<Type>();
-        }
-
-        /// <summary>
         /// Loads all resources from assemblies
         /// </summary>
         /// <returns></returns>
         private void Load()
         {
-            var resourceGenericType = typeof(IResource<,>);
+            var resourceGenericType = typeof(IResource<>);
+            var resourceInstanceGenericType = typeof(IResourceInstance<,>);
             var keyType = typeof(TKey);
 
             _loadedResources.Clear();
@@ -83,22 +70,48 @@ namespace Pipaslot.Infrastructure.Security
             foreach (var type in _scanedAsseblies.SelectMany(s => s.GetTypes()))
             {
                 if (type.IsAbstract || type.IsInterface) continue;
-                var isResource = false;
-                var permissions = new List<Type>();
+                var res = new RegisteredResource(type);
                 foreach (var iface in type.GetInterfaces())
                 {
-                    if (iface.IsGenericType
-                        && resourceGenericType.IsAssignableFrom(iface.GetGenericTypeDefinition())
-                        && iface.GenericTypeArguments.First() == keyType)
+                    if(!iface.IsGenericType)continue;
+                    var genericDef = iface.GetGenericTypeDefinition();
+                    var args = iface.GenericTypeArguments;
+                    if (resourceInstanceGenericType.IsAssignableFrom(genericDef) && args.First() == keyType)
                     {
-                        isResource = true;
-                        permissions.Add(iface.GenericTypeArguments.Skip(1).First());
+                        res.InstancePermissions.Add(iface.GenericTypeArguments.Last());
+                    }
+                    else if (resourceGenericType.IsAssignableFrom(genericDef))
+                    {
+                        res.StaticPermissions.Add(iface.GenericTypeArguments.Last());
                     }
                 }
-                if (isResource)
+                if (res.StaticPermissions.Count > 0 || res.InstancePermissions.Count > 0)
                 {
-                    _loadedResources.Add(type, permissions.Distinct().ToList());
+                    _loadedResources.Add(res);
                 }
+            }
+        }
+
+        public class RegisteredResource
+        {
+            /// <summary>
+            /// Resource type implementing IResource interface
+            /// </summary>
+            public Type ResourceType { get;}
+
+            /// <summary>
+            /// Permissions defined by IResource interface
+            /// </summary>
+            public List<Type> StaticPermissions = new List<Type>();
+
+            /// <summary>
+            /// Permissions defined by IResourceInterface interface
+            /// </summary>
+            public List<Type> InstancePermissions = new List<Type>();
+
+            public RegisteredResource(Type resourceType)
+            {
+                ResourceType = resourceType;
             }
         }
     }

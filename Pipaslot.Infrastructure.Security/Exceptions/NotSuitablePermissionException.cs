@@ -16,7 +16,7 @@ namespace Pipaslot.Infrastructure.Security.Exceptions
         /// </summary>
         public IConvertible Permission { get; }
 
-        public NotSuitablePermissionException(Type resource, IConvertible permission) : base("Permission is not suitable for Resource. Please check if you are using correct PermissionEnum defined at resource interface into IResource<TKey, PermissionEnum>")
+        public NotSuitablePermissionException(Type resource, IConvertible permission) : base("Permission is not suitable for Resource. Please check if you are using correct PermissionEnum defined at resource interface into IResourceInstance<TKey, PermissionEnum> or IResource<PermissionEnum>")
         {
             Resource = resource;
             Permission = permission;

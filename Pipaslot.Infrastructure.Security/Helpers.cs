@@ -10,10 +10,11 @@ namespace Pipaslot.Infrastructure.Security
     {
         internal static void CheckIfResourceHasAssignedPermission(Type resource, IConvertible permissionEnum)
         {
+            var resourceGenericType = typeof(IResource<>);
             var resourceContainsresourcePermissiongenericType = resource.GetInterfaces().Any(x =>
                 x.IsGenericType &&
-                x.GetGenericTypeDefinition() == typeof(IResource<,>) &&
-                x.GetGenericArguments().Skip(1).First() == permissionEnum.GetType());
+                x.GetGenericTypeDefinition() == resourceGenericType &&
+                x.GetGenericArguments().First() == permissionEnum.GetType());
             if (!resourceContainsresourcePermissiongenericType)
             {
                 throw new NotSuitablePermissionException(resource, permissionEnum);

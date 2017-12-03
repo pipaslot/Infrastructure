@@ -4,8 +4,8 @@ using Pipaslot.Infrastructure.Security.Attributes;
 namespace Pipaslot.Infrastructure.SecurityTests.Models
 {
     [Name("First Resource Name")]
-    [Description("First resource purpose description etc. etc. etc. etc.")]
-    public class FirstResource : IResource<int, FirstPermissions>
+    [Description("First resourceInstance purpose description etc. etc. etc. etc.")]
+    public class FirstResource : IResourceInstance<int, FirstPermissions>, IResource<StaticPermissions>
     {
         public int Id { get; set; }
 
@@ -14,7 +14,7 @@ namespace Pipaslot.Infrastructure.SecurityTests.Models
             Id = id;
         }
 
-        #region IResource Implementation
+        #region IResourceInstance Implementation
         
         public int ResourceUniqueIdentifier => Id;
 

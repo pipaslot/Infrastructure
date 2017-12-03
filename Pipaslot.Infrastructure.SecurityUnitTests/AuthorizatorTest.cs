@@ -66,6 +66,32 @@ namespace Pipaslot.Infrastructure.SecurityTests
         }
 
         [TestMethod]
+        public void StaticResourcePermission_ShouldPass()
+        {
+            const int roleId = 1;
+            var permission = FirstPermissions.Edit;
+
+            //Init
+            var permissionStore = new Mock<IPermissionStore<int>>();
+            var convertor = new DefaultNamingConvertor();
+            var auth = new Authorizator<int>(permissionStore.Object);
+
+            var role = new UserRole(roleId);
+
+            //Pre-Condition
+            permissionStore
+                .Setup(p => p.IsAllowed(roleId, convertor.GetResourceUniqueName(typeof(FirstResource)), default(int),
+                    convertor.GetPermissionUniqueIdentifier(permission)))
+                .Returns(true);
+
+            //Act
+            Assert.IsTrue(auth.IsAllowed(role, typeof(FirstResource), permission));
+
+            //Assertion
+            permissionStore.VerifyAll();
+        }
+
+        [TestMethod]
         public void ResourceInstancePermission_ShouldPass()
         {
             const int roleId = 1;
@@ -175,7 +201,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
         private class ConstantNamingConvertor : INamingConvertor
         {
-            public const string RESOURCE = "resource";
+            public const string RESOURCE = "resourceInstance";
             public const string PERMISSION = "permission";
             public string GetResourceUniqueName(Type resource)
             {

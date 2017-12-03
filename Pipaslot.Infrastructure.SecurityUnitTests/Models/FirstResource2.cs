@@ -2,7 +2,7 @@
 
 namespace Pipaslot.Infrastructure.SecurityTests.Models
 {
-    public class FirstResource2 : IResource<int, FirstPermissions>
+    public class FirstResource2 : IResourceInstance<int, FirstPermissions>
     {
         public int Id { get; set; }
 
@@ -11,7 +11,7 @@ namespace Pipaslot.Infrastructure.SecurityTests.Models
             Id = id;
         }
 
-        #region IResource Implementation
+        #region IResourceInstance Implementation
         
         public int ResourceUniqueIdentifier => Id;
 

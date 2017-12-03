@@ -5,8 +5,8 @@ namespace Pipaslot.Infrastructure.SecurityTests.Models
 {
 
     [Name("Second Resource Name")]
-    [Description("Second resource purpose description etc. etc. etc. etc.")]
-    public class SecondResource : IResource<string, SecondPermissions>
+    [Description("Second resourceInstance purpose description etc. etc. etc. etc.")]
+    public class SecondResource : IResourceInstance<string, SecondPermissions>
     {
         public string Id { get; set; }
 
@@ -15,7 +15,7 @@ namespace Pipaslot.Infrastructure.SecurityTests.Models
             Id = id;
         }
 
-        #region IResource Implementation
+        #region IResourceInstance Implementation
         
         public string ResourceUniqueIdentifier => Id;
 

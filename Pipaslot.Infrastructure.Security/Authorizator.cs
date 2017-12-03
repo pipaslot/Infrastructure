@@ -24,11 +24,19 @@ namespace Pipaslot.Infrastructure.Security
             return _permissionStore.IsAllowed(role.Id, GLOBAL_RESOURCE_NAME, default(TKey), perm);
         }
 
-        public virtual bool IsAllowed<TPermissions>(IUserRole<TKey> role, IResource<TKey, TPermissions> resource, TPermissions permissionEnum) where TPermissions : IConvertible
+        public bool IsAllowed(IUserRole<TKey> role, Type resource, IConvertible permissionEnum)
         {
-            var res = _namingConvertor.GetResourceUniqueName(resource.GetType());
+            Helpers.CheckIfResourceHasAssignedPermission(resource, permissionEnum);
+            var res = _namingConvertor.GetResourceUniqueName(resource);
             var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
-            return _permissionStore.IsAllowed(role.Id, res, resource.ResourceUniqueIdentifier, perm);
+            return _permissionStore.IsAllowed(role.Id, res, default(TKey), perm);
+        }
+
+        public virtual bool IsAllowed<TPermissions>(IUserRole<TKey> role, IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum) where TPermissions : IConvertible
+        {
+            var res = _namingConvertor.GetResourceUniqueName(resourceInstance.GetType());
+            var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
+            return _permissionStore.IsAllowed(role.Id, res, resourceInstance.ResourceUniqueIdentifier, perm);
         }
 
         public virtual bool IsAllowed(IUserRole<TKey> role, Type resource, TKey resourceIdentifier, IConvertible permissionEnum)

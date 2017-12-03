@@ -50,7 +50,7 @@ namespace Pipaslot.Infrastructure.Security
             var result = new List<ResourceInfo>();
             foreach (var pair in _resourceRegistry.ResourceTypes)
             {
-                var type = pair.Key;
+                var type = pair.ResourceType;
                 var resourceName = _namingConvertor.GetResourceUniqueName(type);
                 var info = new ResourceInfo
                 {
@@ -98,29 +98,34 @@ namespace Pipaslot.Infrastructure.Security
         {
             var result = new List<PermissionInfo<TKey>>();
             var resourceType = _namingConvertor.GetResourceTypeByUniqueName(resource);
-            var permissionsTypes = _resourceRegistry.GetPermissionTypes(resourceType);
-            foreach (var permissionType in permissionsTypes)
+            var registeredResource = _resourceRegistry.ResourceTypes.FirstOrDefault(r => r.ResourceType == resourceType);
+            if (registeredResource != null)
             {
-                foreach (var propertyInfo in permissionType.GetProperties())
+                var defaultId = default(TKey);
+                var permissionsTypes = resourceId.GetHashCode() == defaultId.GetHashCode() ? registeredResource.StaticPermissions : registeredResource.InstancePermissions;
+                foreach (var permissionType in permissionsTypes)
                 {
-                    var permissionUniqueIdentifier = _namingConvertor.GetPermissionUniqueIdentifier(permissionType, propertyInfo);
-                    var info = new PermissionInfo<TKey>()
+                    foreach (var propertyInfo in permissionType.GetProperties())
                     {
-                        ResourceUniquedName = resource,
-                        ResourceIdentifier = resourceId,
-                        UniqueIdentifier = permissionUniqueIdentifier,
-                        IsAllowed = _permissionStore.IsAllowed(roleId, resource, resourceId, permissionUniqueIdentifier)
-                    };
-                    if (propertyInfo.GetCustomAttributes(typeof(NameAttribute)).FirstOrDefault() is NameAttribute nameAttr)
-                    {
-                        info.Name = nameAttr.Name;
-                    }
-                    if (propertyInfo.GetCustomAttributes(typeof(DescriptionAttribute)).FirstOrDefault() is DescriptionAttribute descAttr)
-                    {
-                        info.Description = descAttr.Description;
-                    }
+                        var permissionUniqueIdentifier = _namingConvertor.GetPermissionUniqueIdentifier(permissionType, propertyInfo);
+                        var info = new PermissionInfo<TKey>()
+                        {
+                            ResourceUniquedName = resource,
+                            ResourceIdentifier = resourceId,
+                            UniqueIdentifier = permissionUniqueIdentifier,
+                            IsAllowed = _permissionStore.IsAllowed(roleId, resource, resourceId, permissionUniqueIdentifier)
+                        };
+                        if (propertyInfo.GetCustomAttributes(typeof(NameAttribute)).FirstOrDefault() is NameAttribute nameAttr)
+                        {
+                            info.Name = nameAttr.Name;
+                        }
+                        if (propertyInfo.GetCustomAttributes(typeof(DescriptionAttribute)).FirstOrDefault() is DescriptionAttribute descAttr)
+                        {
+                            info.Description = descAttr.Description;
+                        }
 
-                    result.Add(info);
+                        result.Add(info);
+                    }
                 }
             }
             return result;

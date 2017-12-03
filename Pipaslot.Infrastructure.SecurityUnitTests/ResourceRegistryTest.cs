@@ -16,10 +16,14 @@ namespace Pipaslot.Infrastructure.SecurityTests
             registry.Register(typeof(FirstResource).Assembly);
 
             //Act
-            Assert.AreEqual(2, registry.ResourceTypes.Count);
+            Assert.AreEqual(3, registry.ResourceTypes.Count);
 
-            Assert.AreEqual(1, registry.ResourceTypes.First().Value.Count);
-            Assert.AreEqual(typeof(FirstPermissions), registry.ResourceTypes.First().Value.First());
+            var firstResource = registry.ResourceTypes.First(r=>r.ResourceType == typeof(FirstResource));
+            Assert.AreEqual(1, firstResource.InstancePermissions.Count);
+            Assert.AreEqual(2, firstResource.StaticPermissions.Count);
+            Assert.IsTrue(firstResource.InstancePermissions.Contains(typeof(FirstPermissions)));
+            Assert.IsTrue(firstResource.StaticPermissions.Contains(typeof(FirstPermissions)));
+            Assert.IsTrue(firstResource.StaticPermissions.Contains(typeof(StaticPermissions)));
         }
     }
 }

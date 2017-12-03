@@ -31,15 +31,23 @@ namespace Pipaslot.Infrastructure.Security
         bool IsAllowed(IConvertible permissionEnum);
 
         /// <summary>
-        /// Check if user has permission for resource. Only permission defined for this resource can be used
+        /// Check if user has static permission for resource. This permission is NOT assigned to identifiers
         /// </summary>
-        /// <param name="resource">Resource instance</param >
-        /// < param name="permissionEnum">Requested permission</param>
+        /// <param name="resource">IResource Class Type</param>
+        /// < param name="permissionEnum"></param>
         /// <returns></returns>
-        bool IsAllowed<TPermissions>(IResource<TKey, TPermissions> resource, TPermissions permissionEnum) where TPermissions: IConvertible;
+        bool IsAllowed(Type resource, IConvertible permissionEnum);
 
         /// <summary>
-        /// Check if user has permission for resource with specific ID
+        /// Check if user has permission for resourceInstance. Only permission defined for this resourceInstance can be used
+        /// </summary>
+        /// <param name="resourceInstance">Resource instance</param >
+        /// < param name="permissionEnum">Requested permission</param>
+        /// <returns></returns>
+        bool IsAllowed<TPermissions>(IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum) where TPermissions: IConvertible;
+
+        /// <summary>
+        /// Check if user has permission for resourceInstance with specific ID
         /// </summary>
         /// <param name="resource">Resource class type</param >
         /// <param name="resourceIdentifier">Instance identifier</param>
@@ -48,9 +56,9 @@ namespace Pipaslot.Infrastructure.Security
         bool IsAllowed(Type resource, TKey resourceIdentifier, IConvertible permissionEnum);
 
         /// <summary>
-        /// Return all Ids from resource for which user has required permision
+        /// Return all Ids from resourceInstance for which user has required permision
         /// </summary>
-        /// <param name="resource">IResource class type</param>
+        /// <param name="resource">IResourceInstance class type</param>
         /// <param name="permissionEnum">Requested permission</param>
         /// <returns></returns>
         IEnumerable<TKey> GetAllowedKeys(Type resource, IConvertible permissionEnum);

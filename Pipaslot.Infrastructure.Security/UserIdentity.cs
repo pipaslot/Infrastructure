@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace Pipaslot.Infrastructure.Security
 {
+    //TODO implement another UserIdentity for Admin user which will have granted all permission by default
     public class UserIdentity<TKey> : IUserIdentity<TKey>
     {
         private readonly IAuthorizator<TKey> _authorizator;
@@ -39,9 +40,14 @@ namespace Pipaslot.Infrastructure.Security
             return Roles.Any(role => _authorizator.IsAllowed(role, permissionEnum));
         }
 
-        public virtual bool IsAllowed<TPermissions>(IResource<TKey, TPermissions> resource, TPermissions permissionEnum) where TPermissions : IConvertible
+        public bool IsAllowed(Type resource, IConvertible permissionEnum)
         {
             return Roles.Any(role => _authorizator.IsAllowed(role, resource, permissionEnum));
+        }
+
+        public virtual bool IsAllowed<TPermissions>(IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum) where TPermissions : IConvertible
+        {
+            return Roles.Any(role => _authorizator.IsAllowed(role, resourceInstance, permissionEnum));
         }
 
         public virtual bool IsAllowed(Type resource, TKey resourceIdentifier, IConvertible permissionEnum)
