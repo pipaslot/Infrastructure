@@ -47,15 +47,14 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertor = new DefaultNamingConvertor();
-            var auth = new Authorizator<int>(permissionStore.Object);
+            var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry<int>());
+            var auth = new Authorizator<int>(permissionStore.Object, convertor);
 
             var role = new UserRole(roleId);
 
             //Pre-Condition
             permissionStore
-                .Setup(p => p.IsAllowed(roleId, Authorizator<int>.GLOBAL_RESOURCE_NAME, default(int),
-                    convertor.GetPermissionUniqueIdentifier(permission)))
+                .Setup(p => p.IsAllowed(roleId, Authorizator<int>.GLOBAL_RESOURCE_NAME, convertor.GetPermissionUniqueIdentifier(permission)))
                 .Returns(true);
 
             //Act
@@ -73,14 +72,14 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertor = new DefaultNamingConvertor();
-            var auth = new Authorizator<int>(permissionStore.Object);
+            var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry<int>());
+            var auth = new Authorizator<int>(permissionStore.Object, convertor);
 
             var role = new UserRole(roleId);
 
             //Pre-Condition
             permissionStore
-                .Setup(p => p.IsAllowed(roleId, convertor.GetResourceUniqueName(typeof(FirstResource)), default(int),
+                .Setup(p => p.IsAllowed(roleId, convertor.GetResourceUniqueName(typeof(FirstResource)),
                     convertor.GetPermissionUniqueIdentifier(permission)))
                 .Returns(true);
 
@@ -92,6 +91,19 @@ namespace Pipaslot.Infrastructure.SecurityTests
         }
 
         [TestMethod]
+        [ExpectedException(typeof(NotSuitablePermissionException))]
+        public void StaticResourcePermission_PermissionIsNotAllowedForResource_ShouldFail()
+        {
+            //Init
+            var permissionStore = new Mock<IPermissionStore<int>>();
+            var convertorMock = new Mock<INamingConvertor>();
+            var auth = new Authorizator<int>(permissionStore.Object, convertorMock.Object);
+
+            //Act
+            auth.IsAllowed(new UserRole(1), typeof(FirstResource), SecondPermissions.Edit);
+        }
+
+        [TestMethod]
         public void ResourceInstancePermission_ShouldPass()
         {
             const int roleId = 1;
@@ -100,8 +112,8 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertor = new DefaultNamingConvertor();
-            var auth = new Authorizator<int>(permissionStore.Object);
+            var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry<int>());
+            var auth = new Authorizator<int>(permissionStore.Object, convertor);
 
             var role = new UserRole(roleId);
             var resource = new FirstResource(resourceId);
@@ -128,8 +140,8 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertor = new DefaultNamingConvertor();
-            var auth = new Authorizator<int>(permissionStore.Object);
+            var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry<int>());
+            var auth = new Authorizator<int>(permissionStore.Object, convertor);
 
             var role = new UserRole(roleId);
 
@@ -145,14 +157,15 @@ namespace Pipaslot.Infrastructure.SecurityTests
             //Assertion
             permissionStore.VerifyAll();
         }
-        
+
         [TestMethod]
         [ExpectedException(typeof(NotSuitablePermissionException))]
         public void ResourceTypeAndIdPermission_PermissionIsNotAllowedForResource_ShouldFail()
         {
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var auth = new Authorizator<int>(permissionStore.Object);
+            var convertorMock = new Mock<INamingConvertor>();
+            var auth = new Authorizator<int>(permissionStore.Object, convertorMock.Object);
 
             //Act
             auth.IsAllowed(new UserRole(1), typeof(FirstResource), 1, SecondPermissions.Edit);
@@ -166,8 +179,8 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertor = new DefaultNamingConvertor();
-            var auth = new Authorizator<int>(permissionStore.Object);
+            var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry<int>());
+            var auth = new Authorizator<int>(permissionStore.Object, convertor);
             var role = new UserRole(roleId);
             var allowed = new List<int> { 1, 3, 5 };
 
@@ -191,7 +204,8 @@ namespace Pipaslot.Infrastructure.SecurityTests
         {
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var auth = new Authorizator<int>(permissionStore.Object);
+            var convertorMock = new Mock<INamingConvertor>();
+            var auth = new Authorizator<int>(permissionStore.Object, convertorMock.Object);
 
             //Act
             auth.GetAllowedKeys(new UserRole(1), typeof(FirstResource), SecondPermissions.Edit);
@@ -218,12 +232,12 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 return PERMISSION;
             }
 
-            public string GetPermissionUniqueIdentifier(Type permissionClass, PropertyInfo property)
+            public string GetPermissionUniqueIdentifier(Type permissionClass, MemberInfo property)
             {
                 return PERMISSION;
             }
         }
-        
+
         #endregion
     }
 }

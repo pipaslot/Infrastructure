@@ -66,6 +66,8 @@
     <Compile Include="Models\StaticPermissions.cs" />
     <Compile Include="Models\UserRole.cs" />
     <Compile Include="ResourceRegistryTest.cs" />
+    <Compile Include="PermissionManagerTest.cs" />
+    <Compile Include="DefaultNamingConvertorTest.cs" />
     <Compile Include="UserIdentityTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

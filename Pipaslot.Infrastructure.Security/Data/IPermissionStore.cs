@@ -10,7 +10,16 @@ namespace Pipaslot.Infrastructure.Security.Data
     public interface IPermissionStore<TKey>
     {
         /// <summary>
-        /// Check if role has assigned permission
+        /// Check if role has assigned static permission
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <param name="resource"></param>
+        /// <param name="permission"></param>
+        /// <returns></returns>
+        bool IsAllowed(TKey roleId, string resource, string permission);
+
+        /// <summary>
+        /// Check if role has assigned instance permission
         /// </summary>
         /// <param name="roleId"></param>
         /// <param name="resource"></param>
@@ -18,7 +27,7 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// <param name="permission"></param>
         /// <returns></returns>
         bool IsAllowed(TKey roleId, string resource, TKey resourceId, string permission);
-
+        
         /// <summary>
         /// Returns all resource ID for which user has assigner permission
         /// </summary>
@@ -29,7 +38,16 @@ namespace Pipaslot.Infrastructure.Security.Data
         IEnumerable<TKey> GetAllowedResourceIds(TKey roleId, string resource, string permission);
 
         /// <summary>
-        /// Allow or Deny permission for user and resource
+        /// Allow or Deny permission for user and static resource
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <param name="resource"></param>
+        /// <param name="permission"></param>
+        /// <param name="isAllowed"></param>
+        void SetPrivilege(TKey roleId, string resource, string permission, bool isAllowed);
+
+        /// <summary>
+        /// Allow or Deny permission for user and resource instance
         /// </summary>
         /// <param name="roleId"></param>
         /// <param name="resource"></param>

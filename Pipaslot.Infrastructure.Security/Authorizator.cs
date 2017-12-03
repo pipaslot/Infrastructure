@@ -12,16 +12,16 @@ namespace Pipaslot.Infrastructure.Security
         protected readonly IPermissionStore<TKey> _permissionStore;
         protected readonly INamingConvertor _namingConvertor;
 
-        public Authorizator(IPermissionStore<TKey> permissionStore, INamingConvertor namingConvertor = null)
+        public Authorizator(IPermissionStore<TKey> permissionStore, INamingConvertor namingConvertor)
         {
             _permissionStore = permissionStore;
-            _namingConvertor = namingConvertor ?? new DefaultNamingConvertor();
+            _namingConvertor = namingConvertor;
         }
 
         public virtual bool IsAllowed(IUserRole<TKey> role, IConvertible permissionEnum)
         {
             var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
-            return _permissionStore.IsAllowed(role.Id, GLOBAL_RESOURCE_NAME, default(TKey), perm);
+            return _permissionStore.IsAllowed(role.Id, GLOBAL_RESOURCE_NAME, perm);
         }
 
         public bool IsAllowed(IUserRole<TKey> role, Type resource, IConvertible permissionEnum)
@@ -29,7 +29,7 @@ namespace Pipaslot.Infrastructure.Security
             Helpers.CheckIfResourceHasAssignedPermission(resource, permissionEnum);
             var res = _namingConvertor.GetResourceUniqueName(resource);
             var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
-            return _permissionStore.IsAllowed(role.Id, res, default(TKey), perm);
+            return _permissionStore.IsAllowed(role.Id, res, perm);
         }
 
         public virtual bool IsAllowed<TPermissions>(IUserRole<TKey> role, IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum) where TPermissions : IConvertible

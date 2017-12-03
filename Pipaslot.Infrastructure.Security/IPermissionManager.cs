@@ -18,10 +18,18 @@ namespace Pipaslot.Infrastructure.Security
         /// </summary>
         /// <param name="resource"></param>
         /// <returns></returns>
-        IEnumerable<ResourceInstanceInfo<TKey>> GetAllResourceInstancess(string resource);
+        IEnumerable<ResourceInstanceInfo<TKey>> GetAllResourceInstances(string resource);
 
         /// <summary>
-        /// Returns all permission assigned to resource or resource instance and selected rore
+        /// Returns all permission assigned to static resource and selected role
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <param name="resource"></param>
+        /// <returns></returns>
+        IEnumerable<PermissionInfo<TKey>> GetAllPermissions(TKey roleId, string resource);
+
+        /// <summary>
+        /// Returns all permission assigned to resource instance and selected role
         /// </summary>
         /// <param name="roleId"></param>
         /// <param name="resource"></param>
@@ -30,7 +38,15 @@ namespace Pipaslot.Infrastructure.Security
         IEnumerable<PermissionInfo<TKey>> GetAllPermissions(TKey roleId, string resource, TKey resourceId);
 
         /// <summary>
-        /// Grant Permission for role
+        /// Grant Permission for role and static resource
+        /// </summary>
+        /// <param name="role"></param>
+        /// <param name="resource"></param>
+        /// <param name="permissionEnum"></param>
+        void Allow(IUserRole<TKey> role, Type resource, IConvertible permissionEnum);
+
+        /// <summary>
+        /// Grant Permission for role and resource instance
         /// </summary>
         /// <param name="role"></param>
         /// <param name="resource"></param>
@@ -39,7 +55,15 @@ namespace Pipaslot.Infrastructure.Security
         void Allow(IUserRole<TKey> role, Type resource, TKey resourceId, IConvertible permissionEnum);
 
         /// <summary>
-        /// Take role permission
+        /// Take role permission for static resource
+        /// </summary>
+        /// <param name="role"></param>
+        /// <param name="resource"></param>
+        /// <param name="permissionEnum"></param>
+        void Deny(IUserRole<TKey> role, Type resource, IConvertible permissionEnum);
+
+        /// <summary>
+        /// Take role permission for resource instance
         /// </summary>
         /// <param name="role"></param>
         /// <param name="resource"></param>

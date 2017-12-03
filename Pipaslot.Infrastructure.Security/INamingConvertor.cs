@@ -37,6 +37,6 @@ namespace Pipaslot.Infrastructure.Security
         /// <param name="permissionClass"></param>
         /// <param name="property"></param>
         /// <returns></returns>
-        string GetPermissionUniqueIdentifier(Type permissionClass, PropertyInfo property);
+        string GetPermissionUniqueIdentifier(Type permissionClass, MemberInfo property);
     }
 }

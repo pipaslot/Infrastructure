@@ -17,6 +17,11 @@ namespace Pipaslot.Infrastructure.Security
         private readonly List<Assembly> _scanedAsseblies = new List<Assembly>();
 
         /// <summary>
+        /// Registered assemblies for scaning
+        /// </summary>
+        public List<Assembly>RegisteredAssemblies => _scanedAsseblies.ToList();
+
+        /// <summary>
         /// Flag if resources should be reloaded because new assembly was added
         /// </summary>
         private bool _reloadAll = true;

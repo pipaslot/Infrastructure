@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using Pipaslot.Infrastructure.Security.Data;
@@ -10,6 +11,11 @@ namespace Pipaslot.Infrastructure.SecurityTests.Mockups
     public class PermissionArrayStore : IPermissionStore<int>
     {
         private readonly List<Record> _data = new List<Record>();
+
+        public bool IsAllowed(int roleId, string resource, string permission)
+        {
+            return IsAllowed(roleId, resource, default(int), permission);
+        }
 
         public bool IsAllowed(int roleId, string resource, int resourceId, string permission)
         {
@@ -27,6 +33,11 @@ namespace Pipaslot.Infrastructure.SecurityTests.Mockups
                                     d.Permission == permission &&
                                     d.IsAllowed)
                 .Select(d => d.ResourceId).ToList();
+        }
+
+        public void SetPrivilege(int roleId, string resource, string permission, bool isAllowed)
+        {
+            SetPrivilege(roleId, resource, default(int), permission, isAllowed);
         }
 
         public void SetPrivilege(int roleId, string resource, int resourceId, string permission, bool isAllowed)

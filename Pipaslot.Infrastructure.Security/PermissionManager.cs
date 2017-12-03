@@ -8,7 +8,7 @@ using Pipaslot.Infrastructure.Security.Data.Queries;
 
 namespace Pipaslot.Infrastructure.Security
 {
-    class PermissionManager<TKey> : IPermissionManager<TKey>
+    public class PermissionManager<TKey> : IPermissionManager<TKey>
     {
         private readonly IPermissionStore<TKey> _permissionStore;
         private readonly ResourceRegistry<TKey> _resourceRegistry;
@@ -17,17 +17,27 @@ namespace Pipaslot.Infrastructure.Security
 
         public PermissionManager(IPermissionStore<TKey> permissionStore, ResourceRegistry<TKey> resourceRegistry, IResourceDetailProvider<TKey> resourceDetailProvider = null, INamingConvertor namingConvertor = null)
         {
-            _namingConvertor = namingConvertor ?? new DefaultNamingConvertor();
             _permissionStore = permissionStore;
             _resourceRegistry = resourceRegistry;
+            _namingConvertor = namingConvertor ?? new DefaultNamingConvertor<TKey>(resourceRegistry);
             _resourceDetailProvider = resourceDetailProvider ?? new DefaultResourceDetailProvider<TKey>();
         }
 
         #region Setup Privilege
 
+        public void Allow(IUserRole<TKey> role, Type resource, IConvertible permissionEnum)
+        {
+            Allow(role, resource, default(TKey), permissionEnum);
+        }
+
         public virtual void Allow(IUserRole<TKey> role, Type resource, TKey resourceId, IConvertible permissionEnum)
         {
             SetPrivilege(role, resource, resourceId, permissionEnum, true);
+        }
+
+        public void Deny(IUserRole<TKey> role, Type resource, IConvertible permissionEnum)
+        {
+            Deny(role, resource, default(TKey), permissionEnum);
         }
 
         public virtual void Deny(IUserRole<TKey> role, Type resource, TKey resourceId, IConvertible permissionEnum)
@@ -75,7 +85,7 @@ namespace Pipaslot.Infrastructure.Security
         }
 
         //todo Implement paging for future
-        public IEnumerable<ResourceInstanceInfo<TKey>> GetAllResourceInstancess(string resource)
+        public IEnumerable<ResourceInstanceInfo<TKey>> GetAllResourceInstances(string resource)
         {
             var result = new List<ResourceInstanceInfo<TKey>>();
             var resourceType = _namingConvertor.GetResourceTypeByUniqueName(resource);
@@ -94,41 +104,83 @@ namespace Pipaslot.Infrastructure.Security
             return result;
         }
 
-        public IEnumerable<PermissionInfo<TKey>> GetAllPermissions(TKey roleId, string resource, TKey resourceId)
+        #region GetAllPermissions
+
+        public IEnumerable<PermissionInfo<TKey>> GetAllPermissions(TKey roleId, string resource)
         {
             var result = new List<PermissionInfo<TKey>>();
-            var resourceType = _namingConvertor.GetResourceTypeByUniqueName(resource);
-            var registeredResource = _resourceRegistry.ResourceTypes.FirstOrDefault(r => r.ResourceType == resourceType);
-            if (registeredResource != null)
+            var registeredResource = GetRegisteredResource(resource);
+            if (registeredResource == null) return result;
+            foreach (var permissionType in registeredResource.StaticPermissions)
             {
-                var defaultId = default(TKey);
-                var permissionsTypes = resourceId.GetHashCode() == defaultId.GetHashCode() ? registeredResource.StaticPermissions : registeredResource.InstancePermissions;
-                foreach (var permissionType in permissionsTypes)
+                var enumNames = Enum.GetNames(permissionType);
+                foreach (var enumName in enumNames)
                 {
-                    foreach (var propertyInfo in permissionType.GetProperties())
+                    var memberInfo = permissionType.GetField(enumName);
+                    var permissionUniqueIdentifier = _namingConvertor.GetPermissionUniqueIdentifier(permissionType, memberInfo);
+                    var info = new PermissionInfo<TKey>()
                     {
-                        var permissionUniqueIdentifier = _namingConvertor.GetPermissionUniqueIdentifier(permissionType, propertyInfo);
-                        var info = new PermissionInfo<TKey>()
-                        {
-                            ResourceUniquedName = resource,
-                            ResourceIdentifier = resourceId,
-                            UniqueIdentifier = permissionUniqueIdentifier,
-                            IsAllowed = _permissionStore.IsAllowed(roleId, resource, resourceId, permissionUniqueIdentifier)
-                        };
-                        if (propertyInfo.GetCustomAttributes(typeof(NameAttribute)).FirstOrDefault() is NameAttribute nameAttr)
-                        {
-                            info.Name = nameAttr.Name;
-                        }
-                        if (propertyInfo.GetCustomAttributes(typeof(DescriptionAttribute)).FirstOrDefault() is DescriptionAttribute descAttr)
-                        {
-                            info.Description = descAttr.Description;
-                        }
-
-                        result.Add(info);
+                        ResourceUniquedName = resource,
+                        ResourceIdentifier = default(TKey),
+                        UniqueIdentifier = permissionUniqueIdentifier,
+                        IsAllowed = _permissionStore.IsAllowed(roleId, resource, permissionUniqueIdentifier)
+                    };
+                    if (memberInfo.GetCustomAttributes(typeof(NameAttribute)).FirstOrDefault() is NameAttribute nameAttr)
+                    {
+                        info.Name = nameAttr.Name;
                     }
+                    if (memberInfo.GetCustomAttributes(typeof(DescriptionAttribute)).FirstOrDefault() is DescriptionAttribute descAttr)
+                    {
+                        info.Description = descAttr.Description;
+                    }
+
+                    result.Add(info);
                 }
             }
             return result;
         }
+
+        public IEnumerable<PermissionInfo<TKey>> GetAllPermissions(TKey roleId, string resource, TKey resourceId)
+        {
+            var result = new List<PermissionInfo<TKey>>();
+            var registeredResource = GetRegisteredResource(resource);
+            if (registeredResource == null) return result;
+            foreach (var permissionType in registeredResource.InstancePermissions)
+            {
+                var enumNames = Enum.GetNames(permissionType);
+                foreach (var enumName in enumNames)
+                {
+                    var memberInfo = permissionType.GetField(enumName);
+                    var permissionUniqueIdentifier = _namingConvertor.GetPermissionUniqueIdentifier(permissionType, memberInfo);
+                    var info = new PermissionInfo<TKey>()
+                    {
+                        ResourceUniquedName = resource,
+                        ResourceIdentifier = resourceId,
+                        UniqueIdentifier = permissionUniqueIdentifier,
+                        IsAllowed = _permissionStore.IsAllowed(roleId, resource, resourceId, permissionUniqueIdentifier)
+                    };
+                    if (memberInfo.GetCustomAttributes(typeof(NameAttribute)).FirstOrDefault() is NameAttribute nameAttr)
+                    {
+                        info.Name = nameAttr.Name;
+                    }
+                    if (memberInfo.GetCustomAttributes(typeof(DescriptionAttribute)).FirstOrDefault() is DescriptionAttribute descAttr)
+                    {
+                        info.Description = descAttr.Description;
+                    }
+
+                    result.Add(info);
+                }
+            }
+            return result;
+        }
+
+        private ResourceRegistry<TKey>.RegisteredResource GetRegisteredResource(string resource)
+        {
+            var resourceType = _namingConvertor.GetResourceTypeByUniqueName(resource);
+            return _resourceRegistry.ResourceTypes.FirstOrDefault(r => r.ResourceType == resourceType);
+        }
+
+
+        #endregion
     }
 }
