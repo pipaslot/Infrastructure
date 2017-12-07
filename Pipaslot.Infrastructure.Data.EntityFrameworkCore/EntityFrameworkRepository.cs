@@ -38,8 +38,10 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCore
                 {
                     return uow.Context;
                 }
+                var context = _dbContextFactory.Create();
+                context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
-                return _dbContextFactory.Create();
+                return context;
             }
         }
 
