@@ -1,11 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2009
+VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Security", "Pipaslot.Infrastructure.Security\Pipaslot.Infrastructure.Security.csproj", "{DB13E6AD-761D-4459-9B06-A8FA1EBEBD25}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.SecurityTests", "Pipaslot.Infrastructure.SecurityUnitTests\Pipaslot.Infrastructure.SecurityTests.csproj", "{CF4B5713-58E2-448F-A5E8-E6006F5AF577}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Data", "Pipaslot.Infrastructure.Data\Pipaslot.Infrastructure.Data.csproj", "{C07E0F0B-0A21-43AB-BF5B-21D02C0B10D7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Data.EntityFrameworkCore", "Pipaslot.Infrastructure.Data.EntityFrameworkCore\Pipaslot.Infrastructure.Data.EntityFrameworkCore.csproj", "{424CB8C5-6C72-4323-9F91-EB14AB3D3007}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests", "Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests\Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests.csproj", "{1A2BD436-72D2-4653-84C2-EDD8062C73FA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.DataTests", "Pipaslot.Infrastructure.DataTests\Pipaslot.Infrastructure.DataTests.csproj", "{4D05CAE3-15D3-499F-80A4-2493A2305E47}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +29,22 @@ Global
 		{CF4B5713-58E2-448F-A5E8-E6006F5AF577}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF4B5713-58E2-448F-A5E8-E6006F5AF577}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF4B5713-58E2-448F-A5E8-E6006F5AF577}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C07E0F0B-0A21-43AB-BF5B-21D02C0B10D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C07E0F0B-0A21-43AB-BF5B-21D02C0B10D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C07E0F0B-0A21-43AB-BF5B-21D02C0B10D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C07E0F0B-0A21-43AB-BF5B-21D02C0B10D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{424CB8C5-6C72-4323-9F91-EB14AB3D3007}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{424CB8C5-6C72-4323-9F91-EB14AB3D3007}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{424CB8C5-6C72-4323-9F91-EB14AB3D3007}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{424CB8C5-6C72-4323-9F91-EB14AB3D3007}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A2BD436-72D2-4653-84C2-EDD8062C73FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A2BD436-72D2-4653-84C2-EDD8062C73FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A2BD436-72D2-4653-84C2-EDD8062C73FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A2BD436-72D2-4653-84C2-EDD8062C73FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D05CAE3-15D3-499F-80A4-2493A2305E47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D05CAE3-15D3-499F-80A4-2493A2305E47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D05CAE3-15D3-499F-80A4-2493A2305E47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D05CAE3-15D3-499F-80A4-2493A2305E47}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
