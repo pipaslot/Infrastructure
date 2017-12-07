@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Pipaslot.Infrastructure.Data.EntityFrameworkCore
 {
-    class EntityFrameworkRepository<TEntity, TKey, TDbContext> : IEntityFrameworkRepository<TEntity, TKey, TDbContext>
+    public class EntityFrameworkRepository<TEntity, TKey, TDbContext> : IEntityFrameworkRepository<TEntity, TKey, TDbContext>
         where TEntity : class, IEntity<TKey>, new()
         where TDbContext : DbContext
     {
@@ -33,12 +33,12 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCore
         {
             get
             {
-                var uow= _uowFactory.GetCurrent(false);
+                var uow = _uowFactory.GetCurrent(false);
                 if (uow != null)
                 {
                     return uow.Context;
                 }
-                
+
                 return _dbContextFactory.Create();
             }
         }
@@ -96,7 +96,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCore
         {
             return await GetByIdsCore(ids, includes).ToListAsync(cancellationToken);
         }
-        
+
 
         private IQueryable<TEntity> GetByIdsCore(IEnumerable<TKey> ids, Expression<Func<TEntity, object>>[] includes)
         {
@@ -161,7 +161,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCore
         {
             Context.Set<TEntity>().Remove(entity);
         }
-        
+
         /// <summary>
         /// Deletes the specified entity.
         /// </summary>

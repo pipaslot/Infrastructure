@@ -44,9 +44,12 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests.Models
 
         public void Dispose()
         {
-            foreach (var db in Dbs)
+            if (isInitialized)
             {
-                db.Database.EnsureDeleted();
+                using (var db = Create())
+                {
+                    db.Database.EnsureDeleted();
+                }
             }
         }
     }
