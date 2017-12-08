@@ -33,5 +33,22 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCore
             var transaction = newContext.Database.BeginTransaction();
             return new EntityFrameworkUnitOfWork<TDbContext>(newContext, transaction);
         }
+
+        /// <summary>
+        /// Create Read only context for Queries
+        /// </summary>
+        /// <returns></returns>
+        public TDbContext GetReadOnlyContext()
+        {
+            var uow = GetCurrent(false);
+            if (uow != null)
+            {
+                return uow.Context;
+            }
+            var context = _dbContextFactory.Create();
+            context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+
+            return context;
+        }
     }
 }

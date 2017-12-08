@@ -13,12 +13,10 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCore
         where TDbContext : DbContext
     {
         private readonly EntityFrameworkUnitOfWorkFactory<TDbContext> _uowFactory;
-        private readonly IEntityFrameworkDbContextFactory<TDbContext> _dbContextFactory;
 
-        public EntityFrameworkRepository(EntityFrameworkUnitOfWorkFactory<TDbContext> uowFactory, IEntityFrameworkDbContextFactory<TDbContext> dbContextFactory)
+        public EntityFrameworkRepository(EntityFrameworkUnitOfWorkFactory<TDbContext> uowFactory)
         {
             _uowFactory = uowFactory;
-            _dbContextFactory = dbContextFactory;
         }
 
         /// <summary>
@@ -29,21 +27,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCore
         /// <summary>
         /// Context for Read only operations. Unit of work is not needed for this operation. If Unit of work does not exists, then is created a new context
         /// </summary>
-        protected TDbContext ContextReadOnly
-        {
-            get
-            {
-                var uow = _uowFactory.GetCurrent(false);
-                if (uow != null)
-                {
-                    return uow.Context;
-                }
-                var context = _dbContextFactory.Create();
-                context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-
-                return context;
-            }
-        }
+        protected TDbContext ContextReadOnly => _uowFactory.GetReadOnlyContext();
 
         /// <summary>
         /// Gets the entity with specified ID.
