@@ -9,7 +9,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests.Models
 {
     public class BlogRepository : EntityFrameworkRepository<Blog,int,BloggingContext>
     {
-        public BlogRepository(EntityFrameworkUnitOfWorkFactory<BloggingContext> uowFactory, IEntityFrameworkDbContextFactory<BloggingContext> dbContextFactory) : base(uowFactory, dbContextFactory)
+        public BlogRepository(EntityFrameworkUnitOfWorkFactory<BloggingContext> uowFactory) : base(uowFactory)
         {
         }
 

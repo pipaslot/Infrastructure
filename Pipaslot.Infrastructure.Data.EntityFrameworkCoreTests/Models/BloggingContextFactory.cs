@@ -15,6 +15,8 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests.Models
         private bool isInitialized;
         private List<BloggingContext>Dbs = new List<BloggingContext>();
 
+        public event EventHandler<BloggingContext> OnDbInit;
+
         public BloggingContextFactory(string dbName)
         {
             _dbName = dbName;
@@ -28,8 +30,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests.Models
 
             var builder = new DbContextOptionsBuilder<BloggingContext>();
 
-            builder.UseSqlServer(
-                    $"Server=(local);Database=testdb_{_dbName};Trusted_Connection=True;MultipleActiveResultSets=true")
+            builder.UseSqlServer($"Server=(local);Database=testdb_{_dbName};Trusted_Connection=True;MultipleActiveResultSets=true")
                 .UseInternalServiceProvider(serviceProvider);
 
             var context = new BloggingContext(builder.Options);
@@ -37,6 +38,10 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests.Models
             {
                 isInitialized = true;
                 context.Database.Migrate();
+                if (OnDbInit != null)
+                {
+                    OnDbInit(this, context);
+                }
             }
             Dbs.Add(context);
             return context;

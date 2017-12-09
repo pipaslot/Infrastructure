@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Pipaslot.Infrastructure.Data.EntityFrameworkCore;
@@ -7,14 +9,17 @@ using Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests.Models;
 namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests
 {
     [TestClass]
-    public class UnitOfWorkIntegrationTest
+    public class UnitOfWorkIntegrationTest : IDisposable
     {
+        private List<BloggingContextFactory> dbFactories = new List<BloggingContextFactory>();
+
         [TestMethod]
         public void SingleLevelTransaction()
         {
             var uowFactory = CreateUoW("SingleLevelTransaction");
             using (var uow = uowFactory.Create())
             {
+                Assert.AreEqual(0, uow.Context.Blog.Count());
                 uow.Context.Blog.Add(new Blog
                 {
                     Name = "MyName"
@@ -39,8 +44,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests
         [TestMethod]
         public void Commit_DataShouldBeAvailableInSeparatedContextsAfterCommit()
         {
-            var dbName = "Commit_DataShouldBeAvailableInSeparatedContextsAfterCommit";
-            var dbFactory = new BloggingContextFactory(dbName);
+            var dbFactory = CreateDbFactory("Commit_DataShouldBeAvailableInSeparatedContextsAfterCommit");
             var uowFactory = new EntityFrameworkUnitOfWorkFactory<BloggingContext>(dbFactory);
             using (var uow = uowFactory.Create())
             {
@@ -86,12 +90,6 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests
             }
         }
 
-        private EntityFrameworkUnitOfWorkFactory<BloggingContext> CreateUoW(string dbName)
-        {
-            var dbFactory = new BloggingContextFactory(dbName);
-            return new EntityFrameworkUnitOfWorkFactory<BloggingContext>(dbFactory);
-        }
-
         private void CreateRecord(EntityFrameworkUnitOfWorkFactory<BloggingContext> uowFactory)
         {
             using (var uow = uowFactory.Create())
@@ -101,6 +99,27 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests
                     Name = "MyName"
                 });
                 uow.Commit();
+            }
+        }
+
+        private EntityFrameworkUnitOfWorkFactory<BloggingContext> CreateUoW(string dbName)
+        {
+            var dbFactory = CreateDbFactory(dbName);
+            return new EntityFrameworkUnitOfWorkFactory<BloggingContext>(dbFactory);
+        }
+
+        private BloggingContextFactory CreateDbFactory(string dbName)
+        {
+            var dbFactory = new BloggingContextFactory(dbName);
+            dbFactories.Add(dbFactory);
+            return dbFactory;
+        }
+
+        public void Dispose()
+        {
+            foreach (var factory in dbFactories)
+            {
+                factory.Dispose();
             }
         }
     }

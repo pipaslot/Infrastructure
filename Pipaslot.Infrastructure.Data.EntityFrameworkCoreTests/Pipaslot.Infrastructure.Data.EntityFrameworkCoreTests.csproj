@@ -123,7 +123,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\BloggingContextFactory.cs" />
+    <Compile Include="Models\BlogQuery.cs" />
     <Compile Include="Models\BlogRepository.cs" />
+    <Compile Include="Models\BlogWithRemappingQuery.cs" />
     <Compile Include="Models\Migrations\20170824151556_initial.cs" />
     <Compile Include="Models\Migrations\20170824151556_initial.Designer.cs">
       <DependentUpon>20170824151556_initial.cs</DependentUpon>
@@ -133,6 +135,7 @@
     <Compile Include="UnitOfWorkIntegrationTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EntityFrameworkRepositoryTest.cs" />
+    <Compile Include="EntitiFrameworkQueryTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
