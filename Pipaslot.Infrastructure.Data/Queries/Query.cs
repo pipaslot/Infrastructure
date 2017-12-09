@@ -20,7 +20,7 @@ namespace Pipaslot.Infrastructure.Data.Queries
         }
     }
 
-    public abstract class Query<TQueryableResult, TResult> : IPageableQuery<TResult>, ISortableQuery<TQueryableResult, TResult>
+    public abstract class Query<TQueryableResult, TResult> : IQuery<TQueryableResult, TResult>
     {
         #region IPageableQuery implementation
 
@@ -113,7 +113,7 @@ namespace Pipaslot.Infrastructure.Data.Queries
         
         #endregion
 
-        #region Query Implementation
+        #region ExecutableQuery Implementation
 
         /// <summary>
         /// Executes the query and returns the results.

@@ -5,9 +5,14 @@ using System.Linq.Expressions;
 
 namespace Pipaslot.Infrastructure.Data.Queries
 {
+    /// <inheritdoc />
+    /// <summary>
+    /// Sort criteria for expected result and for query result
+    /// </summary>
+    /// <typeparam name="TQueryableResult"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
     public interface ISortableQuery<TQueryableResult, TResult> : ISortableQuery<TResult>
     {
-
         /// <summary>
         /// Gets a list of sort criteria applied on this query.
         /// </summary>
@@ -20,7 +25,11 @@ namespace Pipaslot.Infrastructure.Data.Queries
 
     }
 
-    public interface ISortableQuery<TResult> : IQuery<TResult>
+    /// <summary>
+    /// Sort criteria for expected result
+    /// </summary>
+    /// <typeparam name="TResult"></typeparam>
+    public interface ISortableQuery<TResult> : IExecutableQuery<TResult>
     {
         /// <summary>
         /// Adds a specified sort criteria to the query.

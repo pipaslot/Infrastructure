@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Pipaslot.Infrastructure.Data.Queries
 {
-    public interface IPageableQuery<TResult> : IQuery<TResult>
+    public interface IPageableQuery<TResult> : IExecutableQuery<TResult>
     {
         /// <summary>
         /// Gets or sets a number of rows to be skipped. If this value is null, the paging will be applied.
