@@ -25,7 +25,7 @@ namespace Pipaslot.Infrastructure.Data.Queries
         #region IPageableQuery implementation
 
         /// <summary>
-        ///     Gets or sets a number of rows to be skipped. If this value is null, the paging will be applied.
+        /// Gets or sets a number of rows to be skipped. If this value is null, the paging will be applied.
         /// </summary>
         public int? Skip { get; set; }
 
@@ -33,6 +33,16 @@ namespace Pipaslot.Infrastructure.Data.Queries
         /// Gets or sets the page size. If this value is null, the paging will not be applied.
         /// </summary>
         public int? Take { get; set; }
+
+
+        public IPageableQuery<TResult> SetPage(int pageIndex, int pageSize = 10)
+        {
+            if (pageIndex <= 0) throw new ArgumentOutOfRangeException(nameof(pageIndex), "Must be greater than zero");
+            if (pageSize <= 0) throw new ArgumentOutOfRangeException(nameof(pageSize), "Must be greater than zero");
+            Skip = (pageIndex - 1) * pageSize;
+            Take = pageSize;
+            return this;
+        }
 
         /// <summary>
         /// Gets the total row count without respect to paging.

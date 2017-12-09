@@ -101,8 +101,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests
             var first = result.First();
             Assert.AreEqual(skipNumber + 1, first.Id);
         }
-
-
+        
         [TestMethod]
         public void Take()
         {
@@ -116,8 +115,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests
             var first = result.First();
             Assert.AreEqual(_defaultData.First().Name, first.Name);
         }
-
-
+       
         [TestMethod]
         public void AddSortCriteria_Function()
         {
