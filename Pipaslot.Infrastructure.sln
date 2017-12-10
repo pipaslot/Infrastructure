@@ -19,7 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{659C7A9A-F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Security", "Security", "{9222D47E-579F-4131-987A-5E708196ADFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.Data.Mvc", "Pipaslot.Infrastructure.Data.Mvc\Pipaslot.Infrastructure.Data.Mvc.csproj", "{2640D025-8570-4277-A941-907F884B3F14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Data.Mvc", "Pipaslot.Infrastructure.Data.Mvc\Pipaslot.Infrastructure.Data.Mvc.csproj", "{2640D025-8570-4277-A941-907F884B3F14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.Mvc", "Pipaslot.Infrastructure.Mvc\Pipaslot.Infrastructure.Mvc.csproj", "{1BE801F6-DDB5-4A5D-B038-824BDDE4BB5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +57,10 @@ Global
 		{2640D025-8570-4277-A941-907F884B3F14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2640D025-8570-4277-A941-907F884B3F14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2640D025-8570-4277-A941-907F884B3F14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BE801F6-DDB5-4A5D-B038-824BDDE4BB5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BE801F6-DDB5-4A5D-B038-824BDDE4BB5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BE801F6-DDB5-4A5D-B038-824BDDE4BB5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BE801F6-DDB5-4A5D-B038-824BDDE4BB5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
