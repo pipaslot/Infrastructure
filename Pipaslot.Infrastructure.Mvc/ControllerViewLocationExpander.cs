@@ -22,7 +22,7 @@ namespace Pipaslot.Infrastructure.Mvc
     /// <code> 
     ///     //Startup.cs configuration: 
     ///     services.Configure<RazorViewEngineOptions>(options => {
-    ///            options.ViewLocationExpanders.Add(new ViewLocationExpander("Controllers"));
+    ///            options.ViewLocationExpanders.Add(new ControllerViewLocationExpander("Controllers"));
     ///        });
     /// </code>
     public class ControllerViewLocationExpander : IViewLocationExpander
