@@ -9,9 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.Sec
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Data", "Pipaslot.Infrastructure.Data\Pipaslot.Infrastructure.Data.csproj", "{C07E0F0B-0A21-43AB-BF5B-21D02C0B10D7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Data.EntityFrameworkCore", "Pipaslot.Infrastructure.Data.EntityFrameworkCore\Pipaslot.Infrastructure.Data.EntityFrameworkCore.csproj", "{424CB8C5-6C72-4323-9F91-EB14AB3D3007}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Data.EntityFramework", "Pipaslot.Infrastructure.Data.EntityFramework\Pipaslot.Infrastructure.Data.EntityFramework.csproj", "{424CB8C5-6C72-4323-9F91-EB14AB3D3007}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests", "Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests\Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests.csproj", "{1A2BD436-72D2-4653-84C2-EDD8062C73FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.Data.EntityFrameworkTests", "Pipaslot.Infrastructure.Data.EntityFrameworkTests\Pipaslot.Infrastructure.Data.EntityFrameworkTests.csproj", "{1A2BD436-72D2-4653-84C2-EDD8062C73FA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.DataTests", "Pipaslot.Infrastructure.DataTests\Pipaslot.Infrastructure.DataTests.csproj", "{4D05CAE3-15D3-499F-80A4-2493A2305E47}"
 EndProject

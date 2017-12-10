@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Pipaslot.Infrastructure.Data.EntityFrameworkCore
+namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
     /// <summary>
     /// Created Database contex for read-write

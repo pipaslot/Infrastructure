@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Pipaslot.Infrastructure.Data.EntityFrameworkCore;
+using Pipaslot.Infrastructure.Data.EntityFramework;
 
-namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests.Models
+namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models
 {
     public class BlogWithRemappingQuery : EntityFrameworkQuery<Blog, BlogIdName, BloggingContext>
     {

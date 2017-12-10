@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Pipaslot.Infrastructure.Data.EntityFrameworkCore;
+using Pipaslot.Infrastructure.Data.EntityFramework;
 
-namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests.Models
+namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models
 {
     public class BloggingContextFactory : IEntityFrameworkDbContextFactory<BloggingContext>, IDisposable
     {

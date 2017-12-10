@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Pipaslot.Infrastructure.Data.Queries;
 
-namespace Pipaslot.Infrastructure.Data.EntityFrameworkCore
+namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
     public abstract class EntityFrameworkQuery<TResult, TDbContext> : EntityFrameworkQuery<TResult, TResult, TDbContext>
         where TDbContext : DbContext

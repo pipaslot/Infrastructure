@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using System;
 using System.Collections.Generic;
 
-namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests.Models.Migrations
+namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models.Migrations
 {
     public partial class initial : Migration
     {

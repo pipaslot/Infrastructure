@@ -7,8 +7,8 @@
     <ProjectGuid>{1A2BD436-72D2-4653-84C2-EDD8062C73FA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests</RootNamespace>
-    <AssemblyName>Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests</AssemblyName>
+    <RootNamespace>Pipaslot.Infrastructure.Data.EntityFrameworkTests</RootNamespace>
+    <AssemblyName>Pipaslot.Infrastructure.Data.EntityFrameworkTests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -141,9 +141,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Pipaslot.Infrastructure.Data.EntityFrameworkCore\Pipaslot.Infrastructure.Data.EntityFrameworkCore.csproj">
+    <ProjectReference Include="..\Pipaslot.Infrastructure.Data.EntityFramework\Pipaslot.Infrastructure.Data.EntityFramework.csproj">
       <Project>{424cb8c5-6c72-4323-9f91-eb14ab3d3007}</Project>
-      <Name>Pipaslot.Infrastructure.Data.EntityFrameworkCore</Name>
+      <Name>Pipaslot.Infrastructure.Data.EntityFramework</Name>
     </ProjectReference>
     <ProjectReference Include="..\Pipaslot.Infrastructure.Data\Pipaslot.Infrastructure.Data.csproj">
       <Project>{c07e0f0b-0a21-43ab-bf5b-21d02c0b10d7}</Project>

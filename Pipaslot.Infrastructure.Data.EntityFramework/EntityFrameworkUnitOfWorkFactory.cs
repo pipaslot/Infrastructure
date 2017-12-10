@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace Pipaslot.Infrastructure.Data.EntityFrameworkCore
+namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
     public class EntityFrameworkUnitOfWorkFactory<TDbContext> : AUnitOfWorkFactory<EntityFrameworkUnitOfWork<TDbContext>>
         where TDbContext : DbContext

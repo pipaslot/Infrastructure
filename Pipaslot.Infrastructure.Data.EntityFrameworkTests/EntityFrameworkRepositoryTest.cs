@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Pipaslot.Infrastructure.Data.EntityFrameworkCore;
-using Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests.Models;
+using Pipaslot.Infrastructure.Data.EntityFramework;
+using Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models;
 
-namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests
+namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
 {
     [TestClass]
     public class EntityFrameworkRepositoryTest

@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace Pipaslot.Infrastructure.Data.EntityFrameworkCore
+namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
     public class EntityFrameworkRepository<TEntity, TKey, TDbContext> : IEntityFrameworkRepository<TEntity, TKey, TDbContext>
         where TEntity : class, IEntity<TKey>, new()

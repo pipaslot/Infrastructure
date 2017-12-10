@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Pipaslot.Infrastructure.Data.EntityFrameworkCore;
-using Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests.Models;
+using Pipaslot.Infrastructure.Data.EntityFramework;
+using Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models;
 using Pipaslot.Infrastructure.Data.Queries;
 
-namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests
+namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
 {
     [TestClass]
     public class EntitiFrameworkQueryTest : IDisposable

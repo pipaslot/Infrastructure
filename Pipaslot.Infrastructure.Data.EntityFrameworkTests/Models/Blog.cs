@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests.Models
+namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models
 {
     public class Blog : IEntity<int>
     {

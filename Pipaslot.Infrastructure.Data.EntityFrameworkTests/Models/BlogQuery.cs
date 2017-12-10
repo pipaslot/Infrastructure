@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
-using Pipaslot.Infrastructure.Data.EntityFrameworkCore;
+using Pipaslot.Infrastructure.Data.EntityFramework;
 using Pipaslot.Infrastructure.Data.Queries;
 
-namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests.Models
+namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models
 {
     class BlogQuery : EntityFrameworkQuery<Blog,BloggingContext>
     {

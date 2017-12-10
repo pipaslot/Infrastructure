@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests.Models
+namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models
 {
     public class BloggingContext : DbContext
     {

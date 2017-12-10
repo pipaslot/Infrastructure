@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Pipaslot.Infrastructure.Data.EntityFrameworkCore
+namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
     public class EntityFrameworkUnitOfWork<TDbContext> : AUnitOfWork where TDbContext : DbContext
     {

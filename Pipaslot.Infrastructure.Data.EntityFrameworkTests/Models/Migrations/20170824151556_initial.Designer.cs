@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System;
 
-namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests.Models.Migrations
+namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models.Migrations
 {
     [DbContext(typeof(BloggingContext))]
     [Migration("20170824151556_initial")]
@@ -20,7 +20,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests.Models.Migration
                 .HasAnnotation("ProductVersion", "2.0.0-rtm-26452")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Pipaslot.Infrastructure.Data.EntityFrameworkCoreTests.Models.Blog", b =>
+            modelBuilder.Entity("Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models.Blog", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
