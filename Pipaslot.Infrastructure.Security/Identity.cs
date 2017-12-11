@@ -11,18 +11,21 @@ namespace Pipaslot.Infrastructure.Security
     public class Identity<TKey> : IIdentity<TKey>
     {
         public TKey Id { get; }
-        
-        public bool IsAuthenticated { get; }
-        
-        public IEnumerable<IUserRole<TKey>> Roles { get; }
 
+        public bool IsAuthenticated { get; }
+
+        public IEnumerable<IUserRole<TKey>> Roles { get; } = new List<IUserRole<TKey>>();
+        
         public Identity()
         {
             Id = default(TKey);
-            Roles = new List<IUserRole<TKey>>();
         }
 
-        public Identity(TKey id, IEnumerable<IUserRole<TKey>> roles = null)
+        public Identity(TKey id) : this(id, new List<IUserRole<TKey>>())
+        {
+        }
+
+        public Identity(TKey id, IEnumerable<IUserRole<TKey>> roles)
         {
             Id = id;
             Roles = roles ?? new List<IUserRole<TKey>>();

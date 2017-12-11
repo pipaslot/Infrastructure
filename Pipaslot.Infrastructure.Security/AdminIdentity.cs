@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Pipaslot.Infrastructure.Security.Data;
 
 namespace Pipaslot.Infrastructure.Security
 {
     /// <inheritdoc />
     /// <summary>
-    /// Identity for user with all system permission. Be careful with operation and providing this identity.
+    /// Identity for user with all system permission. Be careful with operation and providing this identity. 
+    /// This identity is recomended only for Development environment.
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     public class AdminIdentity<TKey> : IUserIdentity<TKey>
