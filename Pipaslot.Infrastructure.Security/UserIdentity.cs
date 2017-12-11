@@ -20,6 +20,14 @@ namespace Pipaslot.Infrastructure.Security
 
         public IEnumerable<IUserRole<TKey>> Roles => _identity.Roles;
 
+        public UserIdentity(IAuthorizator<TKey> authorizator, TKey userId) : this(authorizator, new Identity<TKey>(userId))
+        {
+        }
+
+        public UserIdentity(IAuthorizator<TKey> authorizator, TKey userId, IEnumerable<IUserRole<TKey>> roles) : this(authorizator, new Identity<TKey>(userId, roles))
+        {
+        }
+
         public UserIdentity(IAuthorizator<TKey> authorizator, IIdentity<TKey> identity = null)
         {
             _authorizator = authorizator;
