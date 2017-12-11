@@ -5,34 +5,26 @@ using System.Linq;
 
 namespace Pipaslot.Infrastructure.Security
 {
-    //TODO implement another UserIdentity for Admin user which will have granted all permission by default
+    /// <inheritdoc />
+    /// <summary>
+    /// Identity about current user and all his permissions
+    /// </summary>
+    /// <typeparam name="TKey"></typeparam>
     public class UserIdentity<TKey> : IUserIdentity<TKey>
     {
         private readonly IAuthorizator<TKey> _authorizator;
+        private readonly IIdentity<TKey> _identity;
 
-        public TKey Id { get; }
+        public TKey Id => _identity.Id;
 
-        public bool IsAuthenticated { get; }
+        public bool IsAuthenticated => _identity.IsAuthenticated;
 
-        public IEnumerable<IUserRole<TKey>> Roles { get; }
+        public IEnumerable<IUserRole<TKey>> Roles => _identity.Roles;
 
-        public UserIdentity(IAuthorizator<TKey> authorizator, TKey id = default(TKey), IEnumerable<IUserRole<TKey>> roles = null)
+        public UserIdentity(IAuthorizator<TKey> authorizator, IIdentity<TKey> identity = null)
         {
             _authorizator = authorizator;
-            Id = id;
-            Roles = roles ?? new List<IUserRole<TKey>>();
-            //If Id is not default value, then was passed valid UserId and user had been authenticated
-            var defaultId = default(TKey);
-            if (defaultId == null)
-            {
-                //Id is nullable type
-                IsAuthenticated = Id != null;
-            }
-            else
-            {
-                //Id is not nullable type
-                IsAuthenticated = Id.GetHashCode() != defaultId.GetHashCode();
-            }
+            _identity = identity ?? new Identity<TKey>();
         }
 
         public virtual bool IsAllowed(IConvertible permissionEnum)

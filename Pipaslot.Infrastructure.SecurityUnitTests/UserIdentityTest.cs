@@ -33,7 +33,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
         public void Constructor_IntGenericType_FilledIdMeansThatUserWasAuthenticatedButShillDoesNotHaveAnyPermissions()
         {
             var authorizatorMock = new Mock<IAuthorizator<int>>();
-            var user = new UserIdentity<int>(authorizatorMock.Object, 100);
+            var user = new UserIdentity<int>(authorizatorMock.Object, new Identity<int>(100));
 
             Assert.AreEqual(100, user.Id);
             Assert.IsTrue(user.IsAuthenticated);
@@ -48,7 +48,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
         public void Constructor_StringGenericType_FilledIdMeansThatUserWasAuthenticatedButStillDoesNotHaveAnyPermissions()
         {
             var authorizatorMock = new Mock<IAuthorizator<string>>();
-            var user = new UserIdentity<string>(authorizatorMock.Object, "100");
+            var user = new UserIdentity<string>(authorizatorMock.Object, new Identity<string>("100"));
 
             Assert.AreEqual("100", user.Id);
             Assert.IsTrue(user.IsAuthenticated);
@@ -80,7 +80,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                     .Returns(valueTuple.role1);
                 authorizatorMock.Setup(a => a.IsAllowed(role2, FirstPermissions.Edit))
                     .Returns(valueTuple.role2);
-                var user = new UserIdentity<int>(authorizatorMock.Object, 1, new[] { role1, role2 });
+                var user = new UserIdentity<int>(authorizatorMock.Object, new Identity<int>(1, new[] { role1, role2 }));
 
                 //Act
                 Assert.AreEqual(valueTuple.expected, user.IsAllowed(FirstPermissions.Edit));
@@ -107,7 +107,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                     .Returns(valueTuple.role1);
                 authorizatorMock.Setup(a => a.IsAllowed(role2, resource, FirstPermissions.Edit))
                     .Returns(valueTuple.role2);
-                var user = new UserIdentity<int>(authorizatorMock.Object, 1, new[] { role1, role2 });
+                var user = new UserIdentity<int>(authorizatorMock.Object, new Identity<int>(1, new[] { role1, role2 }));
 
                 //Act
                 Assert.AreEqual(valueTuple.expected, user.IsAllowed(resource,  FirstPermissions.Edit));
@@ -134,7 +134,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                     .Returns(valueTuple.role1);
                 authorizatorMock.Setup(a => a.IsAllowed(role2, resource, FirstPermissions.Edit))
                     .Returns(valueTuple.role2);
-                var user = new UserIdentity<int>(authorizatorMock.Object, 1, new[] { role1, role2 });
+                var user = new UserIdentity<int>(authorizatorMock.Object, new Identity<int>(1, new[] { role1, role2 }));
 
                 //Act
                 Assert.AreEqual(valueTuple.expected, user.IsAllowed(resource, FirstPermissions.Edit));
@@ -162,7 +162,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                     .Returns(valueTuple.role1);
                 authorizatorMock.Setup(a => a.IsAllowed(role2, resource, resourceId, FirstPermissions.Edit))
                     .Returns(valueTuple.role2);
-                var user = new UserIdentity<int>(authorizatorMock.Object, 1, new[] { role1, role2 });
+                var user = new UserIdentity<int>(authorizatorMock.Object, new Identity<int>(1, new[] { role1, role2 }));
 
                 //Act
                 Assert.AreEqual(valueTuple.expected, user.IsAllowed(resource, resourceId, FirstPermissions.Edit));
@@ -181,7 +181,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 .Returns(new List<int> { 1, 2 });
             authorizatorMock.Setup(a => a.GetAllowedKeys(role2, resource, FirstPermissions.Edit))
                 .Returns(new List<int> { 2, 3 });
-            var user = new UserIdentity<int>(authorizatorMock.Object, 1, new[] { role1, role2 });
+            var user = new UserIdentity<int>(authorizatorMock.Object, new Identity<int>(1, new[] { role1, role2 }));
 
             //Act
             var result = user.GetAllowedKeys(resource, FirstPermissions.Edit).ToList();
