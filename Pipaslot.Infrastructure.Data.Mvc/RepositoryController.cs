@@ -9,12 +9,12 @@ namespace Pipaslot.Infrastructure.Data.Mvc
         where TEntity : IEntity<TKey>
     {
         private readonly IRepository<TEntity, TKey> _repository;
-        private readonly Func<IQuery<TEntity>> _getAllQueryFactory;
+        private readonly Func<IQuery<TEntity>> _queryFactory;
 
-        protected RepositoryController(IRepository<TEntity, TKey> repository, Func<IQuery<TEntity>> getAllQueryFactory)
+        protected RepositoryController(IRepository<TEntity, TKey> repository, Func<IQuery<TEntity>> queryFactory)
         {
             _repository = repository;
-            _getAllQueryFactory = getAllQueryFactory;
+            _queryFactory = queryFactory;
         }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace Pipaslot.Infrastructure.Data.Mvc
         [HttpGet]
         public IList<TEntity> GetAll()
         {
-            var query = _getAllQueryFactory();
+            var query = _queryFactory();
             return query.Execute();
         }
 
@@ -35,7 +35,7 @@ namespace Pipaslot.Infrastructure.Data.Mvc
         [HttpGet]
         public IList<TEntity> GetAll(int pageIndex, int pageSize = 10)
         {
-            var query = _getAllQueryFactory();
+            var query = _queryFactory();
             query.SetPage(pageIndex, pageSize);
             return query.Execute();
         }

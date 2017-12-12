@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Pipaslot.Infrastructure.Security.Identities;
 
 namespace Pipaslot.Infrastructure.Security
