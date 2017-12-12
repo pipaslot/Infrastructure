@@ -4,9 +4,9 @@ using System.Collections.Generic;
 namespace Pipaslot.Infrastructure.Security
 {
     /// <summary>
-    /// Current user working with application
+    /// Operations working with current user
     /// </summary>
-    public interface IUserIdentity<TKey>
+    public interface IUser<TKey>
     {
         /// <summary>
         /// User identifier

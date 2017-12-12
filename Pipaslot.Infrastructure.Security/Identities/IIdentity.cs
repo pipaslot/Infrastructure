@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Pipaslot.Infrastructure.Security
+namespace Pipaslot.Infrastructure.Security.Identities
 {
     public interface IIdentity<TKey>
     {
@@ -8,12 +8,7 @@ namespace Pipaslot.Infrastructure.Security
         /// Database User Id
         /// </summary>
         TKey Id { get; }
-
-        /// <summary>
-        /// User is authenticated. Id is not default value or null
-        /// </summary>
-        bool IsAuthenticated { get; }
-
+        
         /// <summary>
         /// All user roles
         /// </summary>
