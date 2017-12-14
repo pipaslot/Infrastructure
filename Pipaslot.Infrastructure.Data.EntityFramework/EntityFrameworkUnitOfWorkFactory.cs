@@ -1,27 +1,38 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
-    public class EntityFrameworkUnitOfWorkFactory<TDbContext> : AUnitOfWorkFactory<EntityFrameworkUnitOfWork<TDbContext>>
+    public class EntityFrameworkUnitOfWorkFactory : EntityFrameworkUnitOfWorkFactory<DbContext>, IEntityFrameworkUnitOfWorkFactory
+    {
+        public EntityFrameworkUnitOfWorkFactory(IEntityFrameworkDbContextFactory dbContextFactory, IUnitOfWorkRegistry registry) : base(dbContextFactory, registry)
+        {
+        }
+        
+        IEntityFrameworkUnitOfWork IEntityFrameworkUnitOfWorkFactory.Create()
+        {
+            return base.Create();
+        }
+
+        IEntityFrameworkUnitOfWork IEntityFrameworkUnitOfWorkFactory.GetCurrent(int index = 0)
+        {
+            return base.GetCurrent(index);
+        }
+    }
+
+    public class EntityFrameworkUnitOfWorkFactory<TDbContext> : AUnitOfWorkFactory<IEntityFrameworkUnitOfWork<TDbContext>>, IEntityFrameworkUnitOfWorkFactory<TDbContext>
         where TDbContext : DbContext
     {
         private readonly IEntityFrameworkDbContextFactory<TDbContext> _dbContextFactory;
-
-        public EntityFrameworkUnitOfWorkFactory(IEntityFrameworkDbContextFactory<TDbContext> dbContextFactory)
-            : this(dbContextFactory, new UnitOfWorkRegistry())
-        {
-
-        }
 
         public EntityFrameworkUnitOfWorkFactory(IEntityFrameworkDbContextFactory<TDbContext> dbContextFactory, IUnitOfWorkRegistry registry) : base(registry)
         {
             _dbContextFactory = dbContextFactory;
         }
 
-        protected override EntityFrameworkUnitOfWork<TDbContext> CreateUnitOfWork()
+        protected override IEntityFrameworkUnitOfWork<TDbContext> CreateUnitOfWork()
         {
-            var currentUoW = GetCurrent(false);
+            var currentUoW = GetCurrent();
             if (currentUoW != null)
             {
 
@@ -31,24 +42,8 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
             //Return unit of work with new context
             var newContext = _dbContextFactory.Create();
             var transaction = newContext.Database.BeginTransaction();
-            return new EntityFrameworkUnitOfWork<TDbContext>(newContext, transaction);
+            return new EntityFrameworkUnitOfWork<TDbContext>((TDbContext)newContext, transaction);
         }
 
-        /// <summary>
-        /// Create Read only context for Queries
-        /// </summary>
-        /// <returns></returns>
-        public TDbContext GetReadOnlyContext()
-        {
-            var uow = GetCurrent(false);
-            if (uow != null)
-            {
-                return uow.Context;
-            }
-            var context = _dbContextFactory.Create();
-            context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-
-            return context;
-        }
     }
 }

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Pipaslot.Infrastructure.Data.EntityFramework;
@@ -45,6 +42,11 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models
             }
             Dbs.Add(context);
             return context;
+        }
+
+        public BloggingContext GetReadOnlyContext()
+        {
+            return Create();
         }
 
         public void Dispose()

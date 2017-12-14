@@ -5,39 +5,42 @@ namespace Pipaslot.Infrastructure.Data
     /// <summary>
     /// A base implementation of unit of work provider.
     /// </summary>
-    public abstract class AUnitOfWorkFactory<TUnitOfWork> : IUnitOfWorkFactory<TUnitOfWork> where TUnitOfWork : IUnitOfWork
+    public abstract class AUnitOfWorkFactory<TUnitOfWork> : IUnitOfWorkFactory
+        where TUnitOfWork : IUnitOfWork
     {
-        private readonly IUnitOfWorkRegistry registry;
-        
+        private readonly IUnitOfWorkRegistry _registry;
+
         protected AUnitOfWorkFactory(IUnitOfWorkRegistry registry)
         {
-            this.registry = registry;
+           _registry = registry;
+        }
+
+        IUnitOfWork IUnitOfWorkFactory.Create()
+        {
+            return Create();
         }
 
         /// <inheritdoc />
         public virtual TUnitOfWork Create()
         {
             var uow = CreateUnitOfWork();
-            registry.Register(uow);
+            _registry.Register(uow);
             uow.Disposing += OnUnitOfWorkDisposing;
             return uow;
         }
 
-        public TUnitOfWork GetCurrent(bool isNeeded = true)
+        IUnitOfWork IUnitOfWorkFactory.GetCurrent(int index)
         {
-            var index = 0;
-            var uow = registry.GetCurrent(index);
-            while (uow != null)
-            {
-                if (uow is TUnitOfWork expectedUoW)
-                {
-                    return expectedUoW;
-                }
+            return GetCurrent(index);
+        }
 
-                index++;
-                uow = registry.GetCurrent(index);
+        public virtual TUnitOfWork GetCurrent(int index = 0)
+        {
+            var uow = _registry.GetCurrent(index);
+            if (uow is TUnitOfWork expectedUoW)
+            {
+                return expectedUoW;
             }
-            if(isNeeded)throw new InvalidOperationException("Can not get current Unit of work. This method must be used in a unit of work scope surrounded by using(var uow = uowFactory.Create()){...}");
             return default(TUnitOfWork);
         }
 
@@ -45,13 +48,15 @@ namespace Pipaslot.Infrastructure.Data
         /// Creates the real unit of work instance.
         /// </summary>
         protected abstract TUnitOfWork CreateUnitOfWork();
-        
+
+
+
         /// <summary>
         /// Called when the unit of work is being disposed.
         /// </summary>
         private void OnUnitOfWorkDisposing(object sender, EventArgs e)
         {
-            registry.Unregister((IUnitOfWork)sender);
+            _registry.Unregister((TUnitOfWork)sender);
         }
     }
 }

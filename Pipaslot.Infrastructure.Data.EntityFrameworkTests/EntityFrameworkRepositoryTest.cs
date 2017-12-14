@@ -15,17 +15,18 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
             using (var dbFactory = new BloggingContextFactory("ReadFromOutsideOfUnitWOrkButUpdateInUnitOfWOrkCreatedLater"))
             {
                 var uowFactory = new EntityFrameworkUnitOfWorkFactory<BloggingContext>(dbFactory);
-                var repository = new BlogRepository(uowFactory);
+                var repository = new BlogRepository(uowFactory, dbFactory);
                 string defaultBlogName = "Default name";
                 string newBlogName = "UpdatedBlogName";
 
                 //Create record
                 using (var uow = uowFactory.Create())
                 {
-                    Assert.AreEqual(0, uow.Context.Blog.Count());
-                    uow.Context.Blog.Add(new Blog(defaultBlogName));
+                    var context = uow.Context;
+                    Assert.AreEqual(0, context.Blog.Count());
+                    context.Blog.Add(new Blog(defaultBlogName));
                     uow.Commit();
-                    Assert.AreEqual(1, uow.Context.Blog.Count());
+                    Assert.AreEqual(1, context.Blog.Count());
                 }
                 //Read outside from UoW
                 var blog = repository.GetByName(defaultBlogName);

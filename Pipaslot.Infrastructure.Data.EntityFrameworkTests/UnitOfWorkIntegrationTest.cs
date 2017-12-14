@@ -34,14 +34,6 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void GetCurrent_WhithoutCreationOfPreviousOne_ShouldThrowException()
-        {
-            var uowFactory = CreateUoW("SingleLevelTransaction");
-            uowFactory.GetCurrent();
-        }
-
-        [TestMethod]
         public void Commit_DataShouldBeAvailableInSeparatedContextsAfterCommit()
         {
             var dbFactory = CreateDbFactory("Commit_DataShouldBeAvailableInSeparatedContextsAfterCommit");

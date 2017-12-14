@@ -9,10 +9,10 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models
 {
     public class BlogWithRemappingQuery : EntityFrameworkQuery<Blog, BlogIdName, BloggingContext>
     {
-
-        public BlogWithRemappingQuery(EntityFrameworkUnitOfWorkFactory<BloggingContext> uowFactory) : base(uowFactory)
+        public BlogWithRemappingQuery(IEntityFrameworkDbContextFactory<BloggingContext> dbContextFactory) : base(dbContextFactory)
         {
         }
+
         protected override IList<BlogIdName> PostProcessResults(IList<Blog> results)
         {
             return results.Select(b => new BlogIdName(b.Id, b.Name)).ToList();

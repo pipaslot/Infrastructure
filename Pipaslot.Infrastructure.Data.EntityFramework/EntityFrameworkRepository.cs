@@ -8,26 +8,28 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
-    public class EntityFrameworkRepository<TEntity, TKey, TDbContext> : IEntityFrameworkRepository<TEntity, TKey, TDbContext>
+    public class EntityFrameworkRepository<TEntity, TKey, TDbContext> : IRepository<TEntity, TKey>
         where TEntity : class, IEntity<TKey>, new()
         where TDbContext : DbContext
     {
-        private readonly EntityFrameworkUnitOfWorkFactory<TDbContext> _uowFactory;
+        private readonly IEntityFrameworkUnitOfWorkFactory<TDbContext> _uowFactory;
+        private readonly IEntityFrameworkDbContextFactory<TDbContext> _dbContextFactory;
 
-        public EntityFrameworkRepository(EntityFrameworkUnitOfWorkFactory<TDbContext> uowFactory)
+        public EntityFrameworkRepository(IEntityFrameworkUnitOfWorkFactory<TDbContext> uowFactory, IEntityFrameworkDbContextFactory<TDbContext> dbContextFactory)
         {
             _uowFactory = uowFactory;
+            _dbContextFactory = dbContextFactory;
         }
 
         /// <summary>
         /// Context fore Read-Write operations
         /// </summary>
-        protected TDbContext Context => _uowFactory.GetCurrent().Context;
+        protected TDbContext Context => (TDbContext)EntityFrameworkUnitOfWork.GetDbContext<TDbContext>(_uowFactory);
 
         /// <summary>
         /// Context for Read only operations. Unit of work is not needed for this operation. If Unit of work does not exists, then is created a new context
         /// </summary>
-        protected TDbContext ContextReadOnly => _uowFactory.GetReadOnlyContext();
+        protected TDbContext ContextReadOnly => (TDbContext)EntityFrameworkUnitOfWork.GetDbContext<TDbContext>(_uowFactory, false) ?? _dbContextFactory.GetReadOnlyContext();
 
         /// <summary>
         /// Gets the entity with specified ID.

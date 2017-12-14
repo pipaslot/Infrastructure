@@ -1,22 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Pipaslot.Infrastructure.Data
 {
-    public interface IUnitOfWorkFactory<TUnitOfWork> where TUnitOfWork : IUnitOfWork
+    public interface IUnitOfWorkFactory
     {
         /// <summary>
         /// Creates an unit of work scope.
         /// </summary>
-        TUnitOfWork Create();
+        IUnitOfWork Create();
 
         /// <summary>
-        /// Get one Existing Unit of work or throw exception if isNeeded
+        /// Get one Existing Unit of work on requested level of nesting
         /// </summary>
-        /// <param name="isNeeded">If is TRUE and Unit of Work does not exists, then exception is thrown</param>
+        /// <param name="index"></param>
         /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        TUnitOfWork GetCurrent(bool isNeeded = true);
+        IUnitOfWork GetCurrent(int index = 0);
+        
     }
 }

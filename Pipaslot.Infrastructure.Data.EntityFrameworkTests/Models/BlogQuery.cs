@@ -8,10 +8,10 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models
 {
     class BlogQuery : EntityFrameworkQuery<Blog,BloggingContext>
     {
-        public BlogQuery(EntityFrameworkUnitOfWorkFactory<BloggingContext> uowFactory) : base(uowFactory)
+        public BlogQuery(IEntityFrameworkDbContextFactory<BloggingContext> dbContextFactory) : base(dbContextFactory)
         {
         }
-        
+
         protected override IQueryable<Blog> GetQueryable()
         {
             return ContextReadOnly.Set<Blog>();

@@ -11,7 +11,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
         where TDbContext : DbContext
 
     {
-        protected EntityFrameworkQuery(EntityFrameworkUnitOfWorkFactory<TDbContext> uowFactory) : base(uowFactory)
+        protected EntityFrameworkQuery(IEntityFrameworkDbContextFactory<TDbContext> dbContextFactory) : base(dbContextFactory)
         {
         }
 
@@ -28,17 +28,17 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
     public abstract class EntityFrameworkQuery<TQueryableResult, TResult, TDbContext> : Query<TQueryableResult, TResult>
     where TDbContext : DbContext
     {
-        private readonly EntityFrameworkUnitOfWorkFactory<TDbContext> _uowFactory;
+        private readonly IEntityFrameworkDbContextFactory<TDbContext> _dbContextFactory;
 
-        protected EntityFrameworkQuery(EntityFrameworkUnitOfWorkFactory<TDbContext> uowFactory)
+        protected EntityFrameworkQuery(IEntityFrameworkDbContextFactory<TDbContext> dbContextFactory)
         {
-            _uowFactory = uowFactory;
+            _dbContextFactory = dbContextFactory;
         }
 
         /// <summary>
         /// Context for Read only operations. Unit of work is not needed for this operation. If Unit of work does not exists, then is created a new context
         /// </summary>
-        protected TDbContext ContextReadOnly => _uowFactory.GetReadOnlyContext();
+        protected TDbContext ContextReadOnly => _dbContextFactory.GetReadOnlyContext();
 
 
         public override async Task<int> GetTotalRowCountAsync(CancellationToken cancellationToken)

@@ -1,11 +1,39 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
-    public class EntityFrameworkUnitOfWork<TDbContext> : AUnitOfWork where TDbContext : DbContext
+    public class EntityFrameworkUnitOfWork : EntityFrameworkUnitOfWork<DbContext>
+    {
+        public EntityFrameworkUnitOfWork(DbContext sharedDbContext, IDbContextTransaction topLevelTransaction = null) : base(sharedDbContext, topLevelTransaction)
+        {
+        }
+
+        public static DbContext GetDbContext<TDbContext>(IUnitOfWorkFactory unitOfWorkFactory, bool isNeeded = true)
+            where TDbContext : DbContext
+        {
+            var index = 0;
+            var uow = unitOfWorkFactory.GetCurrent(index);
+            while (uow != null)
+            {
+                if (uow is EntityFrameworkUnitOfWork<TDbContext> expectedUoW)
+                {
+                    return expectedUoW.Context;
+                }
+
+                index++;
+                uow = unitOfWorkFactory.GetCurrent(index);
+            }
+            if (isNeeded) throw new InvalidOperationException("Can not get current Unit of work. This method must be used in a unit of work scope surrounded by using(var uow = uowFactory.Create()){...}");
+            return default(TDbContext);
+        }
+    }
+
+    public class EntityFrameworkUnitOfWork<TDbContext> : AUnitOfWork, IEntityFrameworkUnitOfWork<TDbContext>
+        where TDbContext : DbContext
     {
         private readonly IDbContextTransaction _topLevelTransaction;
 
@@ -49,5 +77,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
                 _topLevelTransaction.Dispose();
             }
         }
+
+        DbContext IEntityFrameworkUnitOfWork.Context => Context;
     }
 }

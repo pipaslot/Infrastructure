@@ -37,7 +37,6 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
         };
 
         private readonly BloggingContextFactory _dbFactory;
-        private readonly EntityFrameworkUnitOfWorkFactory<BloggingContext> _uowFactory;
 
         public EntitiFrameworkQueryTest()
         {
@@ -47,7 +46,6 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
                 context.Blog.AddRange(_defaultData);
                 context.SaveChanges();
             };
-            _uowFactory = new EntityFrameworkUnitOfWorkFactory<BloggingContext>(_dbFactory);
         }
 
         public void Dispose()
@@ -58,7 +56,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
         [TestMethod]
         public void Execute()
         {
-            var query = new BlogQuery(_uowFactory);
+            var query = new BlogQuery(_dbFactory);
             var result = query.Execute();
             Assert.AreEqual(_defaultData.Count, result.Count);
         }
@@ -66,7 +64,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
         [TestMethod]
         public async Task ExecuteAsync()
         {
-            var query = new BlogQuery(_uowFactory);
+            var query = new BlogQuery(_dbFactory);
             var result = await query.ExecuteAsync();
             Assert.AreEqual(_defaultData.Count, result.Count);
         }
@@ -74,7 +72,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
         [TestMethod]
         public void GetTotalRowCount()
         {
-            var query = new BlogQuery(_uowFactory);
+            var query = new BlogQuery(_dbFactory);
 
             Assert.AreEqual(_defaultData.Count, query.GetTotalRowCount());
         }
@@ -82,7 +80,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
         [TestMethod]
         public async Task GetTotalRowCountAsync()
         {
-            var query = new BlogQuery(_uowFactory);
+            var query = new BlogQuery(_dbFactory);
 
             var result = await query.GetTotalRowCountAsync();
             Assert.AreEqual(_defaultData.Count, result);
@@ -92,7 +90,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
         public void Skip()
         {
             const int skipNumber = 10;
-            var query = new BlogQuery(_uowFactory);
+            var query = new BlogQuery(_dbFactory);
             query.Skip = skipNumber;
 
             var result = query.Execute();
@@ -106,7 +104,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
         public void Take()
         {
             const int takeNumber = 10;
-            var query = new BlogQuery(_uowFactory);
+            var query = new BlogQuery(_dbFactory);
             query.Take = takeNumber;
 
             var result = query.Execute();
@@ -119,7 +117,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
         [TestMethod]
         public void AddSortCriteria_Function()
         {
-            var query = new BlogQuery(_uowFactory);
+            var query = new BlogQuery(_dbFactory);
             query.AddSortCriteria(b => b.Name);
 
             var result1 = query.Execute();
@@ -137,7 +135,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
         [TestMethod]
         public void AddSortCriteria_propertyName()
         {
-            var query = new BlogQuery(_uowFactory);
+            var query = new BlogQuery(_dbFactory);
             query.AddSortCriteria("name");
 
             var result1 = query.Execute();
@@ -155,7 +153,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
         [TestMethod]
         public void PostProcessResult_ShouldReturnTransformedObjectBlogIdNameWhichHavePropertyCreatedFromDbData()
         {
-            var query = new BlogWithRemappingQuery(_uowFactory);
+            var query = new BlogWithRemappingQuery(_dbFactory);
             var result = query.Execute();
             foreach (var blog in _defaultData)
             {
