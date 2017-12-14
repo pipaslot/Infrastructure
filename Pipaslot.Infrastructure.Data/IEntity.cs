@@ -4,6 +4,11 @@ using System.Text;
 
 namespace Pipaslot.Infrastructure.Data
 {
+    public interface IEntity : IEntity<int>
+    {
+        
+    }
+
     /// <summary>
     /// Represents an entity with single-column unique ID.
     /// </summary>

@@ -8,7 +8,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
         public EntityFrameworkUnitOfWorkFactory(IEntityFrameworkDbContextFactory dbContextFactory, IUnitOfWorkRegistry registry) : base(dbContextFactory, registry)
         {
         }
-        
+
         IEntityFrameworkUnitOfWork IEntityFrameworkUnitOfWorkFactory.Create()
         {
             return base.Create();
@@ -24,7 +24,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
         where TDbContext : DbContext
     {
         private readonly IEntityFrameworkDbContextFactory<TDbContext> _dbContextFactory;
-
+        
         public EntityFrameworkUnitOfWorkFactory(IEntityFrameworkDbContextFactory<TDbContext> dbContextFactory, IUnitOfWorkRegistry registry) : base(registry)
         {
             _dbContextFactory = dbContextFactory;

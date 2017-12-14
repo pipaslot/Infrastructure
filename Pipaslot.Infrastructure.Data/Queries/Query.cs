@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 
 namespace Pipaslot.Infrastructure.Data.Queries
 {
-    public abstract class Query<TResult> : Query<TResult, TResult>
+    public abstract class Query<TResult> : Query<TResult, TResult>, IQuery<TResult>
     {
+        /// <inheritdoc />
         /// <summary>
         /// When overriden in derived class, it allows to modify the materialized results of the query before they are returned
         /// to the caller.
@@ -23,15 +24,9 @@ namespace Pipaslot.Infrastructure.Data.Queries
     public abstract class Query<TQueryableResult, TResult> : IQuery<TQueryableResult, TResult>
     {
         #region IPageableQuery implementation
-
-        /// <summary>
-        /// Gets or sets a number of rows to be skipped. If this value is null, the paging will be applied.
-        /// </summary>
+        
         public int? Skip { get; set; }
-
-        /// <summary>
-        /// Gets or sets the page size. If this value is null, the paging will not be applied.
-        /// </summary>
+        
         public int? Take { get; set; }
 
 
@@ -43,27 +38,18 @@ namespace Pipaslot.Infrastructure.Data.Queries
             Take = pageSize;
             return this;
         }
-
-        /// <summary>
-        /// Gets the total row count without respect to paging.
-        /// </summary>
+        
         public virtual int GetTotalRowCount()
         {
             var queryable = GetQueryable();
             return queryable.Count();
         }
-
-        /// <summary>
-        /// Gets the total row count without respect to paging.
-        /// </summary>
+        
         public virtual Task<int> GetTotalRowCountAsync()
         {
             return GetTotalRowCountAsync(CancellationToken.None);
         }
-
-        /// <summary>
-        /// Gets the total row count without respect to paging.
-        /// </summary>
+        
         public abstract Task<int> GetTotalRowCountAsync(CancellationToken cancellationToken);
 
         #endregion
@@ -72,10 +58,6 @@ namespace Pipaslot.Infrastructure.Data.Queries
 
         public IList<Func<IQueryable<TQueryableResult>, IOrderedQueryable<TQueryableResult>>> SortCriteria { get; } = new List<Func<IQueryable<TQueryableResult>, IOrderedQueryable<TQueryableResult>>>();
 
-        
-        /// <summary>
-        /// Adds a specified sort criteria to the query.
-        /// </summary>
         public void AddSortCriteria(string fieldName, SortDirection direction = SortDirection.Ascending)
         {
             // create the expression
@@ -89,9 +71,6 @@ namespace Pipaslot.Infrastructure.Data.Queries
                 .Invoke(this, new object[] { expr, direction });
         }
 
-        /// <summary>
-        /// Adds a specified sort criteria to the query.
-        /// </summary>
         public void AddSortCriteria<TKey>(Expression<Func<TQueryableResult, TKey>> field, SortDirection direction = SortDirection.Ascending)
         {
             AddSortCriteriaCore(field, direction);
@@ -114,16 +93,31 @@ namespace Pipaslot.Infrastructure.Data.Queries
         #endregion
 
         #region ExecutableQuery Implementation
-
-        /// <summary>
-        /// Executes the query and returns the results.
-        /// </summary>
+        
         public virtual IList<TResult> Execute()
         {
             var query = PreProcessQuery();
             var queryResults = query.ToList();
             var results = PostProcessResults(queryResults);
             return results;
+        }
+
+        async Task<IList<object>> IExecutableQuery.ExecuteAsync()
+        {
+            var list = await ExecuteAsync();
+            return (IList<object>)list;
+        }
+
+        async Task<IList<object>> IExecutableQuery.ExecuteAsync(CancellationToken cancellationToken)
+        {
+            var list = await ExecuteAsync(cancellationToken);
+            return (IList<object>)list;
+        }
+
+        IList<object> IExecutableQuery.Execute()
+        {
+            var list = Execute();
+            return (IList<object>)list;
         }
 
         /// <summary>

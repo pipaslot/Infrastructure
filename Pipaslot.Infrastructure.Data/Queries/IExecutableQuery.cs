@@ -1,27 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Pipaslot.Infrastructure.Data.Queries
 {
-    public interface IExecutableQuery<TResult>
+    public interface IExecutableQuery<TResult> : IExecutableQuery
     {
         /// <summary>
         /// Executes the query and returns the results.
         /// </summary>
-        IList<TResult> Execute();
+        new IList<TResult> Execute();
 
         /// <summary>
         /// Asynchronously executes the query and returns the results.
         /// </summary>
-        Task<IList<TResult>> ExecuteAsync();
+        new Task<IList<TResult>> ExecuteAsync();
 
         /// <summary>
         /// Asynchronously executes the query and returns the results.
         /// </summary>
         /// <param name="cancellationToken"></param>
-        Task<IList<TResult>> ExecuteAsync(CancellationToken cancellationToken);
+        new Task<IList<TResult>> ExecuteAsync(CancellationToken cancellationToken);
+    }
+
+    public interface IExecutableQuery
+    {
+        /// <summary>
+        /// Executes the query and returns the results.
+        /// </summary>
+        IList<object> Execute();
+
+        /// <summary>
+        /// Asynchronously executes the query and returns the results.
+        /// </summary>
+        Task<IList<object>> ExecuteAsync();
+
+        /// <summary>
+        /// Asynchronously executes the query and returns the results.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        Task<IList<object>> ExecuteAsync(CancellationToken cancellationToken);
     }
 }

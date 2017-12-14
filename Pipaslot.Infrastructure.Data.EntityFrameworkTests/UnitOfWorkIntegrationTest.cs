@@ -37,7 +37,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
         public void Commit_DataShouldBeAvailableInSeparatedContextsAfterCommit()
         {
             var dbFactory = CreateDbFactory("Commit_DataShouldBeAvailableInSeparatedContextsAfterCommit");
-            var uowFactory = new EntityFrameworkUnitOfWorkFactory<BloggingContext>(dbFactory);
+            var uowFactory = new EntityFrameworkUnitOfWorkFactory<BloggingContext>(dbFactory, new UnitOfWorkRegistry());
             using (var uow = uowFactory.Create())
             {
                 Assert.AreEqual(0, uow.Context.Blog.Count());
@@ -97,7 +97,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
         private EntityFrameworkUnitOfWorkFactory<BloggingContext> CreateUoW(string dbName)
         {
             var dbFactory = CreateDbFactory(dbName);
-            return new EntityFrameworkUnitOfWorkFactory<BloggingContext>(dbFactory);
+            return new EntityFrameworkUnitOfWorkFactory<BloggingContext>(dbFactory, new UnitOfWorkRegistry());
         }
 
         private BloggingContextFactory CreateDbFactory(string dbName)

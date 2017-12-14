@@ -2,8 +2,9 @@
 
 namespace Pipaslot.Infrastructure.Data
 {
-    public interface IQueryFactory
+    public interface IQueryFactory<out TQuery>
+        where TQuery : IExecutableQuery
     {
-        IQuery<object> Create();
+        TQuery Create();
     }
 }

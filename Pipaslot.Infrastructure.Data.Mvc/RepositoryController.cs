@@ -10,37 +10,37 @@ namespace Pipaslot.Infrastructure.Data.Mvc
     {
         private readonly IUnitOfWorkFactory _unitOfWorkFactory;
         private readonly IRepository<TEntity, TKey> _repository;
-        //private readonly IQueryFactory<IQuery<TEntity>> _queryFactory;
+        private readonly IQueryFactory<IQuery<TEntity>> _queryFactory;
 
-        protected RepositoryController(IUnitOfWorkFactory unitOfWorkFactory, IRepository<TEntity, TKey> repository/*, IQueryFactory<IQuery<TEntity>> queryFactory*/)
+        protected RepositoryController(IUnitOfWorkFactory unitOfWorkFactory, IRepository<TEntity, TKey> repository, IQueryFactory<IQuery<TEntity>> queryFactory)
         {
             _unitOfWorkFactory = unitOfWorkFactory;
             _repository = repository;
-            //_queryFactory = queryFactory;
+            _queryFactory = queryFactory;
         }
 
-        ///// <summary>
-        ///// Get all 
-        ///// </summary>
-        ///// <returns></returns>
-        //[HttpGet]
-        //public virtual IList<TEntity> GetAll()
-        //{
-        //    var query = _queryFactory.Create();
-        //    return query.Execute();
-        //}
+        /// <summary>
+        /// Get all 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public virtual IList<TEntity> GetAll()
+        {
+            var query = _queryFactory.Create();
+            return query.Execute();
+        }
 
-        ///// <summary>
-        ///// Get all with applied paging
-        ///// </summary>
-        ///// <returns></returns>
-        //[HttpGet("paged{pageIndex}/{pageSize}")]
-        //public virtual IList<TEntity> GetAll(int pageIndex, int pageSize = 10)
-        //{
-        //    var query = _queryFactory.Create();
-        //    query.SetPage(pageIndex, pageSize);
-        //    return query.Execute();
-        //}
+        /// <summary>
+        /// Get all with applied paging
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("paged{pageIndex}/{pageSize}")]
+        public virtual IList<TEntity> GetAll(int pageIndex, int pageSize = 10)
+        {
+            var query = _queryFactory.Create();
+            query.SetPage(pageIndex, pageSize);
+            return query.Execute();
+        }
 
         /// <summary>
         /// Get entity by its ID

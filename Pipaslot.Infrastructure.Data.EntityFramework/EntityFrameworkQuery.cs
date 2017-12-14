@@ -7,21 +7,31 @@ using Pipaslot.Infrastructure.Data.Queries;
 
 namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
-    public abstract class EntityFrameworkQuery<TResult, TDbContext> : EntityFrameworkQuery<TResult, TResult, TDbContext>
+    public abstract class EntityFrameworkQuery<TResult, TDbContext> : Query<TResult>
         where TDbContext : DbContext
 
     {
-        protected EntityFrameworkQuery(IEntityFrameworkDbContextFactory<TDbContext> dbContextFactory) : base(dbContextFactory)
+        private readonly IEntityFrameworkDbContextFactory<TDbContext> _dbContextFactory;
+
+        protected EntityFrameworkQuery(IEntityFrameworkDbContextFactory<TDbContext> dbContextFactory)
         {
+            _dbContextFactory = dbContextFactory;
         }
 
         /// <summary>
-        ///     When overriden in derived class, it allows to modify the materialized results of the query before they are returned
-        ///     to the caller.
+        /// Context for Read only operations. Unit of work is not needed for this operation. If Unit of work does not exists, then is created a new context
         /// </summary>
-        protected override IList<TResult> PostProcessResults(IList<TResult> results)
+        protected TDbContext ContextReadOnly => _dbContextFactory.GetReadOnlyContext();
+
+
+        public override async Task<int> GetTotalRowCountAsync(CancellationToken cancellationToken)
         {
-            return results;
+            return await GetQueryable().CountAsync(cancellationToken);
+        }
+
+        protected override async Task<IList<TResult>> ExecuteQueryAsync(IQueryable<TResult> query, CancellationToken cancellationToken)
+        {
+            return await query.ToListAsync(cancellationToken);
         }
     }
 

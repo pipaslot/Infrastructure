@@ -14,7 +14,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
         {
             using (var dbFactory = new BloggingContextFactory("ReadFromOutsideOfUnitWOrkButUpdateInUnitOfWOrkCreatedLater"))
             {
-                var uowFactory = new EntityFrameworkUnitOfWorkFactory<BloggingContext>(dbFactory);
+                var uowFactory = new EntityFrameworkUnitOfWorkFactory<BloggingContext>(dbFactory, new UnitOfWorkRegistry());
                 var repository = new BlogRepository(uowFactory, dbFactory);
                 string defaultBlogName = "Default name";
                 string newBlogName = "UpdatedBlogName";
