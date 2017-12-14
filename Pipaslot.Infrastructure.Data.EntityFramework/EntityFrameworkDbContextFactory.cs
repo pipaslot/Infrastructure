@@ -22,16 +22,14 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
             _dbContextOptions3 = dbContextOptions3;
         }
 
-        public new TDbContext3 Create()
+        public new virtual TDbContext3 GetReadOnlyContext()
         {
-            return (TDbContext3)Activator.CreateInstance(typeof(TDbContext1), _dbContextOptions3);
+            return GetReadOnlyContextCore<TDbContext3>(_dbContextOptions3);
         }
 
-        public new TDbContext3 GetReadOnlyContext()
+        public new virtual TDbContext3 Create()
         {
-            var context = Create();
-            context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            return context;
+            return CreateCore<TDbContext3>(_dbContextOptions3);
         }
     }
 
@@ -52,16 +50,14 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
             _dbContextOptions2 = dbContextOptions2;
         }
 
-        public new TDbContext2 Create()
+        public new virtual TDbContext2 GetReadOnlyContext()
         {
-            return (TDbContext2)Activator.CreateInstance(typeof(TDbContext1), _dbContextOptions2);
+            return GetReadOnlyContextCore<TDbContext2>(_dbContextOptions2);
         }
 
-        public new TDbContext2 GetReadOnlyContext()
+        public new virtual TDbContext2 Create()
         {
-            var context = Create();
-            context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            return context;
+            return CreateCore<TDbContext2>(_dbContextOptions2);
         }
     }
 
@@ -79,21 +75,46 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
         {
             _dbContextOptions1 = dbContextOptions1;
         }
-
-
-        public TDbContext1 Create()
+        
+        public virtual TDbContext1 GetReadOnlyContext()
         {
-            return (TDbContext1)Activator.CreateInstance(typeof(TDbContext1), _dbContextOptions1);
+            return GetReadOnlyContextCore<TDbContext1>(_dbContextOptions1);
         }
 
-        public TDbContext1 GetReadOnlyContext()
+        public virtual TDbContext1 Create()
         {
-            var context = Create();
+            return CreateCore<TDbContext1>(_dbContextOptions1);
+        }
+
+        #region Factory helpers
+
+        /// <summary>
+        /// Reusable Read-Only Context factory
+        /// </summary>
+        /// <typeparam name="TDbContext"></typeparam>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        protected virtual TDbContext GetReadOnlyContextCore<TDbContext>(DbContextOptions options)where TDbContext : DbContext
+        {
+            var context = CreateCore<TDbContext>(options);
             context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             return context;
         }
 
-        #region Generic Implementation
+        /// <summary>
+        /// Reusable Context factory
+        /// </summary>
+        /// <typeparam name="TDbContext"></typeparam>
+        /// <param name="option"></param>
+        /// <returns></returns>
+        protected virtual TDbContext CreateCore<TDbContext>(DbContextOptions option) where TDbContext : DbContext
+        {
+            return (TDbContext)Activator.CreateInstance(typeof(TDbContext), _dbContextOptions1);
+        }
+        
+        #endregion
+
+        #region Generic Implementation of top Factory interface
 
         public TDbContext Create<TDbContext>() where TDbContext : DbContext
         {

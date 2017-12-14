@@ -11,9 +11,9 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
         where TDbContext : DbContext
 
     {
-        private readonly IEntityFrameworkDbContextFactory<TDbContext> _dbContextFactory;
+        private readonly IEntityFrameworkDbContextFactory _dbContextFactory;
 
-        protected EntityFrameworkQuery(IEntityFrameworkDbContextFactory<TDbContext> dbContextFactory)
+        protected EntityFrameworkQuery(IEntityFrameworkDbContextFactory dbContextFactory)
         {
             _dbContextFactory = dbContextFactory;
         }
@@ -21,7 +21,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
         /// <summary>
         /// Context for Read only operations. Unit of work is not needed for this operation. If Unit of work does not exists, then is created a new context
         /// </summary>
-        protected TDbContext ContextReadOnly => _dbContextFactory.GetReadOnlyContext();
+        protected TDbContext ContextReadOnly => _dbContextFactory.GetReadOnlyContext<TDbContext>();
 
 
         public override async Task<int> GetTotalRowCountAsync(CancellationToken cancellationToken)

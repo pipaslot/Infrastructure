@@ -6,47 +6,41 @@ using Pipaslot.Infrastructure.Data.EntityFramework;
 
 namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models
 {
-    public class BloggingContextFactory : IEntityFrameworkDbContextFactory<BloggingContext>, IDisposable
+    public class BloggingContextFactory : EntityFrameworkDbContextFactory<BloggingContext>, IDisposable
     {
-        private readonly string _dbName;
         private bool isInitialized;
-        private List<BloggingContext>Dbs = new List<BloggingContext>();
+        private readonly List<BloggingContext> _databases = new List<BloggingContext>();
 
         public event EventHandler<BloggingContext> OnDbInit;
-
-        public BloggingContextFactory(string dbName)
+        
+        public BloggingContextFactory(string dbName) : base(PrepareOptions(dbName))
         {
-            _dbName = dbName;
         }
 
-        public BloggingContext Create()
+        private static DbContextOptions PrepareOptions(string dbName)
         {
-            var serviceProvider = new ServiceCollection()
-                .AddEntityFrameworkSqlServer()
-                .BuildServiceProvider();
-
             var builder = new DbContextOptionsBuilder<BloggingContext>();
+            builder.UseSqlServer(
+                $"Server=(local);Database=testdb_{dbName};Trusted_Connection=True;MultipleActiveResultSets=true");
+            return builder.Options;
+        }
 
-            builder.UseSqlServer($"Server=(local);Database=testdb_{_dbName};Trusted_Connection=True;MultipleActiveResultSets=true")
-                .UseInternalServiceProvider(serviceProvider);
+        public override BloggingContext GetReadOnlyContext()
+        {
+            return Create();
+        }
 
-            var context = new BloggingContext(builder.Options);
+        public override BloggingContext Create()
+        {
+            var context = base.Create();
             if (!isInitialized)
             {
                 isInitialized = true;
                 context.Database.Migrate();
-                if (OnDbInit != null)
-                {
-                    OnDbInit(this, context);
-                }
+                OnDbInit?.Invoke(this, context);
             }
-            Dbs.Add(context);
+            _databases.Add(context);
             return context;
-        }
-
-        public BloggingContext GetReadOnlyContext()
-        {
-            return Create();
         }
 
         public void Dispose()
