@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
-    public class EntityFrameworkSimpleQuery<TKey, TResult, TDbContext> : EntityFrameworkQuery<TResult, TDbContext>
+    public class EntityFrameworkSimpleQuery<TResult, TDbContext> : EntityFrameworkQuery<TResult, TDbContext>
         where TDbContext : DbContext
-        where TResult : class, IEntity<TKey>
+        where TResult : class
     {
-        public EntityFrameworkSimpleQuery(IEntityFrameworkDbContextFactory<TDbContext> dbContextFactory) : base(dbContextFactory)
+        public EntityFrameworkSimpleQuery(IEntityFrameworkDbContextFactory dbContextFactory) : base(dbContextFactory)
         {
         }
 

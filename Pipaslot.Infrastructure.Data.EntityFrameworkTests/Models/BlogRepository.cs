@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Pipaslot.Infrastructure.Data.EntityFramework;
 
 namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models
 {
-    public class BlogRepository : EntityFrameworkRepository<Blog,int,BloggingContext>
+    public class BlogRepository : EntityFrameworkRepository<Blog, int, BloggingContext>
     {
-        public BlogRepository(EntityFrameworkUnitOfWorkFactory<BloggingContext> uowFactory, IEntityFrameworkDbContextFactory<BloggingContext> dbContextFactory) : base(uowFactory, dbContextFactory)
+        public BlogRepository(IUnitOfWorkFactory uowFactory, IEntityFrameworkDbContextFactory dbContextFactory) : base(uowFactory, dbContextFactory)
         {
         }
 

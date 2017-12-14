@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Pipaslot.Infrastructure.Data.EntityFramework;
 
 namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models
 {
     public class BlogWithRemappingQuery : EntityFrameworkQuery<Blog, BlogIdName, BloggingContext>
     {
-        public BlogWithRemappingQuery(IEntityFrameworkDbContextFactory<BloggingContext> dbContextFactory) : base(dbContextFactory)
+        public BlogWithRemappingQuery(IEntityFrameworkDbContextFactory dbContextFactory) : base(dbContextFactory)
         {
         }
 

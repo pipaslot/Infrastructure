@@ -1,14 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq;
 using Pipaslot.Infrastructure.Data.EntityFramework;
-using Pipaslot.Infrastructure.Data.Queries;
 
 namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models
 {
-    class BlogQuery : EntityFrameworkQuery<Blog,BloggingContext>
+    class BlogQuery : EntityFrameworkQuery<Blog, BloggingContext>
     {
-        public BlogQuery(IEntityFrameworkDbContextFactory<BloggingContext> dbContextFactory) : base(dbContextFactory)
+        public BlogQuery(IEntityFrameworkDbContextFactory dbContextFactory) : base(dbContextFactory)
         {
         }
 

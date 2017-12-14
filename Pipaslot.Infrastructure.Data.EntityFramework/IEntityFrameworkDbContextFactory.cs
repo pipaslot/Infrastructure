@@ -2,7 +2,6 @@
 
 namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
-    
     public interface IEntityFrameworkDbContextFactory<out TDbContext> : IEntityFrameworkDbContextFactory
         where TDbContext : DbContext
     {
@@ -22,7 +21,6 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
     /// <summary>
     /// Created Database context
     /// </summary>
-    /// <typeparam name="TDbContext"></typeparam>
     public interface IEntityFrameworkDbContextFactory
     {
         /// <summary>
