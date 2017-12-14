@@ -7,7 +7,7 @@ using Pipaslot.Infrastructure.Data.Queries;
 
 namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
-    public abstract class EntityFrameworkQuery<TResult, TDbContext> : Query<TResult>
+    public abstract class EntityFrameworkQuery<TResult, TDbContext> : AQuery<TResult>
         where TDbContext : DbContext
 
     {
@@ -35,7 +35,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
         }
     }
 
-    public abstract class EntityFrameworkQuery<TQueryableResult, TResult, TDbContext> : Query<TQueryableResult, TResult>
+    public abstract class EntityFrameworkQuery<TQueryableResult, TResult, TDbContext> : AQuery<TQueryableResult, TResult>
     where TDbContext : DbContext
     {
         private readonly IEntityFrameworkDbContextFactory<TDbContext> _dbContextFactory;

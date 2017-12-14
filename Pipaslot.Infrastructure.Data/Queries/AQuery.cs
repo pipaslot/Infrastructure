@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Pipaslot.Infrastructure.Data.Queries
 {
     //TODO RENAME
-    public abstract class Query<TResult> : Query<TResult, TResult>, IQuery<TResult>
+    public abstract class AQuery<TResult> : AQuery<TResult, TResult>, IQuery<TResult>
     {
         /// <inheritdoc />
         /// <summary>
@@ -22,7 +22,7 @@ namespace Pipaslot.Infrastructure.Data.Queries
         }
     }
 
-    public abstract class Query<TQueryableResult, TResult> : IQuery<TQueryableResult, TResult>
+    public abstract class AQuery<TQueryableResult, TResult> : IQuery<TQueryableResult, TResult>
     {
         #region IPageableQuery implementation
         
@@ -67,7 +67,7 @@ namespace Pipaslot.Infrastructure.Data.Queries
             var expr = Expression.Lambda(Expression.Property(param, prop), param);
 
             // call the method
-            typeof(Query<TQueryableResult, TResult>).GetTypeInfo().GetMethod(nameof(AddSortCriteriaCore),
+            typeof(AQuery<TQueryableResult, TResult>).GetTypeInfo().GetMethod(nameof(AddSortCriteriaCore),
                     BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(prop.PropertyType)
                 .Invoke(this, new object[] { expr, direction });
         }
