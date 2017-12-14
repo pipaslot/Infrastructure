@@ -3,29 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
-    //TODO nepoužívat bez kontextu???
-    public class EntityFrameworkUnitOfWorkFactory : EntityFrameworkUnitOfWorkFactory<DbContext>, IEntityFrameworkUnitOfWorkFactory
-    {
-        public EntityFrameworkUnitOfWorkFactory(IEntityFrameworkDbContextFactory<DbContext> dbContextFactory, IUnitOfWorkRegistry registry) : base(dbContextFactory, registry)
-        {
-        }
-
-        IEntityFrameworkUnitOfWork IEntityFrameworkUnitOfWorkFactory.Create()
-        {
-            return base.Create();
-        }
-
-        IEntityFrameworkUnitOfWork IEntityFrameworkUnitOfWorkFactory.GetCurrent(int index = 0)
-        {
-            return base.GetCurrent(index);
-        }
-    }
-
     public class EntityFrameworkUnitOfWorkFactory<TDbContext> : AUnitOfWorkFactory<IEntityFrameworkUnitOfWork<TDbContext>>, IEntityFrameworkUnitOfWorkFactory<TDbContext>
-        where TDbContext : DbContext
+         where TDbContext : DbContext
     {
         private readonly IEntityFrameworkDbContextFactory<TDbContext> _dbContextFactory;
-        
+
         public EntityFrameworkUnitOfWorkFactory(IEntityFrameworkDbContextFactory<TDbContext> dbContextFactory, IUnitOfWorkRegistry registry) : base(registry)
         {
             _dbContextFactory = dbContextFactory;

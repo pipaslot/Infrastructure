@@ -2,14 +2,13 @@
 
 namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
-    public interface IEntityFrameworkUnitOfWork<out TDbContext> : IEntityFrameworkUnitOfWork
+    /// <inheritdoc />
+    /// <summary>
+    /// Unit of work which can access DbContext
+    /// </summary>
+    public interface IEntityFrameworkUnitOfWork<out TDbContext> : IUnitOfWork
         where TDbContext : DbContext
     {
-        new TDbContext Context { get; }
-    }
-
-    public interface IEntityFrameworkUnitOfWork : IUnitOfWork
-    {
-        DbContext Context { get; }
+        TDbContext Context { get; }
     }
 }

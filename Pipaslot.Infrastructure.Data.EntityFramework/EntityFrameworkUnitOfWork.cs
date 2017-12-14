@@ -77,7 +77,6 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
                 _topLevelTransaction.Dispose();
             }
         }
-
-        DbContext IEntityFrameworkUnitOfWork.Context => Context;
+        
     }
 }
