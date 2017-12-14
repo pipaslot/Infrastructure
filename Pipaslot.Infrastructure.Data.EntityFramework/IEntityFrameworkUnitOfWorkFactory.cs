@@ -18,6 +18,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
         IEntityFrameworkUnitOfWork<TDbContext> GetCurrent(int index = 0);
     }
 
+    //TODo ODSTRANIT ???
     public interface IEntityFrameworkUnitOfWorkFactory : IUnitOfWorkFactory
     {
         /// <summary>

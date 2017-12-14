@@ -1,11 +1,10 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
-using Pipaslot.Infrastructure.Data.Queries;
 
 namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
     public class EntityFrameworkQueryFactory<TDbContext, TQuery, TResult> : IQueryFactory<TQuery>
-        where TQuery : IQuery<TResult>, IExecutableQuery
+        where TQuery : EntityFrameworkQuery<TResult, TDbContext>//TODO nahradit za IQuery interface
         where TDbContext : DbContext
     {
         private readonly IEntityFrameworkDbContextFactory<TDbContext> _dbContextFactory;

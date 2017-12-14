@@ -2,16 +2,8 @@
 
 namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
-    public interface IEntityFrameworkDbContextFactory : IEntityFrameworkDbContextFactory<DbContext>
-    {
-        
-    }
-
-    /// <summary>
-    /// Created Database contex for read-write
-    /// </summary>
-    /// <typeparam name="TDbContext"></typeparam>
-    public interface IEntityFrameworkDbContextFactory<out TDbContext>
+    
+    public interface IEntityFrameworkDbContextFactory<out TDbContext> : IEntityFrameworkDbContextFactory
         where TDbContext : DbContext
     {
         /// <summary>
@@ -19,11 +11,30 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
         /// </summary>
         /// <returns></returns>
         TDbContext Create();
-        
+
         /// <summary>
         /// Create Read only context for Queries
         /// </summary>
         /// <returns></returns>
         TDbContext GetReadOnlyContext();
+    }
+
+    /// <summary>
+    /// Created Database context
+    /// </summary>
+    /// <typeparam name="TDbContext"></typeparam>
+    public interface IEntityFrameworkDbContextFactory
+    {
+        /// <summary>
+        /// Create Read-Write context for unit of work
+        /// </summary>
+        /// <returns></returns>
+        TDbContext Create<TDbContext>() where TDbContext : DbContext;
+
+        /// <summary>
+        /// Create Read only context for Queries
+        /// </summary>
+        /// <returns></returns>
+        TDbContext GetReadOnlyContext<TDbContext>() where TDbContext : DbContext;
     }
 }

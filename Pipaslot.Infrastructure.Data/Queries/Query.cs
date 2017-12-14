@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Pipaslot.Infrastructure.Data.Queries
 {
+    //TODO RENAME
     public abstract class Query<TResult> : Query<TResult, TResult>, IQuery<TResult>
     {
         /// <inheritdoc />
