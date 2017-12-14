@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
-    public class EntityFrameworkUnitOfWorkFactory<TDbContext> : AUnitOfWorkFactory<IEntityFrameworkUnitOfWork<TDbContext>>, IEntityFrameworkUnitOfWorkFactory<TDbContext>
+    public class EntityFrameworkUnitOfWorkFactory<TDbContext> : AUnitOfWorkFactory<IEntityFrameworkUnitOfWork<TDbContext>>
          where TDbContext : DbContext
     {
-        private readonly IEntityFrameworkDbContextFactory<TDbContext> _dbContextFactory;
+        private readonly IEntityFrameworkDbContextFactory _dbContextFactory;
 
-        public EntityFrameworkUnitOfWorkFactory(IEntityFrameworkDbContextFactory<TDbContext> dbContextFactory, IUnitOfWorkRegistry registry) : base(registry)
+        public EntityFrameworkUnitOfWorkFactory(IEntityFrameworkDbContextFactory dbContextFactory, IUnitOfWorkRegistry registry) : base(registry)
         {
             _dbContextFactory = dbContextFactory;
         }
@@ -23,9 +23,9 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
                 return new EntityFrameworkUnitOfWork<TDbContext>(currentUoW.Context);
             }
             //Return unit of work with new context
-            var newContext = _dbContextFactory.Create();
+            var newContext = _dbContextFactory.Create<TDbContext>();
             var transaction = newContext.Database.BeginTransaction();
-            return new EntityFrameworkUnitOfWork<TDbContext>((TDbContext)newContext, transaction);
+            return new EntityFrameworkUnitOfWork<TDbContext>(newContext, transaction);
         }
 
     }
