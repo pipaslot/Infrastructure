@@ -4,7 +4,7 @@ using Pipaslot.Infrastructure.Data.EntityFramework;
 
 namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models
 {
-    public class BlogWithRemappingQuery : EntityFrameworkQuery<Blog, BlogIdName, BloggingContext>
+    public class BlogWithRemappingQuery : EntityFrameworkQuery<BloggingContext, Blog, BlogIdName>
     {
         public BlogWithRemappingQuery(IEntityFrameworkDbContextFactory dbContextFactory) : base(dbContextFactory)
         {

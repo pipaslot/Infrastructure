@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Pipaslot.Infrastructure.Data
+﻿namespace Pipaslot.Infrastructure.Data
 {
+
     public interface IEntity : IEntity<int>
     {
-        
+
     }
 
     /// <summary>
@@ -14,11 +11,9 @@ namespace Pipaslot.Infrastructure.Data
     /// </summary>
     public interface IEntity<TKey>
     {
-
         /// <summary>
         /// Gets or sets the unique identification of the entity.
         /// </summary>
         TKey Id { get; set; }
-
     }
 }
