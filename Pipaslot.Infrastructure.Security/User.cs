@@ -14,58 +14,54 @@ namespace Pipaslot.Infrastructure.Security
     {
         private readonly IAuthorizator<TKey> _authorizator;
 
-        private readonly IIdentityProvider<TKey> _identityProvider;
+        private readonly IIdentity<TKey> _identity;
 
-        public TKey Id => _identityProvider.GetCurrent().Id;
+        public TKey Id => _identity.Id;
 
-        public bool IsAuthenticated => _identityProvider.GetCurrent() is UserIdentity<TKey>;
+        public bool IsAuthenticated => _identity is UserIdentity<TKey>;
 
-        public IEnumerable<IUserRole<TKey>> Roles => _identityProvider.GetCurrent().Roles;
+        public IEnumerable<IUserRole<TKey>> Roles => _identity.Roles;
         
-        public User(IAuthorizator<TKey> authorizator, IIdentityProvider<TKey> identityProviderProvider)
+        public User(IAuthorizator<TKey> authorizator, IIdentity<TKey> identity)
         {
             _authorizator = authorizator;
-            _identityProvider = identityProviderProvider;
+            _identity = identity;
         }
 
         public virtual bool IsAllowed(IConvertible permissionEnum)
         {
-            var identity = _identityProvider.GetCurrent();
-            if (identity is AdminIdentity<TKey>)
+            if (_identity is AdminIdentity<TKey>)
             {
                 return true;
             }
-            return identity.Roles.Any(role => _authorizator.IsAllowed(role, permissionEnum));
+            return Roles.Any(role => _authorizator.IsAllowed(role, permissionEnum));
         }
 
         public bool IsAllowed(Type resource, IConvertible permissionEnum)
         {
-            var identity = _identityProvider.GetCurrent();
-            if (identity is AdminIdentity<TKey>)
+            if (_identity is AdminIdentity<TKey>)
             {
                 return true;
             }
-            return identity.Roles.Any(role => _authorizator.IsAllowed(role, resource, permissionEnum));
+            return Roles.Any(role => _authorizator.IsAllowed(role, resource, permissionEnum));
         }
 
         public virtual bool IsAllowed<TPermissions>(IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum) where TPermissions : IConvertible
         {
-            var identity = _identityProvider.GetCurrent();
-            if (identity is AdminIdentity<TKey>)
+            if (_identity is AdminIdentity<TKey>)
             {
                 return true;
             }
-            return identity.Roles.Any(role => _authorizator.IsAllowed(role, resourceInstance, permissionEnum));
+            return Roles.Any(role => _authorizator.IsAllowed(role, resourceInstance, permissionEnum));
         }
 
         public virtual bool IsAllowed(Type resource, TKey resourceIdentifier, IConvertible permissionEnum)
         {
-            var identity = _identityProvider.GetCurrent();
-            if (identity is AdminIdentity<TKey>)
+            if (_identity is AdminIdentity<TKey>)
             {
                 return true;
             }
-            return identity.Roles.Any(role => _authorizator.IsAllowed(role, resource, resourceIdentifier, permissionEnum));
+            return Roles.Any(role => _authorizator.IsAllowed(role, resource, resourceIdentifier, permissionEnum));
         }
 
         public virtual IEnumerable<TKey> GetAllowedKeys(Type resource, IConvertible permissionEnum)

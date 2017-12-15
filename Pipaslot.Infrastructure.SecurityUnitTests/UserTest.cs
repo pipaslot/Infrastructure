@@ -19,7 +19,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
         public void Constructor_MinimuParameters_UserIsUnauthorizedAndWithoutRolesByDefaultAndWithoutPermissions()
         {
             var authorizatorMock = new Mock<IAuthorizator<int>>();
-            var user = new User<int>(authorizatorMock.Object, new CallbackIdentityProvider<int>(() => new GuestIdentity<int>()));
+            var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>());
 
             Assert.AreEqual(0, user.Id);
             Assert.IsFalse(user.IsAuthenticated);
@@ -34,7 +34,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
         public void Constructor_IntGenericType_UserIsAuthenticatedIfIdentityproviderReturnsUserIdentityButNotGuestIdentity()
         {
             var authorizatorMock = new Mock<IAuthorizator<int>>();
-            var user = new User<int>(authorizatorMock.Object, new CallbackIdentityProvider<int>(() => new UserIdentity<int>(100)));
+            var user = new User<int>(authorizatorMock.Object, new UserIdentity<int>(100));
 
             Assert.AreEqual(100, user.Id);
             Assert.IsTrue(user.IsAuthenticated);
@@ -49,7 +49,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
         public void Constructor_StringGenericType_UserIsAuthenticatedIfIdentityproviderReturnsUserIdentityButNotGuestIdentity()
         {
             var authorizatorMock = new Mock<IAuthorizator<string>>();
-            var user = new User<string>(authorizatorMock.Object, new CallbackIdentityProvider<string>(() => new UserIdentity<string>("100")));
+            var user = new User<string>(authorizatorMock.Object, new UserIdentity<string>("100"));
 
             Assert.AreEqual("100", user.Id);
             Assert.IsTrue(user.IsAuthenticated);
@@ -81,7 +81,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                     .Returns(valueTuple.role1);
                 authorizatorMock.Setup(a => a.IsAllowed(role2, FirstPermissions.Edit))
                     .Returns(valueTuple.role2);
-                var user = new User<int>(authorizatorMock.Object, new CallbackIdentityProvider<int>(() => new GuestIdentity<int>(1, new[] { role1, role2 })));
+                var user = new User<int>(authorizatorMock.Object,  new GuestIdentity<int>(1, new[] { role1, role2 }));
 
                 //Act
                 Assert.AreEqual(valueTuple.expected, user.IsAllowed(FirstPermissions.Edit));
@@ -108,7 +108,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                     .Returns(valueTuple.role1);
                 authorizatorMock.Setup(a => a.IsAllowed(role2, resource, FirstPermissions.Edit))
                     .Returns(valueTuple.role2);
-                var user = new User<int>(authorizatorMock.Object, new CallbackIdentityProvider<int>(() => new GuestIdentity<int>(1, new[] { role1, role2 })));
+                var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }));
 
                 //Act
                 Assert.AreEqual(valueTuple.expected, user.IsAllowed(resource,  FirstPermissions.Edit));
@@ -135,7 +135,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                     .Returns(valueTuple.role1);
                 authorizatorMock.Setup(a => a.IsAllowed(role2, resource, FirstPermissions.Edit))
                     .Returns(valueTuple.role2);
-                var user = new User<int>(authorizatorMock.Object, new CallbackIdentityProvider<int>(() => new GuestIdentity<int>(1, new[] { role1, role2 })));
+                var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }));
 
                 //Act
                 Assert.AreEqual(valueTuple.expected, user.IsAllowed(resource, FirstPermissions.Edit));
@@ -163,7 +163,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                     .Returns(valueTuple.role1);
                 authorizatorMock.Setup(a => a.IsAllowed(role2, resource, resourceId, FirstPermissions.Edit))
                     .Returns(valueTuple.role2);
-                var user = new User<int>(authorizatorMock.Object, new CallbackIdentityProvider<int>(() => new GuestIdentity<int>(1, new[] { role1, role2 })));
+                var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }));
 
                 //Act
                 Assert.AreEqual(valueTuple.expected, user.IsAllowed(resource, resourceId, FirstPermissions.Edit));
@@ -182,7 +182,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 .Returns(new List<int> { 1, 2 });
             authorizatorMock.Setup(a => a.GetAllowedKeys(role2, resource, FirstPermissions.Edit))
                 .Returns(new List<int> { 2, 3 });
-            var user = new User<int>(authorizatorMock.Object, new CallbackIdentityProvider<int>(() => new GuestIdentity<int>(1, new[] { role1, role2 })));
+            var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }));
 
             //Act
             var result = user.GetAllowedKeys(resource, FirstPermissions.Edit).ToList();
@@ -190,36 +190,17 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
         }
 
-
         [TestMethod]
         public void IsAllowed_AdminIdentityHasAllPermissions()
         {
             var authorizatorMock = new Mock<IAuthorizator<int>>();
-            var user = new User<int>(authorizatorMock.Object, new CallbackIdentityProvider<int>(() => new AdminIdentity<int>(1)));
+            var user = new User<int>(authorizatorMock.Object, new AdminIdentity<int>(1));
 
             //Act
             Assert.IsTrue(user.IsAllowed(FirstPermissions.Edit));
             Assert.IsTrue(user.IsAllowed(typeof(FirstResource), FirstPermissions.Edit));
             Assert.IsTrue(user.IsAllowed(typeof(FirstResource), 1, FirstPermissions.Edit));
             Assert.IsTrue(user.IsAllowed(new FirstResource(1), FirstPermissions.Edit));
-        }
-
-        [TestMethod]
-        public void CallsAndUseEntityProviderForAllActions()
-        {
-            var counter = 0;
-            var provider = new CallbackIdentityProvider<int>(() =>
-            {
-                counter++;
-                if (counter >1) return new GuestIdentity<int>();
-                return new AdminIdentity<int>(1);
-            });
-            var authorizatorMock = new Mock<IAuthorizator<int>>();
-            var user = new User<int>(authorizatorMock.Object, provider);
-
-            //Act
-            Assert.IsTrue(user.IsAllowed(FirstPermissions.Edit));
-            Assert.IsFalse(user.IsAllowed(FirstPermissions.Edit));
         }
     }
 }
