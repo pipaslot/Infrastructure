@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>Pipaslot.Demo</AssemblyName>
+    <RootNamespace>Pipaslot.Demo</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netcoreapp2.0\Pipaslot.Demo.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netcoreapp2.0\Pipaslot.Demo.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="1.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Pipaslot.Infrastructure.Data.EntityFramework\Pipaslot.Infrastructure.Data.EntityFramework.csproj" />
+    <ProjectReference Include="..\Pipaslot.Infrastructure.Data.Mvc\Pipaslot.Infrastructure.Data.Mvc.csproj" />
+    <ProjectReference Include="..\Pipaslot.Infrastructure.Data\Pipaslot.Infrastructure.Data.csproj" />
+    <ProjectReference Include="..\Pipaslot.Infrastructure.Mvc\Pipaslot.Infrastructure.Mvc.csproj" />
+    <ProjectReference Include="..\Pipaslot.Infrastructure.Security.EntityFramework\Pipaslot.Infrastructure.Security.EntityFramework.csproj" />
+    <ProjectReference Include="..\Pipaslot.Infrastructure.SecurityUI\Pipaslot.Infrastructure.SecurityUI.csproj" />
+    <ProjectReference Include="..\Pipaslot.Infrastructure.Security\Pipaslot.Infrastructure.Security.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+</Project>
