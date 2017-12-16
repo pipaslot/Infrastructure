@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace Pipaslot.Demo.Migrations
 {
+#pragma warning disable 1591
     public partial class initial : Migration
     {
-        #pragma warning disable 1591
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(

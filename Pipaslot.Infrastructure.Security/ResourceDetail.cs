@@ -1,15 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Pipaslot.Infrastructure.Security
+﻿namespace Pipaslot.Infrastructure.Security
 {
-    public class ResourceDetail<TKey>
+    public class ResourceDetail<TKey> : ResourceDetail
     {
         /// <summary>
         /// Resource primary key/Identifier
         /// </summary>
-        public TKey Id { get; }
+        public new TKey Id { get; }
+
+        public ResourceDetail(TKey id, string name, string description = null) : base(id, name, description)
+        {
+            Id = id;
+        }
+    }
+
+    public class ResourceDetail
+    {
+        /// <summary>
+        /// Resource primary key/Identifier
+        /// </summary>
+        public object Id { get; }
 
         /// <summary>
         /// Real resource name
@@ -19,9 +28,9 @@ namespace Pipaslot.Infrastructure.Security
         /// <summary>
         /// Real resource description
         /// </summary>
-        public string  Description { get; }
+        public string Description { get; }
 
-        public ResourceDetail(TKey id, string name, string description = null)
+        public ResourceDetail(object id, string name, string description = null)
         {
             Id = id;
             Name = name;

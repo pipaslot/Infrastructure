@@ -2,6 +2,6 @@
 {
     public class SecurityUIOptions
     {
-        public string RoutePrefix { get; set; } = "permissions";
+        public string RoutePrefix { get; set; } = "security";
     }
 }

@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Pipaslot.Infrastructure.Security
 {
+    public interface IResourceDetailProvider<TKey> : IResourceDetailProvider
+    {
+        IEnumerable<ResourceDetail<TKey>> GetResourceDetails(Type resource, List<TKey> identifiers);
+    }
+
     /// <summary>
     /// Provides Name and Description for resource based on stored primary key
     /// </summary>
-    public interface IResourceDetailProvider<TKey>
+    public interface IResourceDetailProvider
     {
-        IEnumerable<ResourceDetail<TKey>> GetResourceDetails(Type resource, List<TKey> identifiers);
+        IEnumerable<ResourceDetail<object>>GetResourceDetails(Type resource, List<object> identifiers);
     }
 }

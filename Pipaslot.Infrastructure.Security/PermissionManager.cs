@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using Pipaslot.Infrastructure.Security.Attributes;
 using Pipaslot.Infrastructure.Security.Data;
 using Pipaslot.Infrastructure.Security.Data.Queries;
 
@@ -15,12 +13,12 @@ namespace Pipaslot.Infrastructure.Security
         private readonly IResourceDetailProvider<TKey> _resourceDetailProvider;
         private readonly INamingConvertor _namingConvertor;
 
-        public PermissionManager(IPermissionStore<TKey> permissionStore, ResourceRegistry<TKey> resourceRegistry, IResourceDetailProvider<TKey> resourceDetailProvider = null, INamingConvertor namingConvertor = null)
+        public PermissionManager(IPermissionStore<TKey> permissionStore, ResourceRegistry<TKey> resourceRegistry, IResourceDetailProvider<TKey> resourceDetailProvider, INamingConvertor namingConvertor)
         {
             _permissionStore = permissionStore;
             _resourceRegistry = resourceRegistry;
-            _namingConvertor = namingConvertor ?? new DefaultNamingConvertor<TKey>(resourceRegistry);
-            _resourceDetailProvider = resourceDetailProvider ?? new DefaultResourceDetailProvider<TKey>();
+            _namingConvertor = namingConvertor;
+            _resourceDetailProvider = resourceDetailProvider;
         }
 
         #region Setup Privilege
@@ -65,26 +63,17 @@ namespace Pipaslot.Infrastructure.Security
                 var info = new ResourceInfo
                 {
                     InstancesCount = _permissionStore.GetResourceInstanceCount(resourceName),
-                    UniquedName = resourceName
+                    UniquedName = resourceName,
+                    Name = Helpers.GetResourceReadableName(type),
+                    Description = Helpers.GetResourceReadableDescription(type)
                 };
-                if (type.GetCustomAttributes(typeof(NameAttribute)).FirstOrDefault() is NameAttribute nameAttr)
-                {
-                    info.Name = nameAttr.Name;
-                }
-                else
-                {
-                    info.Name = type.FullName;
-                }
-                if (type.GetCustomAttributes(typeof(DescriptionAttribute)).FirstOrDefault() is DescriptionAttribute descAttr)
-                {
-                    info.Description = descAttr.Description;
-                }
+                
                 result.Add(info);
             }
             return result;
         }
 
-        //todo Implement paging for future
+        //todo Implement paging for future (as query)
         public IEnumerable<ResourceInstanceInfo<TKey>> GetAllResourceInstances(string resource)
         {
             var result = new List<ResourceInstanceInfo<TKey>>();
@@ -123,16 +112,10 @@ namespace Pipaslot.Infrastructure.Security
                         ResourceUniquedName = resource,
                         ResourceIdentifier = default(TKey),
                         UniqueIdentifier = permissionUniqueIdentifier,
-                        IsAllowed = _permissionStore.IsAllowed(roleId, resource, permissionUniqueIdentifier)
+                        IsAllowed = _permissionStore.IsAllowed(roleId, resource, permissionUniqueIdentifier),
+                        Name = Helpers.GetPermissonReadableName(memberInfo),
+                        Description = Helpers.GetPermissonReadableDescription(memberInfo)
                     };
-                    if (memberInfo.GetCustomAttributes(typeof(NameAttribute)).FirstOrDefault() is NameAttribute nameAttr)
-                    {
-                        info.Name = nameAttr.Name;
-                    }
-                    if (memberInfo.GetCustomAttributes(typeof(DescriptionAttribute)).FirstOrDefault() is DescriptionAttribute descAttr)
-                    {
-                        info.Description = descAttr.Description;
-                    }
 
                     result.Add(info);
                 }
@@ -157,16 +140,10 @@ namespace Pipaslot.Infrastructure.Security
                         ResourceUniquedName = resource,
                         ResourceIdentifier = resourceId,
                         UniqueIdentifier = permissionUniqueIdentifier,
-                        IsAllowed = _permissionStore.IsAllowed(roleId, resource, resourceId, permissionUniqueIdentifier)
+                        IsAllowed = _permissionStore.IsAllowed(roleId, resource, resourceId, permissionUniqueIdentifier),
+                        Name = Helpers.GetPermissonReadableName(memberInfo),
+                        Description = Helpers.GetPermissonReadableDescription(memberInfo)
                     };
-                    if (memberInfo.GetCustomAttributes(typeof(NameAttribute)).FirstOrDefault() is NameAttribute nameAttr)
-                    {
-                        info.Name = nameAttr.Name;
-                    }
-                    if (memberInfo.GetCustomAttributes(typeof(DescriptionAttribute)).FirstOrDefault() is DescriptionAttribute descAttr)
-                    {
-                        info.Description = descAttr.Description;
-                    }
 
                     result.Add(info);
                 }

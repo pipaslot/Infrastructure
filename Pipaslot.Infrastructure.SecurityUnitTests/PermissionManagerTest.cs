@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -20,7 +19,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
             var resourceRegistry = new Mock<ResourceRegistry<int>>();
-            var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry.Object);
+            var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry.Object, new DefaultResourceDetailProvider<int>(), new DefaultNamingConvertor<int>(resourceRegistry.Object));
 
             //Act
             manager.Allow(new UserRole(1), typeof(FirstResource), default(int), SecondPermissions.Edit);
@@ -33,7 +32,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
             var resourceRegistry = new Mock<ResourceRegistry<int>>();
-            var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry.Object);
+            var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry.Object, new DefaultResourceDetailProvider<int>(), new DefaultNamingConvertor<int>(resourceRegistry.Object));
 
             //Act
             manager.Deny(new UserRole(1), typeof(FirstResource), default(int), SecondPermissions.Edit);
@@ -51,7 +50,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var resourceRegistry = new ResourceRegistry<int>();
             resourceRegistry
                 .Register(resourceType.Assembly);
-            var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry);
+            var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry, new DefaultResourceDetailProvider<int>(), new DefaultNamingConvertor<int>(resourceRegistry));
 
             var resources = manager.GetAllResources();
             var firstResource = resources.First(r => r.UniquedName == resourceType.FullName);
@@ -85,7 +84,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 });
 
             //Act
-            var manager = new PermissionManager<int>(permissionStoreMock.Object, resourceRegistry, resourceDetailProviderMock.Object);
+            var manager = new PermissionManager<int>(permissionStoreMock.Object, resourceRegistry, resourceDetailProviderMock.Object, new DefaultNamingConvertor<int>(resourceRegistry));
             var resources = manager.GetAllResourceInstances(resourceType.FullName);
             var firstResource = resources
                 .First(r => r.UniquedName == resourceType.FullName);
@@ -128,7 +127,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 .Returns(isAllowed);
 
             //Act
-            var manager = new PermissionManager<int>(permissionStoreMock.Object, resourceRegistry, resourceDetailProviderMock.Object);
+            var manager = new PermissionManager<int>(permissionStoreMock.Object, resourceRegistry, resourceDetailProviderMock.Object, new DefaultNamingConvertor<int>(resourceRegistry));
             var permissions = manager.GetAllPermissions(roleId, resourceName).ToList();
 
             Assert.AreEqual(3, permissions.Count());
@@ -141,7 +140,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             Assert.IsFalse(string.IsNullOrWhiteSpace(create.Description));
             Assert.AreEqual(isAllowed, create.IsAllowed);
         }
-        
+
         [TestMethod]
         public void GetAllPermissionsForInstanceResource_LoadAllPermissionWithAllowedAccess()
         {
@@ -174,7 +173,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 .Returns(isAllowed);
 
             //Act
-            var manager = new PermissionManager<int>(permissionStoreMock.Object, resourceRegistry, resourceDetailProviderMock.Object);
+            var manager = new PermissionManager<int>(permissionStoreMock.Object, resourceRegistry, resourceDetailProviderMock.Object, new DefaultNamingConvertor<int>(resourceRegistry));
             var permissions = manager.GetAllPermissions(roleId, resourceName, resourceId).ToList();
 
             Assert.AreEqual(2, permissions.Count());

@@ -15,17 +15,51 @@ namespace Pipaslot.Infrastructure.Security
         private readonly IAuthorizator<TKey> _authorizator;
 
         private readonly IIdentity<TKey> _identity;
+        private readonly IResourceDetailProvider<TKey> _resourceDetailProvider;
 
         public TKey Id => _identity.Id;
 
         public bool IsAuthenticated => _identity is UserIdentity<TKey>;
 
         public IEnumerable<IUserRole<TKey>> Roles => _identity.Roles;
-        
-        public User(IAuthorizator<TKey> authorizator, IIdentity<TKey> identity)
+
+        public User(IAuthorizator<TKey> authorizator, IIdentity<TKey> identity, IResourceDetailProvider<TKey> resourceDetailProvider)
         {
             _authorizator = authorizator;
             _identity = identity;
+            _resourceDetailProvider = resourceDetailProvider;
+        }
+
+        public void CheckPermission(IConvertible permissionEnum)
+        {
+            if (!IsAllowed(permissionEnum))
+            {
+                throw new AuthorizationException(permissionEnum);
+            }
+        }
+
+        public void CheckPermission(Type resource, IConvertible permissionEnum)
+        {
+            if (!IsAllowed(resource, permissionEnum))
+            {
+                throw new AuthorizationException(resource, permissionEnum);
+            }
+        }
+
+        public void CheckPermission<TPermissions>(IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum) where TPermissions : IConvertible
+        {
+            if (!IsAllowed(resourceInstance, permissionEnum))
+            {
+                throw new AuthorizationException(resourceInstance.GetType(), permissionEnum, () => _resourceDetailProvider.GetResourceDetails(resourceInstance.GetType(), new List<object>() { resourceInstance.ResourceUniqueIdentifier }).FirstOrDefault());
+            }
+        }
+
+        public void CheckPermission(Type resource, TKey resourceIdentifier, IConvertible permissionEnum)
+        {
+            if (!IsAllowed(resource, resourceIdentifier, permissionEnum))
+            {
+                throw new AuthorizationException(resource, permissionEnum, () => _resourceDetailProvider.GetResourceDetails(resource, new List<object>() { resourceIdentifier }).FirstOrDefault());
+            }
         }
 
         public virtual bool IsAllowed(IConvertible permissionEnum)
@@ -74,6 +108,5 @@ namespace Pipaslot.Infrastructure.Security
             }
             return keys.Distinct();
         }
-
     }
 }

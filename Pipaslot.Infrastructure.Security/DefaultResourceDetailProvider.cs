@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Pipaslot.Infrastructure.Security
 {
@@ -15,6 +14,11 @@ namespace Pipaslot.Infrastructure.Security
         public IEnumerable<ResourceDetail<TKey>> GetResourceDetails(Type resource, List<TKey> identifiers)
         {
             return identifiers.Select(id => new ResourceDetail<TKey>(id, id.ToString(), string.Empty));
+        }
+
+        public IEnumerable<ResourceDetail<object>> GetResourceDetails(Type resource, List<object> identifiers)
+        {
+            return identifiers.Select(id => new ResourceDetail<object>(id, id.ToString(), string.Empty));
         }
     }
 }

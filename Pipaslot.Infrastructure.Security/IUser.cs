@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Pipaslot.Infrastructure.Security
 {
+    //TODO Implement async operation for IAllowed, GetAllowedKeys, CheckPermission
     /// <summary>
     /// Operations working with current user
     /// </summary>
@@ -22,6 +23,39 @@ namespace Pipaslot.Infrastructure.Security
         /// Roles assigned to user 
         /// </summary>
         IEnumerable<IUserRole<TKey>> Roles { get; }
+
+        /// <summary>
+        /// Check if User has got required permission, if not, then Exception is thrown.
+        /// </summary>
+        /// <param name="permissionEnum"></param>
+        /// <exception cref="AuthorizationException"></exception>
+        void CheckPermission(IConvertible permissionEnum);
+
+        /// <summary>
+        ///  Check if User has got required permission, if not, then Exception is thrown.
+        /// </summary>
+        /// <param name="resource"></param>
+        /// <param name="permissionEnum"></param>
+        /// <exception cref="AuthorizationException"></exception>
+        void CheckPermission(Type resource, IConvertible permissionEnum);
+
+        /// <summary>
+        ///  Check if User has got required permission, if not, then Exception is thrown.
+        /// </summary>
+        /// <typeparam name="TPermissions"></typeparam>
+        /// <param name="resourceInstance"></param>
+        /// <param name="permissionEnum"></param>
+        /// <exception cref="AuthorizationException"></exception>
+        void CheckPermission<TPermissions>(IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum) where TPermissions : IConvertible;
+
+        /// <summary>
+        ///  Check if User has got required permission, if not, then Exception is thrown.
+        /// </summary>
+        /// <param name="resource"></param>
+        /// <param name="resourceIdentifier"></param>
+        /// <param name="permissionEnum"></param>
+        /// <exception cref="AuthorizationException"></exception>
+        void CheckPermission(Type resource, TKey resourceIdentifier, IConvertible permissionEnum);
 
         /// <summary>
         /// Check if user has permission
@@ -62,6 +96,5 @@ namespace Pipaslot.Infrastructure.Security
         /// <param name="permissionEnum">Requested permission</param>
         /// <returns></returns>
         IEnumerable<TKey> GetAllowedKeys(Type resource, IConvertible permissionEnum);
-
     }
 }
