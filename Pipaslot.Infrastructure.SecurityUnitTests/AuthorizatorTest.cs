@@ -211,6 +211,36 @@ namespace Pipaslot.Infrastructure.SecurityTests
             auth.GetAllowedKeys(new[] { new UserRole(1) }, typeof(FirstResource), SecondPermissions.Edit);
         }
 
+        [TestMethod]
+        public void IsAllowedCached()
+        {
+            const int roleId = 1;
+            var permission = FirstPermissions.Edit;
+
+            //Init
+            var permissionStore = new Mock<IPermissionStore<int>>();
+            var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry<int>());
+            var auth = new Authorizator<int>(permissionStore.Object, convertor);
+
+            var role = new UserRole(roleId);
+
+            //Pre-Condition
+            permissionStore
+                .Setup(p => p.IsAllowed(new[] { roleId }, convertor.GetResourceUniqueName(typeof(FirstResource)), convertor.GetPermissionUniqueIdentifier(permission)))
+                .Returns(true);
+
+            //Act
+            auth.IsAllowed(new[] { role }, typeof(FirstResource), permission);
+            auth.IsAllowed(new[] { role }, typeof(FirstResource), permission);
+
+            //Assertion
+            permissionStore
+                .Verify(
+                    p => p.IsAllowed(new[] {roleId}, convertor.GetResourceUniqueName(typeof(FirstResource)),
+                        convertor.GetPermissionUniqueIdentifier(permission)), Times.AtMostOnce);
+
+        }
+
         #region Mockups
 
         private class ConstantNamingConvertor : INamingConvertor
