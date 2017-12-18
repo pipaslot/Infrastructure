@@ -68,7 +68,7 @@ namespace Pipaslot.Infrastructure.Security
             {
                 return true;
             }
-            return Roles.Any(role => _authorizator.IsAllowed(role, permissionEnum));
+            return _authorizator.IsAllowed(Roles, permissionEnum);
         }
 
         public bool IsAllowed(Type resource, IConvertible permissionEnum)
@@ -77,7 +77,7 @@ namespace Pipaslot.Infrastructure.Security
             {
                 return true;
             }
-            return Roles.Any(role => _authorizator.IsAllowed(role, resource, permissionEnum));
+            return _authorizator.IsAllowed(Roles, resource, permissionEnum);
         }
 
         public virtual bool IsAllowed<TPermissions>(IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum) where TPermissions : IConvertible
@@ -86,7 +86,7 @@ namespace Pipaslot.Infrastructure.Security
             {
                 return true;
             }
-            return Roles.Any(role => _authorizator.IsAllowed(role, resourceInstance, permissionEnum));
+            return _authorizator.IsAllowed(Roles, resourceInstance, permissionEnum);
         }
 
         public virtual bool IsAllowed(Type resource, TKey resourceIdentifier, IConvertible permissionEnum)
@@ -95,18 +95,12 @@ namespace Pipaslot.Infrastructure.Security
             {
                 return true;
             }
-            return Roles.Any(role => _authorizator.IsAllowed(role, resource, resourceIdentifier, permissionEnum));
+            return _authorizator.IsAllowed(Roles, resource, resourceIdentifier, permissionEnum);
         }
 
         public virtual IEnumerable<TKey> GetAllowedKeys(Type resource, IConvertible permissionEnum)
         {
-            var keys = new List<TKey>();
-            foreach (var role in Roles)
-            {
-                var allowed = _authorizator.GetAllowedKeys(role, resource, permissionEnum);
-                keys.AddRange(allowed);
-            }
-            return keys.Distinct();
+            return _authorizator.GetAllowedKeys(Roles, resource, permissionEnum);
         }
     }
 }

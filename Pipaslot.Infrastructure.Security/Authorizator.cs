@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Pipaslot.Infrastructure.Security.Data;
 
 namespace Pipaslot.Infrastructure.Security
@@ -17,41 +18,46 @@ namespace Pipaslot.Infrastructure.Security
             _namingConvertor = namingConvertor;
         }
 
-        public virtual bool IsAllowed(IUserRole<TKey> role, IConvertible permissionEnum)
+        public virtual bool IsAllowed(IEnumerable<IUserRole<TKey>> roles, IConvertible permissionEnum)
         {
+            var roleIds = roles.Select(r => r.Id).ToList();
             var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
-            return _permissionStore.IsAllowed(role.Id, GLOBAL_RESOURCE_NAME, perm);
+            return _permissionStore.IsAllowed(roleIds, GLOBAL_RESOURCE_NAME, perm);
         }
 
-        public bool IsAllowed(IUserRole<TKey> role, Type resource, IConvertible permissionEnum)
+        public bool IsAllowed(IEnumerable<IUserRole<TKey>> roles, Type resource, IConvertible permissionEnum)
         {
+            var roleIds = roles.Select(r => r.Id).ToList();
             Helpers.CheckIfResourceHasAssignedPermission(resource, permissionEnum);
             var res = _namingConvertor.GetResourceUniqueName(resource);
             var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
-            return _permissionStore.IsAllowed(role.Id, res, perm);
+            return _permissionStore.IsAllowed(roleIds, res, perm);
         }
 
-        public virtual bool IsAllowed<TPermissions>(IUserRole<TKey> role, IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum) where TPermissions : IConvertible
+        public virtual bool IsAllowed<TPermissions>(IEnumerable<IUserRole<TKey>> roles, IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum) where TPermissions : IConvertible
         {
+            var roleIds = roles.Select(r => r.Id).ToList();
             var res = _namingConvertor.GetResourceUniqueName(resourceInstance.GetType());
             var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
-            return _permissionStore.IsAllowed(role.Id, res, resourceInstance.ResourceUniqueIdentifier, perm);
+            return _permissionStore.IsAllowed(roleIds, res, resourceInstance.ResourceUniqueIdentifier, perm);
         }
 
-        public virtual bool IsAllowed(IUserRole<TKey> role, Type resource, TKey resourceIdentifier, IConvertible permissionEnum)
+        public virtual bool IsAllowed(IEnumerable<IUserRole<TKey>> roles, Type resource, TKey resourceIdentifier, IConvertible permissionEnum)
         {
+            var roleIds = roles.Select(r => r.Id).ToList();
             Helpers.CheckIfResourceHasAssignedPermission(resource, permissionEnum);
             var res = _namingConvertor.GetResourceUniqueName(resource);
             var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
-            return _permissionStore.IsAllowed(role.Id, res, resourceIdentifier, perm);
+            return _permissionStore.IsAllowed(roleIds, res, resourceIdentifier, perm);
         }
 
-        public virtual IEnumerable<TKey> GetAllowedKeys(IUserRole<TKey> role, Type resource, IConvertible permissionEnum)
+        public virtual IEnumerable<TKey> GetAllowedKeys(IEnumerable<IUserRole<TKey>> roles, Type resource, IConvertible permissionEnum)
         {
+            var roleIds = roles.Select(r => r.Id).ToList();
             Helpers.CheckIfResourceHasAssignedPermission(resource, permissionEnum);
             var res = _namingConvertor.GetResourceUniqueName(resource);
             var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
-            return _permissionStore.GetAllowedResourceIds(role.Id, res, perm);
+            return _permissionStore.GetAllowedResourceIds(roleIds, res, perm);
         }
     }
 }

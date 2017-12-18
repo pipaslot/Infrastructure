@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 using Pipaslot.Infrastructure.Security.Data;
 
 namespace Pipaslot.Infrastructure.SecurityTests.Mockups
@@ -17,18 +14,33 @@ namespace Pipaslot.Infrastructure.SecurityTests.Mockups
             return IsAllowed(roleId, resource, default(int), permission);
         }
 
+        public bool IsAllowed(IEnumerable<int> roleIds, string resource, string permission)
+        {
+            return IsAllowed(roleIds, resource, default(int), permission);
+        }
+
         public bool IsAllowed(int roleId, string resource, int resourceId, string permission)
         {
-            return _data.Any(d => d.Role == roleId &&
-                                           d.Resource == resource &&
-                                           d.ResourceId == resourceId &&
-                                           d.Permission == permission &&
-                                           d.IsAllowed);
+            return IsAllowed(new[] { roleId }, resource, resourceId, permission);
+        }
+
+        public bool IsAllowed(IEnumerable<int> roleIds, string resource, int resourceId, string permission)
+        {
+            return _data.Any(d => roleIds.Contains(d.Role) &&
+                                  d.Resource == resource &&
+                                  d.ResourceId == resourceId &&
+                                  d.Permission == permission &&
+                                  d.IsAllowed);
         }
 
         public IEnumerable<int> GetAllowedResourceIds(int roleId, string resource, string permission)
         {
-            return _data.Where(d => d.Role == roleId &&
+            return GetAllowedResourceIds(new[] { roleId }, resource, permission);
+        }
+
+        public IEnumerable<int> GetAllowedResourceIds(IEnumerable<int> roleIds, string resource, string permission)
+        {
+            return _data.Where(d => roleIds.Contains(d.Role) &&
                                     d.Resource == resource &&
                                     d.Permission == permission &&
                                     d.IsAllowed)

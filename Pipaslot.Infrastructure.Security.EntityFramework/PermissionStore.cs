@@ -21,9 +21,20 @@ namespace Pipaslot.Infrastructure.Security.EntityFramework
             return IsAllowed(roleId, resource, resourceId, permission);
         }
 
+        public bool IsAllowed(IEnumerable<TKey> roleIds, string resource, string permission)
+        {
+            var resourceId = default(TKey);
+            return IsAllowed(roleIds, resource, resourceId, permission);
+        }
+
         public bool IsAllowed(TKey roleId, string resource, TKey resourceId, string permission)
         {
-            return ContextReadOnly.SecurityPrivilege.Any(p => p.Role.Equals(roleId) &&
+            return IsAllowed(new []{ roleId }, resource, resourceId, permission);
+        }
+
+        public bool IsAllowed(IEnumerable<TKey> roleIds, string resource, TKey resourceId, string permission)
+        {
+            return ContextReadOnly.SecurityPrivilege.Any(p => roleIds.Contains(p.Role) &&
                                                               p.Resource == resource &&
                                                               p.ResourceInstance.Equals(resourceId) &&
                                                               p.Permission == permission &&
@@ -32,10 +43,15 @@ namespace Pipaslot.Infrastructure.Security.EntityFramework
 
         public IEnumerable<TKey> GetAllowedResourceIds(TKey roleId, string resource, string permission)
         {
-            return ContextReadOnly.SecurityPrivilege.Where(p => p.Role.Equals(roleId) &&
-                                    p.Resource == resource &&
-                                    p.Permission == permission &&
-                                    p.IsAllowed)
+            return GetAllowedResourceIds(new[] {roleId}, resource, permission);
+        }
+
+        public IEnumerable<TKey> GetAllowedResourceIds(IEnumerable<TKey> roleIds, string resource, string permission)
+        {
+            return ContextReadOnly.SecurityPrivilege.Where(p => roleIds.Contains(p.Role) &&
+                                                                p.Resource == resource &&
+                                                                p.Permission == permission &&
+                                                                p.IsAllowed)
                 .Select(d => d.ResourceInstance)
                 .ToList();
         }

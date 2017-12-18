@@ -30,10 +30,10 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var resource = new FirstResource(resourceId);
 
             //Pre-Condition
-            permissionStore.Setup(p => p.IsAllowed(roleId, ConstantNamingConvertor.RESOURCE, resourceId, ConstantNamingConvertor.PERMISSION));
+            permissionStore.Setup(p => p.IsAllowed(new []{ roleId }, ConstantNamingConvertor.RESOURCE, resourceId, ConstantNamingConvertor.PERMISSION));
 
             //Act
-            auth.IsAllowed(role, resource, permission);
+            auth.IsAllowed(new []{ role }, resource, permission);
 
             //Assertion
             permissionStore.VerifyAll();
@@ -54,11 +54,11 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             //Pre-Condition
             permissionStore
-                .Setup(p => p.IsAllowed(roleId, Authorizator<int>.GLOBAL_RESOURCE_NAME, convertor.GetPermissionUniqueIdentifier(permission)))
+                .Setup(p => p.IsAllowed(new[] { roleId }, Authorizator<int>.GLOBAL_RESOURCE_NAME, convertor.GetPermissionUniqueIdentifier(permission)))
                 .Returns(true);
 
             //Act
-            Assert.IsTrue(auth.IsAllowed(role, permission));
+            Assert.IsTrue(auth.IsAllowed(new[] { role }, permission));
 
             //Assertion
             permissionStore.VerifyAll();
@@ -79,12 +79,12 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             //Pre-Condition
             permissionStore
-                .Setup(p => p.IsAllowed(roleId, convertor.GetResourceUniqueName(typeof(FirstResource)),
+                .Setup(p => p.IsAllowed(new[] { roleId }, convertor.GetResourceUniqueName(typeof(FirstResource)),
                     convertor.GetPermissionUniqueIdentifier(permission)))
                 .Returns(true);
 
             //Act
-            Assert.IsTrue(auth.IsAllowed(role, typeof(FirstResource), permission));
+            Assert.IsTrue(auth.IsAllowed(new[] { role }, typeof(FirstResource), permission));
 
             //Assertion
             permissionStore.VerifyAll();
@@ -100,7 +100,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var auth = new Authorizator<int>(permissionStore.Object, convertorMock.Object);
 
             //Act
-            auth.IsAllowed(new UserRole(1), typeof(FirstResource), SecondPermissions.Edit);
+            auth.IsAllowed(new[] { new UserRole(1) }, typeof(FirstResource), SecondPermissions.Edit);
         }
 
         [TestMethod]
@@ -120,12 +120,12 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             //Pre-Condition
             permissionStore
-                .Setup(p => p.IsAllowed(roleId, convertor.GetResourceUniqueName(resource.GetType()), resourceId,
+                .Setup(p => p.IsAllowed(new[] { roleId }, convertor.GetResourceUniqueName(resource.GetType()), resourceId,
                     convertor.GetPermissionUniqueIdentifier(permission)))
                 .Returns(true);
 
             //Act
-            Assert.IsTrue(auth.IsAllowed(role, resource, permission));
+            Assert.IsTrue(auth.IsAllowed(new[] { role }, resource, permission));
 
             //Assertion
             permissionStore.VerifyAll();
@@ -147,12 +147,12 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             //Pre-Condition
             permissionStore
-                .Setup(p => p.IsAllowed(roleId, convertor.GetResourceUniqueName(typeof(FirstResource)), resourceId,
+                .Setup(p => p.IsAllowed(new[] { roleId }, convertor.GetResourceUniqueName(typeof(FirstResource)), resourceId,
                     convertor.GetPermissionUniqueIdentifier(permission)))
                 .Returns(true);
 
             //Act
-            Assert.IsTrue(auth.IsAllowed(role, typeof(FirstResource), resourceId, permission));
+            Assert.IsTrue(auth.IsAllowed(new[] { role }, typeof(FirstResource), resourceId, permission));
 
             //Assertion
             permissionStore.VerifyAll();
@@ -168,7 +168,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var auth = new Authorizator<int>(permissionStore.Object, convertorMock.Object);
 
             //Act
-            auth.IsAllowed(new UserRole(1), typeof(FirstResource), 1, SecondPermissions.Edit);
+            auth.IsAllowed(new[] { new UserRole(1) }, typeof(FirstResource), 1, SecondPermissions.Edit);
         }
 
         [TestMethod]
@@ -186,12 +186,12 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             //Pre-Condition
             permissionStore
-                .Setup(p => p.GetAllowedResourceIds(roleId, convertor.GetResourceUniqueName(typeof(FirstResource)),
+                .Setup(p => p.GetAllowedResourceIds(new[] { roleId }, convertor.GetResourceUniqueName(typeof(FirstResource)),
                     convertor.GetPermissionUniqueIdentifier(permission)))
                 .Returns(allowed);
 
             //Act
-            var allowedResult = auth.GetAllowedKeys(role, typeof(FirstResource), permission);
+            var allowedResult = auth.GetAllowedKeys(new[] { role }, typeof(FirstResource), permission);
             Assert.AreEqual(allowed, allowedResult);
 
             //Assertion
@@ -208,7 +208,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var auth = new Authorizator<int>(permissionStore.Object, convertorMock.Object);
 
             //Act
-            auth.GetAllowedKeys(new UserRole(1), typeof(FirstResource), SecondPermissions.Edit);
+            auth.GetAllowedKeys(new[] { new UserRole(1) }, typeof(FirstResource), SecondPermissions.Edit);
         }
 
         #region Mockups

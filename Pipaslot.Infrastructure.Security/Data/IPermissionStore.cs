@@ -19,6 +19,15 @@ namespace Pipaslot.Infrastructure.Security.Data
         bool IsAllowed(TKey roleId, string resource, string permission);
 
         /// <summary>
+        /// Check if role has assigned static permission
+        /// </summary>
+        /// <param name="roleIds"></param>
+        /// <param name="resource"></param>
+        /// <param name="permission"></param>
+        /// <returns></returns>
+        bool IsAllowed(IEnumerable<TKey> roleIds, string resource, string permission);
+
+        /// <summary>
         /// Check if role has assigned instance permission
         /// </summary>
         /// <param name="roleId"></param>
@@ -27,7 +36,17 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// <param name="permission"></param>
         /// <returns></returns>
         bool IsAllowed(TKey roleId, string resource, TKey resourceId, string permission);
-        
+
+        /// <summary>
+        /// Check if role has assigned instance permission
+        /// </summary>
+        /// <param name="roleIds"></param>
+        /// <param name="resource"></param>
+        /// <param name="resourceId"></param>
+        /// <param name="permission"></param>
+        /// <returns></returns>
+        bool IsAllowed(IEnumerable<TKey> roleIds, string resource, TKey resourceId, string permission);
+
         /// <summary>
         /// Returns all resource ID for which user has assigner permission
         /// </summary>
@@ -36,6 +55,15 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// <param name="permission"></param>
         /// <returns></returns>
         IEnumerable<TKey> GetAllowedResourceIds(TKey roleId, string resource, string permission);
+
+        /// <summary>
+        /// Returns all resource ID for which user has assigner permission
+        /// </summary>
+        /// <param name="roleIds"></param>
+        /// <param name="resource"></param>
+        /// <param name="permission"></param>
+        /// <returns></returns>
+        IEnumerable<TKey> GetAllowedResourceIds(IEnumerable<TKey> roleIds, string resource, string permission);
 
         /// <summary>
         /// Allow or Deny permission for user and static resource

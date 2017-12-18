@@ -77,10 +77,8 @@ namespace Pipaslot.Infrastructure.SecurityTests
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowed(role1, FirstPermissions.Edit))
-                    .Returns(valueTuple.role1);
-                authorizatorMock.Setup(a => a.IsAllowed(role2, FirstPermissions.Edit))
-                    .Returns(valueTuple.role2);
+                authorizatorMock.Setup(a => a.IsAllowed(new[] { role1, role2 }, FirstPermissions.Edit))
+                    .Returns(valueTuple.role1 | valueTuple.role2);
                 var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }), new DefaultResourceDetailProvider<int>());
 
                 //Act
@@ -104,10 +102,8 @@ namespace Pipaslot.Infrastructure.SecurityTests
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowed(role1, resource, FirstPermissions.Edit))
-                    .Returns(valueTuple.role1);
-                authorizatorMock.Setup(a => a.IsAllowed(role2, resource, FirstPermissions.Edit))
-                    .Returns(valueTuple.role2);
+                authorizatorMock.Setup(a => a.IsAllowed(new[] { role1, role2 }, resource, FirstPermissions.Edit))
+                    .Returns(valueTuple.role1 | valueTuple.role2);
                 var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }), new DefaultResourceDetailProvider<int>());
 
                 //Act
@@ -131,10 +127,8 @@ namespace Pipaslot.Infrastructure.SecurityTests
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowed(role1, resource, FirstPermissions.Edit))
-                    .Returns(valueTuple.role1);
-                authorizatorMock.Setup(a => a.IsAllowed(role2, resource, FirstPermissions.Edit))
-                    .Returns(valueTuple.role2);
+                authorizatorMock.Setup(a => a.IsAllowed(new[] { role1, role2 }, resource, FirstPermissions.Edit))
+                    .Returns(valueTuple.role1 | valueTuple.role2);
                 var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }), new DefaultResourceDetailProvider<int>());
 
                 //Act
@@ -159,10 +153,8 @@ namespace Pipaslot.Infrastructure.SecurityTests
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowed(role1, resource, resourceId, FirstPermissions.Edit))
-                    .Returns(valueTuple.role1);
-                authorizatorMock.Setup(a => a.IsAllowed(role2, resource, resourceId, FirstPermissions.Edit))
-                    .Returns(valueTuple.role2);
+                authorizatorMock.Setup(a => a.IsAllowed(new[] { role1, role2 }, resource, resourceId, FirstPermissions.Edit))
+                    .Returns(valueTuple.role1 | valueTuple.role2);
                 var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }), new DefaultResourceDetailProvider<int>());
 
                 //Act
@@ -193,10 +185,8 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             var resource = typeof(FirstResource);
             var authorizatorMock = new Mock<IAuthorizator<int>>();
-            authorizatorMock.Setup(a => a.GetAllowedKeys(role1, resource, FirstPermissions.Edit))
-                .Returns(new List<int> { 1, 2 });
-            authorizatorMock.Setup(a => a.GetAllowedKeys(role2, resource, FirstPermissions.Edit))
-                .Returns(new List<int> { 2, 3 });
+            authorizatorMock.Setup(a => a.GetAllowedKeys(new[] { role1, role2 }, resource, FirstPermissions.Edit))
+                .Returns(new List<int> { 1, 2, 3 });
             var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }), new DefaultResourceDetailProvider<int>());
 
             //Act
@@ -221,9 +211,9 @@ namespace Pipaslot.Infrastructure.SecurityTests
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowed(role1, FirstPermissions.Edit))
+                authorizatorMock.Setup(a => a.IsAllowed(new[] { role1 }, FirstPermissions.Edit))
                     .Returns(valueTuple.role1);
-                authorizatorMock.Setup(a => a.IsAllowed(role2, FirstPermissions.Edit))
+                authorizatorMock.Setup(a => a.IsAllowed(new[] { role2 }, FirstPermissions.Edit))
                     .Returns(valueTuple.role2);
                 var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }), new DefaultResourceDetailProvider<int>());
 
@@ -261,9 +251,9 @@ namespace Pipaslot.Infrastructure.SecurityTests
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowed(role1, resource, FirstPermissions.Edit))
+                authorizatorMock.Setup(a => a.IsAllowed(new[] { role1 }, resource, FirstPermissions.Edit))
                     .Returns(valueTuple.role1);
-                authorizatorMock.Setup(a => a.IsAllowed(role2, resource, FirstPermissions.Edit))
+                authorizatorMock.Setup(a => a.IsAllowed(new[] { role2 }, resource, FirstPermissions.Edit))
                     .Returns(valueTuple.role2);
                 var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }), new DefaultResourceDetailProvider<int>());
 
@@ -302,10 +292,8 @@ namespace Pipaslot.Infrastructure.SecurityTests
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowed(role1, resource, FirstPermissions.Edit))
-                    .Returns(valueTuple.role1);
-                authorizatorMock.Setup(a => a.IsAllowed(role2, resource, FirstPermissions.Edit))
-                    .Returns(valueTuple.role2);
+                authorizatorMock.Setup(a => a.IsAllowed(new[] { role1 ,role2}, resource, FirstPermissions.Edit))
+                    .Returns(valueTuple.role1 | valueTuple.role2);
                 var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }), new DefaultResourceDetailProvider<int>());
 
                 //Act
@@ -344,10 +332,8 @@ namespace Pipaslot.Infrastructure.SecurityTests
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowed(role1, resource, resourceId, FirstPermissions.Edit))
-                    .Returns(valueTuple.role1);
-                authorizatorMock.Setup(a => a.IsAllowed(role2, resource, resourceId, FirstPermissions.Edit))
-                    .Returns(valueTuple.role2);
+                authorizatorMock.Setup(a => a.IsAllowed(new[] { role1,role2 }, resource, resourceId, FirstPermissions.Edit))
+                    .Returns(valueTuple.role1 | valueTuple.role2);
                 var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }), new DefaultResourceDetailProvider<int>());
 
                 //Act
