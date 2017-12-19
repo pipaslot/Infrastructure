@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Pipaslot.Infrastructure.Security.Data;
 
 namespace Pipaslot.Infrastructure.Security
@@ -22,78 +24,78 @@ namespace Pipaslot.Infrastructure.Security
             _namingConvertor = namingConvertor;
         }
 
-        public virtual bool IsAllowed(IEnumerable<IUserRole<TKey>> roles, IConvertible permissionEnum)
+        public virtual async Task<bool> IsAllowedAsync(IEnumerable<IUserRole<TKey>> roles, IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
         {
             var roleIds = roles.Select(r => r.Id).ToList();
             var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
-            return LoadCached(
-                () => _permissionStore.IsAllowed(roleIds, GLOBAL_RESOURCE_NAME, perm),
+            return await LoadCachedAsync(
+                () => _permissionStore.IsAllowedAsync(roleIds, GLOBAL_RESOURCE_NAME, perm, token),
                 roleIds,
                 perm,
                 GLOBAL_RESOURCE_NAME);
         }
 
-        public virtual bool IsAllowed(IEnumerable<IUserRole<TKey>> roles, Type resource, IConvertible permissionEnum)
+        public virtual async Task<bool> IsAllowedAsync(IEnumerable<IUserRole<TKey>> roles, Type resource, IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
         {
             var roleIds = roles.Select(r => r.Id).ToList();
             Helpers.CheckIfResourceHasAssignedPermission(resource, permissionEnum);
             var res = _namingConvertor.GetResourceUniqueName(resource);
             var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
-            return LoadCached(
-                () => _permissionStore.IsAllowed(roleIds, res, perm),
+            return await LoadCachedAsync(
+                () => _permissionStore.IsAllowedAsync(roleIds, res, perm, token),
                 roleIds,
                 perm,
                 res);
         }
 
-        public virtual bool IsAllowed<TPermissions>(IEnumerable<IUserRole<TKey>> roles, IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum) where TPermissions : IConvertible
+        public virtual async Task<bool> IsAllowedAsync<TPermissions>(IEnumerable<IUserRole<TKey>> roles, IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum, CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible
         {
             var roleIds = roles.Select(r => r.Id).ToList();
             var res = _namingConvertor.GetResourceUniqueName(resourceInstance.GetType());
             var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
-            return LoadCached(
-                () => _permissionStore.IsAllowed(roleIds, res, resourceInstance.ResourceUniqueIdentifier, perm),
+            return await LoadCachedAsync(
+                () => _permissionStore.IsAllowedAsync(roleIds, res, resourceInstance.ResourceUniqueIdentifier, perm, token),
                 roleIds,
                 perm,
                 res,
                 resourceInstance.ResourceUniqueIdentifier.ToString());
         }
 
-        public virtual bool IsAllowed(IEnumerable<IUserRole<TKey>> roles, Type resource, TKey resourceIdentifier, IConvertible permissionEnum)
+        public virtual async Task<bool> IsAllowedAsync(IEnumerable<IUserRole<TKey>> roles, Type resource, TKey resourceIdentifier, IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
         {
             var roleIds = roles.Select(r => r.Id).ToList();
             Helpers.CheckIfResourceHasAssignedPermission(resource, permissionEnum);
             var res = _namingConvertor.GetResourceUniqueName(resource);
             var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
-            return LoadCached(
-                () => _permissionStore.IsAllowed(roleIds, res, resourceIdentifier, perm),
+            return await LoadCachedAsync(
+                () => _permissionStore.IsAllowedAsync(roleIds, res, resourceIdentifier, perm, token),
                 roleIds,
                 perm,
                 res,
                 resourceIdentifier.ToString());
         }
 
-        public virtual IEnumerable<TKey> GetAllowedKeys(IEnumerable<IUserRole<TKey>> roles, Type resource, IConvertible permissionEnum)
+        public virtual Task<IEnumerable<TKey>> GetAllowedKeysAsync(IEnumerable<IUserRole<TKey>> roles, Type resource, IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
         {
             var roleIds = roles.Select(r => r.Id).ToList();
             Helpers.CheckIfResourceHasAssignedPermission(resource, permissionEnum);
             var res = _namingConvertor.GetResourceUniqueName(resource);
             var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
-            return _permissionStore.GetAllowedResourceIds(roleIds, res, perm);
+            return _permissionStore.GetAllowedResourceIdsAsync(roleIds, res, perm, token);
         }
 
         #region Local Array Cache implementation
 
         private readonly Dictionary<string, bool> _privilegeCache = new Dictionary<string, bool>();
 
-        private bool LoadCached(Func<bool> callback, IEnumerable<TKey> roleIds, string permission, string resource, string resourceId = "")
+        private async Task<bool> LoadCachedAsync(Func<Task<bool>> callback, IEnumerable<TKey> roleIds, string permission, string resource, string resourceId = "")
         {
             var key = string.Join("###", roleIds) + "#|#|#" + resource + "#|#|#" + permission + "#|#|#" + resourceId;
             if (_privilegeCache.ContainsKey(key))
             {
                 return _privilegeCache[key];
             }
-            var result = callback();
+            var result = await callback();
             _privilegeCache.Add(key, result);
             return result;
         }

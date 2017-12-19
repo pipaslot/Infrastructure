@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Pipaslot.Infrastructure.Security
 {
@@ -11,14 +13,16 @@ namespace Pipaslot.Infrastructure.Security
     /// <typeparam name="TKey"></typeparam>
     public class DefaultResourceDetailProvider<TKey> : IResourceDetailProvider<TKey>
     {
-        public IEnumerable<ResourceDetail<TKey>> GetResourceDetails(Type resource, List<TKey> identifiers)
+        public Task<IEnumerable<ResourceDetail<TKey>>> GetResourceDetailsAsync(Type resource, List<TKey> identifiers, CancellationToken token = default(CancellationToken))
         {
-            return identifiers.Select(id => new ResourceDetail<TKey>(id, id.ToString(), string.Empty));
+            var result = identifiers.Select(id => new ResourceDetail<TKey>(id, id.ToString(), string.Empty));
+            return Task.FromResult(result);
         }
 
-        public IEnumerable<ResourceDetail<object>> GetResourceDetails(Type resource, List<object> identifiers)
+        public Task<IEnumerable<ResourceDetail<object>>> GetResourceDetailsAsync(Type resource, List<object> identifiers, CancellationToken token = default(CancellationToken))
         {
-            return identifiers.Select(id => new ResourceDetail<object>(id, id.ToString(), string.Empty));
+            var result = identifiers.Select(id => new ResourceDetail<object>(id, id.ToString(), string.Empty));
+            return Task.FromResult(result);
         }
     }
 }

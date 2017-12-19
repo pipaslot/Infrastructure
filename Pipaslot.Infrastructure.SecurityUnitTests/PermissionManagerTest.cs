@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Pipaslot.Infrastructure.Security;
@@ -44,15 +46,16 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var instanceCount = 3;
             var resourceType = typeof(FirstResource);
             var permissionStore = new Mock<IPermissionStore<int>>();
+            var tokenSource = new CancellationTokenSource();
             permissionStore
-                .Setup(p => p.GetResourceInstanceCount(resourceType.FullName))
-                .Returns(instanceCount);
+                .Setup(p => p.GetResourceInstanceCountAsync(resourceType.FullName,tokenSource.Token))
+                .Returns(Task.FromResult(instanceCount));
             var resourceRegistry = new ResourceRegistry<int>();
             resourceRegistry
                 .Register(resourceType.Assembly);
             var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry, new DefaultResourceDetailProvider<int>(), new DefaultNamingConvertor<int>(resourceRegistry));
 
-            var resources = manager.GetAllResources();
+            var resources = manager.GetAllResourcesAsync(tokenSource.Token).Result;
             var firstResource = resources.First(r => r.UniquedName == resourceType.FullName);
             Assert.IsFalse(string.IsNullOrWhiteSpace(firstResource.Name));
             Assert.IsFalse(string.IsNullOrWhiteSpace(firstResource.Description));
@@ -66,26 +69,24 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var resourceIdList = new List<int> { resourceId };
             var resourceType = typeof(FirstResource);
             var providerResult = new ResourceDetail<int>(resourceId, "NAME", "DESCRIPTION");
+            var tokenSource = new CancellationTokenSource();
 
             var permissionStoreMock = new Mock<IPermissionStore<int>>();
             permissionStoreMock
-                .Setup(p => p.GetAllResourceInstancesIds(resourceType.FullName))
-                .Returns(new List<int> { resourceId });
+                .Setup(p => p.GetAllResourceInstancesIdsAsync(resourceType.FullName, tokenSource.Token))
+                .Returns(Task.FromResult(new List<int> { resourceId }));
 
             var resourceRegistry = new ResourceRegistry<int>();
             resourceRegistry.Register(resourceType.Assembly);
 
             var resourceDetailProviderMock = new Mock<IResourceDetailProvider<int>>();
             resourceDetailProviderMock
-                .Setup(r => r.GetResourceDetails(resourceType, resourceIdList))
-                .Returns(new List<ResourceDetail<int>>
-                {
-                    providerResult
-                });
+                .Setup(r => r.GetResourceDetailsAsync(resourceType, resourceIdList, tokenSource.Token))
+                .Returns(Task.FromResult((new List<ResourceDetail<int>>{providerResult}).AsEnumerable()));
 
             //Act
             var manager = new PermissionManager<int>(permissionStoreMock.Object, resourceRegistry, resourceDetailProviderMock.Object, new DefaultNamingConvertor<int>(resourceRegistry));
-            var resources = manager.GetAllResourceInstances(resourceType.FullName);
+            var resources = manager.GetAllResourceInstancesAsync(resourceType.FullName, tokenSource.Token).Result;
             var firstResource = resources
                 .First(r => r.UniquedName == resourceType.FullName);
 
@@ -112,10 +113,10 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var roleId = 5;
             var resourceType = typeof(FirstResource);
             var resourceName = typeof(FirstResource).FullName;
-
-
+            
             var resourceRegistry = new ResourceRegistry<int>();
             resourceRegistry.Register(resourceType.Assembly);
+            var tokenSource = new CancellationTokenSource();
 
             var namingConvertor = new DefaultNamingConvertor<int>(resourceRegistry);
 
@@ -123,12 +124,12 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             var permissionStoreMock = new Mock<IPermissionStore<int>>();
             permissionStoreMock
-                .Setup(p => p.IsAllowed(roleId, resourceName, namingConvertor.GetPermissionUniqueIdentifier(StaticPermissions.Create)))
-                .Returns(isAllowed);
+                .Setup(p => p.IsAllowedAsync(roleId, resourceName, namingConvertor.GetPermissionUniqueIdentifier(StaticPermissions.Create), tokenSource.Token))
+                .Returns(Task.FromResult(isAllowed));
 
             //Act
             var manager = new PermissionManager<int>(permissionStoreMock.Object, resourceRegistry, resourceDetailProviderMock.Object, new DefaultNamingConvertor<int>(resourceRegistry));
-            var permissions = manager.GetAllPermissions(roleId, resourceName).ToList();
+            var permissions = manager.GetAllPermissionsAsync(roleId, resourceName, tokenSource.Token).Result.ToList();
 
             Assert.AreEqual(3, permissions.Count());
 
@@ -162,6 +163,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             var resourceRegistry = new ResourceRegistry<int>();
             resourceRegistry.Register(resourceType.Assembly);
+            var tokenSource = new CancellationTokenSource();
 
             var namingConvertor = new DefaultNamingConvertor<int>(resourceRegistry);
 
@@ -169,12 +171,12 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             var permissionStoreMock = new Mock<IPermissionStore<int>>();
             permissionStoreMock
-                .Setup(p => p.IsAllowed(roleId, resourceName, resourceId, namingConvertor.GetPermissionUniqueIdentifier(FirstPermissions.Edit)))
-                .Returns(isAllowed);
+                .Setup(p => p.IsAllowedAsync(roleId, resourceName, resourceId, namingConvertor.GetPermissionUniqueIdentifier(FirstPermissions.Edit), tokenSource.Token))
+                .Returns(Task.FromResult(isAllowed));
 
             //Act
             var manager = new PermissionManager<int>(permissionStoreMock.Object, resourceRegistry, resourceDetailProviderMock.Object, new DefaultNamingConvertor<int>(resourceRegistry));
-            var permissions = manager.GetAllPermissions(roleId, resourceName, resourceId).ToList();
+            var permissions = manager.GetAllPermissionsAsync(roleId, resourceName, resourceId, tokenSource.Token).Result.ToList();
 
             Assert.AreEqual(2, permissions.Count());
 

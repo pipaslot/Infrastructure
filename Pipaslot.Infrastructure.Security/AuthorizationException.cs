@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Pipaslot.Infrastructure.Security
 {
@@ -7,22 +8,12 @@ namespace Pipaslot.Infrastructure.Security
     {
         public IConvertible Permission { get; }
         public string PermissionName => Helpers.GetPermissonReadableName(Permission);
-        private readonly Func<ResourceDetail> _resourceDetailGetter;
+        private readonly Func<Task<ResourceDetail>> _resourceDetailGetter;
         public Type Resource { get; }
         public string ResourceName => Helpers.GetResourceReadableName(Resource);
         private string _resourceInstnanceName;
 
-        public string ResourceInstanceName
-        {
-            get
-            {
-                if (_resourceInstnanceName == null)
-                {
-                    _resourceInstnanceName = _resourceDetailGetter()?.Name ?? "";
-                }
-                return _resourceInstnanceName;
-            }
-        }
+        public string ResourceInstanceName => _resourceInstnanceName ?? (_resourceInstnanceName = _resourceDetailGetter().Result?.Name ?? "");
 
         public AuthorizationException(IConvertible permissionEnum)
         {
@@ -35,7 +26,7 @@ namespace Pipaslot.Infrastructure.Security
             Permission = permissionEnum;
         }
 
-        public AuthorizationException(Type resource, IConvertible permissionEnum, Func<ResourceDetail> resourceDetailGetter)
+        public AuthorizationException(Type resource, IConvertible permissionEnum, Func<Task<ResourceDetail>> resourceDetailGetter)
         {
             _resourceDetailGetter = resourceDetailGetter;
             Resource = resource;

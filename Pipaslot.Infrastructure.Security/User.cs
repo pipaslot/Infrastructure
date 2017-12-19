@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Pipaslot.Infrastructure.Security.Identities;
 
 namespace Pipaslot.Infrastructure.Security
@@ -29,78 +31,93 @@ namespace Pipaslot.Infrastructure.Security
             _identity = identity;
             _resourceDetailProvider = resourceDetailProvider;
         }
-
-        public void CheckPermission(IConvertible permissionEnum)
+        
+        public virtual async Task CheckPermissionAsync(IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
         {
-            if (!IsAllowed(permissionEnum))
+            if (!await IsAllowedAsync(permissionEnum, token))
             {
                 throw new AuthorizationException(permissionEnum);
             }
         }
-
-        public void CheckPermission(Type resource, IConvertible permissionEnum)
+        
+        public virtual async Task CheckPermissionAsync(Type resource, IConvertible permissionEnum,
+            CancellationToken token = default(CancellationToken))
         {
-            if (!IsAllowed(resource, permissionEnum))
+            if (!await IsAllowedAsync(resource, permissionEnum, token))
             {
                 throw new AuthorizationException(resource, permissionEnum);
             }
         }
-
-        public void CheckPermission<TPermissions>(IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum) where TPermissions : IConvertible
+        
+        public virtual async Task CheckPermissionAsync<TPermissions>(IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum,
+            CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible
         {
-            if (!IsAllowed(resourceInstance, permissionEnum))
+            if (!await IsAllowedAsync(resourceInstance, permissionEnum, token))
             {
-                throw new AuthorizationException(resourceInstance.GetType(), permissionEnum, () => _resourceDetailProvider.GetResourceDetails(resourceInstance.GetType(), new List<object>() { resourceInstance.ResourceUniqueIdentifier }).FirstOrDefault());
+                throw new AuthorizationException(resourceInstance.GetType(), permissionEnum, async() =>
+                {
+                    var details = await _resourceDetailProvider.GetResourceDetailsAsync(resourceInstance.GetType(), new List<object>() { resourceInstance.ResourceUniqueIdentifier },token);
+                    return details.FirstOrDefault();
+                });
             }
         }
 
-        public void CheckPermission(Type resource, TKey resourceIdentifier, IConvertible permissionEnum)
+        public virtual async Task CheckPermissionAsync(Type resource, TKey resourceIdentifier, IConvertible permissionEnum,
+            CancellationToken token = default(CancellationToken))
         {
-            if (!IsAllowed(resource, resourceIdentifier, permissionEnum))
+            if (!await IsAllowedAsync(resource, resourceIdentifier, permissionEnum, token))
             {
-                throw new AuthorizationException(resource, permissionEnum, () => _resourceDetailProvider.GetResourceDetails(resource, new List<object>() { resourceIdentifier }).FirstOrDefault());
+                throw new AuthorizationException(resource, permissionEnum, async () =>
+                {
+                    var details = await _resourceDetailProvider.GetResourceDetailsAsync(resource,
+                        new List<object>() {resourceIdentifier}, token);
+                    return details.FirstOrDefault();
+                });
             }
         }
 
-        public virtual bool IsAllowed(IConvertible permissionEnum)
+        public virtual async Task<bool> IsAllowedAsync(IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
         {
             if (_identity is AdminIdentity<TKey>)
             {
                 return true;
             }
-            return _authorizator.IsAllowed(Roles, permissionEnum);
+            return await _authorizator.IsAllowedAsync(Roles, permissionEnum, token);
         }
 
-        public bool IsAllowed(Type resource, IConvertible permissionEnum)
+        public virtual async Task<bool> IsAllowedAsync(Type resource, IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
         {
             if (_identity is AdminIdentity<TKey>)
             {
                 return true;
             }
-            return _authorizator.IsAllowed(Roles, resource, permissionEnum);
+            return await _authorizator.IsAllowedAsync(Roles, resource, permissionEnum, token);
         }
 
-        public virtual bool IsAllowed<TPermissions>(IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum) where TPermissions : IConvertible
+        public virtual async Task<bool> IsAllowedAsync<TPermissions>(IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum,
+            CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible
         {
             if (_identity is AdminIdentity<TKey>)
             {
                 return true;
             }
-            return _authorizator.IsAllowed(Roles, resourceInstance, permissionEnum);
+            return await _authorizator.IsAllowedAsync(Roles, resourceInstance, permissionEnum, token);
         }
-
-        public virtual bool IsAllowed(Type resource, TKey resourceIdentifier, IConvertible permissionEnum)
+        
+        public virtual async Task<bool> IsAllowedAsync(Type resource, TKey resourceIdentifier, IConvertible permissionEnum,
+            CancellationToken token = default(CancellationToken))
         {
             if (_identity is AdminIdentity<TKey>)
             {
                 return true;
             }
-            return _authorizator.IsAllowed(Roles, resource, resourceIdentifier, permissionEnum);
+            return await _authorizator.IsAllowedAsync(Roles, resource, resourceIdentifier, permissionEnum, token);
         }
 
-        public virtual IEnumerable<TKey> GetAllowedKeys(Type resource, IConvertible permissionEnum)
+        public virtual Task<IEnumerable<TKey>> GetAllowedKeysAsync(Type resource, IConvertible permissionEnum,
+            CancellationToken token = default(CancellationToken))
         {
-            return _authorizator.GetAllowedKeys(Roles, resource, permissionEnum);
+            return _authorizator.GetAllowedKeysAsync(Roles, resource, permissionEnum, token);
         }
     }
 }

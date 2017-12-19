@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Pipaslot.Infrastructure.Security;
@@ -21,11 +23,11 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             Assert.AreEqual(0, user.Id);
             Assert.IsFalse(user.IsAuthenticated);
-            Assert.IsFalse(user.IsAllowed(FirstPermissions.Edit));
-            Assert.IsFalse(user.IsAllowed(new FirstResource(1), FirstPermissions.Edit));
-            Assert.IsFalse(user.IsAllowed(typeof(FirstResource), 1, FirstPermissions.Edit));
+            Assert.IsFalse(user.IsAllowedAsync(FirstPermissions.Edit).Result);
+            Assert.IsFalse(user.IsAllowedAsync(new FirstResource(1), FirstPermissions.Edit).Result);
+            Assert.IsFalse(user.IsAllowedAsync(typeof(FirstResource), 1, FirstPermissions.Edit).Result);
             //Does not have any permissions for resourceInstance
-            Assert.AreEqual(0, user.GetAllowedKeys(typeof(FirstResource), FirstPermissions.Edit).Count());
+            Assert.AreEqual(0, user.GetAllowedKeysAsync(typeof(FirstResource), FirstPermissions.Edit).Result.Count());
         }
 
         [TestMethod]
@@ -36,11 +38,11 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             Assert.AreEqual(100, user.Id);
             Assert.IsTrue(user.IsAuthenticated);
-            Assert.IsFalse(user.IsAllowed(FirstPermissions.Edit));
-            Assert.IsFalse(user.IsAllowed(new FirstResource(1), FirstPermissions.Edit));
-            Assert.IsFalse(user.IsAllowed(typeof(FirstResource), 1, FirstPermissions.Edit));
+            Assert.IsFalse(user.IsAllowedAsync(FirstPermissions.Edit).Result);
+            Assert.IsFalse(user.IsAllowedAsync(new FirstResource(1), FirstPermissions.Edit).Result);
+            Assert.IsFalse(user.IsAllowedAsync(typeof(FirstResource), 1, FirstPermissions.Edit).Result);
             //Does not have any permissions for resourceInstance
-            Assert.AreEqual(0, user.GetAllowedKeys(typeof(FirstResource), FirstPermissions.Edit).Count());
+            Assert.AreEqual(0, user.GetAllowedKeysAsync(typeof(FirstResource), FirstPermissions.Edit).Result.Count());
         }
 
         [TestMethod]
@@ -51,11 +53,11 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             Assert.AreEqual("100", user.Id);
             Assert.IsTrue(user.IsAuthenticated);
-            Assert.IsFalse(user.IsAllowed(SecondPermissions.Edit));
-            Assert.IsFalse(user.IsAllowed(new SecondResource("123"), SecondPermissions.Edit));
-            Assert.IsFalse(user.IsAllowed(typeof(SecondResource), "123", SecondPermissions.Edit));
+            Assert.IsFalse(user.IsAllowedAsync(SecondPermissions.Edit).Result);
+            Assert.IsFalse(user.IsAllowedAsync(new SecondResource("123"), SecondPermissions.Edit).Result);
+            Assert.IsFalse(user.IsAllowedAsync(typeof(SecondResource), "123", SecondPermissions.Edit).Result);
             //Does not have any permissions for resourceInstance
-            Assert.AreEqual(0, user.GetAllowedKeys(typeof(SecondResource), SecondPermissions.Edit).Count());
+            Assert.AreEqual(0, user.GetAllowedKeysAsync(typeof(SecondResource), SecondPermissions.Edit).Result.Count());
         }
 
         #endregion
@@ -74,15 +76,16 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 (true, false, true),
                 (true, true, true),
             };
+            var tokenSource = new CancellationTokenSource();
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowed(new[] { role1, role2 }, FirstPermissions.Edit))
-                    .Returns(valueTuple.role1 | valueTuple.role2);
+                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role1, role2 }, FirstPermissions.Edit, tokenSource.Token))
+                    .Returns(Task.FromResult(valueTuple.role1 | valueTuple.role2));
                 var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }), new DefaultResourceDetailProvider<int>());
 
                 //Act
-                Assert.AreEqual(valueTuple.expected, user.IsAllowed(FirstPermissions.Edit));
+                Assert.AreEqual(valueTuple.expected, user.IsAllowedAsync(FirstPermissions.Edit, tokenSource.Token).Result);
             }
         }
 
@@ -99,15 +102,16 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 (true, true, true),
             };
             var resource = typeof(FirstResource);
+            var tokenSource = new CancellationTokenSource();
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowed(new[] { role1, role2 }, resource, FirstPermissions.Edit))
-                    .Returns(valueTuple.role1 | valueTuple.role2);
+                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role1, role2 }, resource, FirstPermissions.Edit, tokenSource.Token))
+                    .Returns(Task.FromResult(valueTuple.role1 | valueTuple.role2));
                 var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }), new DefaultResourceDetailProvider<int>());
 
                 //Act
-                Assert.AreEqual(valueTuple.expected, user.IsAllowed(resource, FirstPermissions.Edit));
+                Assert.AreEqual(valueTuple.expected, user.IsAllowedAsync(resource, FirstPermissions.Edit, tokenSource.Token).Result);
             }
         }
 
@@ -124,15 +128,16 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 (true, true, true),
             };
             var resource = new FirstResource(1);
+            var tokenSource = new CancellationTokenSource();
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowed(new[] { role1, role2 }, resource, FirstPermissions.Edit))
-                    .Returns(valueTuple.role1 | valueTuple.role2);
+                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role1, role2 }, resource, FirstPermissions.Edit, tokenSource.Token))
+                    .Returns(Task.FromResult(valueTuple.role1 | valueTuple.role2));
                 var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }), new DefaultResourceDetailProvider<int>());
 
                 //Act
-                Assert.AreEqual(valueTuple.expected, user.IsAllowed(resource, FirstPermissions.Edit));
+                Assert.AreEqual(valueTuple.expected, user.IsAllowedAsync(resource, FirstPermissions.Edit, tokenSource.Token).Result);
             }
         }
 
@@ -150,15 +155,16 @@ namespace Pipaslot.Infrastructure.SecurityTests
             };
             var resource = typeof(FirstResource);
             var resourceId = 1;
+            var tokenSource = new CancellationTokenSource();
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowed(new[] { role1, role2 }, resource, resourceId, FirstPermissions.Edit))
-                    .Returns(valueTuple.role1 | valueTuple.role2);
+                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role1, role2 }, resource, resourceId, FirstPermissions.Edit, tokenSource.Token))
+                    .Returns(Task.FromResult(valueTuple.role1 | valueTuple.role2));
                 var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }), new DefaultResourceDetailProvider<int>());
 
                 //Act
-                Assert.AreEqual(valueTuple.expected, user.IsAllowed(resource, resourceId, FirstPermissions.Edit));
+                Assert.AreEqual(valueTuple.expected, user.IsAllowedAsync(resource, resourceId, FirstPermissions.Edit, tokenSource.Token).Result);
             }
         }
 
@@ -169,10 +175,10 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var user = new User<int>(authorizatorMock.Object, new AdminIdentity<int>(1), new DefaultResourceDetailProvider<int>());
 
             //Act
-            Assert.IsTrue(user.IsAllowed(FirstPermissions.Edit));
-            Assert.IsTrue(user.IsAllowed(typeof(FirstResource), FirstPermissions.Edit));
-            Assert.IsTrue(user.IsAllowed(typeof(FirstResource), 1, FirstPermissions.Edit));
-            Assert.IsTrue(user.IsAllowed(new FirstResource(1), FirstPermissions.Edit));
+            Assert.IsTrue(user.IsAllowedAsync(FirstPermissions.Edit).Result);
+            Assert.IsTrue(user.IsAllowedAsync(typeof(FirstResource), FirstPermissions.Edit).Result);
+            Assert.IsTrue(user.IsAllowedAsync(typeof(FirstResource), 1, FirstPermissions.Edit).Result);
+            Assert.IsTrue(user.IsAllowedAsync(new FirstResource(1), FirstPermissions.Edit).Result);
         }
 
         #endregion
@@ -185,19 +191,20 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             var resource = typeof(FirstResource);
             var authorizatorMock = new Mock<IAuthorizator<int>>();
-            authorizatorMock.Setup(a => a.GetAllowedKeys(new[] { role1, role2 }, resource, FirstPermissions.Edit))
-                .Returns(new List<int> { 1, 2, 3 });
+            var tokenSource = new CancellationTokenSource();
+            authorizatorMock.Setup(a => a.GetAllowedKeysAsync(new[] { role1, role2 }, resource, FirstPermissions.Edit, tokenSource.Token))
+                .Returns(Task.FromResult((new List<int> { 1, 2, 3 }).AsEnumerable()));
             var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }), new DefaultResourceDetailProvider<int>());
 
             //Act
-            var result = user.GetAllowedKeys(resource, FirstPermissions.Edit).ToList();
+            var result = user.GetAllowedKeysAsync(resource, FirstPermissions.Edit, tokenSource.Token).Result.ToList();
             CollectionAssert.AreEqual(new List<int> { 1, 2, 3 }, result);
 
         }
 
         #region CheckPermission
 
-        public void CheckPermission_WithPermissionOnly_AtLeastOneRoleMustHavePermission()
+        public async Task CheckPermission_WithPermissionOnly_AtLeastOneRoleMustHavePermission()
         {
             var role1 = new UserRole(1);
             var role2 = new UserRole(2);
@@ -208,27 +215,28 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 (true, false, true),
                 (true, true, true),
             };
+            var tokenSource = new CancellationTokenSource();
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowed(new[] { role1 }, FirstPermissions.Edit))
-                    .Returns(valueTuple.role1);
-                authorizatorMock.Setup(a => a.IsAllowed(new[] { role2 }, FirstPermissions.Edit))
-                    .Returns(valueTuple.role2);
+                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role1 }, FirstPermissions.Edit, tokenSource.Token))
+                    .Returns(Task.FromResult(valueTuple.role1));
+                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role2 }, FirstPermissions.Edit, tokenSource.Token))
+                    .Returns(Task.FromResult(valueTuple.role2));
                 var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }), new DefaultResourceDetailProvider<int>());
 
                 //Act
                 if (valueTuple.expected)
                 {
                     //Shouldn't throw an exception
-                    user.CheckPermission(FirstPermissions.Edit);
+                    await user.CheckPermissionAsync(FirstPermissions.Edit, tokenSource.Token);
                 }
                 else
                 {
                     //Should thrown an exception
                     try
                     {
-                        user.CheckPermission(FirstPermissions.Edit);
+                        await user.CheckPermissionAsync(FirstPermissions.Edit, tokenSource.Token);
                         Assert.Fail();
                     }
                     catch (AuthorizationException) { }
@@ -236,7 +244,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             }
         }
 
-        public void CheckPermission_WithStaticResourceType_AtLeastOneRoleMustHavePermission()
+        public async Task CheckPermission_WithStaticResourceType_AtLeastOneRoleMustHavePermission()
         {
             var role1 = new UserRole(1);
             var role2 = new UserRole(2);
@@ -248,27 +256,28 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 (true, true, true),
             };
             var resource = typeof(FirstResource);
+            var tokenSource = new CancellationTokenSource();
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowed(new[] { role1 }, resource, FirstPermissions.Edit))
-                    .Returns(valueTuple.role1);
-                authorizatorMock.Setup(a => a.IsAllowed(new[] { role2 }, resource, FirstPermissions.Edit))
-                    .Returns(valueTuple.role2);
+                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role1 }, resource, FirstPermissions.Edit, tokenSource.Token))
+                    .Returns(Task.FromResult(valueTuple.role1));
+                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role2 }, resource, FirstPermissions.Edit, tokenSource.Token))
+                    .Returns(Task.FromResult(valueTuple.role2));
                 var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }), new DefaultResourceDetailProvider<int>());
 
                 //Act
                 if (valueTuple.expected)
                 {
                     //Shouldn't throw an exception
-                    user.CheckPermission(resource, FirstPermissions.Edit);
+                    await user.CheckPermissionAsync(resource, FirstPermissions.Edit, tokenSource.Token);
                 }
                 else
                 {
                     //Should thrown an exception
                     try
                     {
-                        user.CheckPermission(resource, FirstPermissions.Edit);
+                        await user.CheckPermissionAsync(resource, FirstPermissions.Edit, tokenSource.Token);
                         Assert.Fail();
                     }
                     catch (AuthorizationException) { }
@@ -277,7 +286,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
         }
 
         [TestMethod]
-        public void CheckPermission_WithResource_AtLeastOneRoleMustHavePermission()
+        public async Task CheckPermission_WithResource_AtLeastOneRoleMustHavePermission()
         {
             var role1 = new UserRole(1);
             var role2 = new UserRole(2);
@@ -289,25 +298,26 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 (true, true, true),
             };
             var resource = new FirstResource(1);
+            var tokenSource = new CancellationTokenSource();
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowed(new[] { role1 ,role2}, resource, FirstPermissions.Edit))
-                    .Returns(valueTuple.role1 | valueTuple.role2);
+                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role1 ,role2}, resource, FirstPermissions.Edit, tokenSource.Token))
+                    .Returns(Task.FromResult(valueTuple.role1 | valueTuple.role2));
                 var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }), new DefaultResourceDetailProvider<int>());
 
                 //Act
                 if (valueTuple.expected)
                 {
                     //Shouldn't throw an exception
-                    user.CheckPermission(resource, FirstPermissions.Edit);
+                    await user.CheckPermissionAsync(resource, FirstPermissions.Edit, tokenSource.Token);
                 }
                 else
                 {
                     //Should thrown an exception
                     try
                     {
-                        user.CheckPermission(resource, FirstPermissions.Edit);
+                        await user.CheckPermissionAsync(resource, FirstPermissions.Edit, tokenSource.Token);
                         Assert.Fail();
                     }
                     catch (AuthorizationException) { }
@@ -316,7 +326,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
         }
 
         [TestMethod]
-        public void CheckPermission_WithResourceType_AtLeastOneRoleMustHavePermission()
+        public async Task CheckPermission_WithResourceType_AtLeastOneRoleMustHavePermission()
         {
             var role1 = new UserRole(1);
             var role2 = new UserRole(2);
@@ -329,25 +339,26 @@ namespace Pipaslot.Infrastructure.SecurityTests
             };
             var resource = typeof(FirstResource);
             var resourceId = 1;
+            var tokenSource = new CancellationTokenSource();
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowed(new[] { role1,role2 }, resource, resourceId, FirstPermissions.Edit))
-                    .Returns(valueTuple.role1 | valueTuple.role2);
+                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role1,role2 }, resource, resourceId, FirstPermissions.Edit, tokenSource.Token))
+                    .Returns(Task.FromResult(valueTuple.role1 | valueTuple.role2));
                 var user = new User<int>(authorizatorMock.Object, new GuestIdentity<int>(1, new[] { role1, role2 }), new DefaultResourceDetailProvider<int>());
 
                 //Act
                 if (valueTuple.expected)
                 {
                     //Shouldn't throw an exception
-                    user.CheckPermission(resource, resourceId, FirstPermissions.Edit);
+                    await user.CheckPermissionAsync(resource, resourceId, FirstPermissions.Edit, tokenSource.Token);
                 }
                 else
                 {
                     //Should thrown an exception
                     try
                     {
-                        user.CheckPermission(resource, resourceId, FirstPermissions.Edit);
+                        await user.CheckPermissionAsync(resource, resourceId, FirstPermissions.Edit, tokenSource.Token);
                         Assert.Fail();
                     }
                     catch (AuthorizationException){}

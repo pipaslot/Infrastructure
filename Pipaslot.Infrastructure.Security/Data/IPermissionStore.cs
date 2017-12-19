@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Pipaslot.Infrastructure.Security.Data
 {
@@ -15,8 +17,10 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// <param name="roleId"></param>
         /// <param name="resource"></param>
         /// <param name="permission"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        bool IsAllowed(TKey roleId, string resource, string permission);
+        Task<bool> IsAllowedAsync(TKey roleId, string resource, string permission, CancellationToken token = default(CancellationToken));
+        
 
         /// <summary>
         /// Check if role has assigned static permission
@@ -24,8 +28,9 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// <param name="roleIds"></param>
         /// <param name="resource"></param>
         /// <param name="permission"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        bool IsAllowed(IEnumerable<TKey> roleIds, string resource, string permission);
+        Task<bool> IsAllowedAsync(IEnumerable<TKey> roleIds, string resource, string permission,CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Check if role has assigned instance permission
@@ -34,18 +39,20 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// <param name="resource"></param>
         /// <param name="resourceId"></param>
         /// <param name="permission"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        bool IsAllowed(TKey roleId, string resource, TKey resourceId, string permission);
+        Task<bool> IsAllowedAsync(TKey roleId, string resource, TKey resourceId, string permission, CancellationToken token = default(CancellationToken));
 
         /// <summary>
-        /// Check if role has assigned instance permission
+        /// Check if role has assigned static permission
         /// </summary>
         /// <param name="roleIds"></param>
         /// <param name="resource"></param>
         /// <param name="resourceId"></param>
         /// <param name="permission"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        bool IsAllowed(IEnumerable<TKey> roleIds, string resource, TKey resourceId, string permission);
+        Task<bool> IsAllowedAsync(IEnumerable<TKey> roleIds, string resource, TKey resourceId, string permission, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Returns all resource ID for which user has assigner permission
@@ -53,8 +60,9 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// <param name="roleId"></param>
         /// <param name="resource"></param>
         /// <param name="permission"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        IEnumerable<TKey> GetAllowedResourceIds(TKey roleId, string resource, string permission);
+        Task<IEnumerable<TKey>> GetAllowedResourceIdsAsync(TKey roleId, string resource, string permission, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Returns all resource ID for which user has assigner permission
@@ -62,8 +70,9 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// <param name="roleIds"></param>
         /// <param name="resource"></param>
         /// <param name="permission"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        IEnumerable<TKey> GetAllowedResourceIds(IEnumerable<TKey> roleIds, string resource, string permission);
+        Task<IEnumerable<TKey>> GetAllowedResourceIdsAsync(IEnumerable<TKey> roleIds, string resource, string permission, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Allow or Deny permission for user and static resource
@@ -88,14 +97,16 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// Count all resource instances, but ignores default key value
         /// </summary>
         /// <param name="resourceName"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        int GetResourceInstanceCount(string resourceName);
+        Task<int> GetResourceInstanceCountAsync(string resourceName, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Returns all stored Instance Ids for resource
         /// </summary>
         /// <param name="resource"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        List<TKey> GetAllResourceInstancesIds(string resource);
+        Task<List<TKey>> GetAllResourceInstancesIdsAsync(string resource, CancellationToken token = default(CancellationToken));
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Pipaslot.Infrastructure.Data;
 using Pipaslot.Infrastructure.Data.EntityFramework;
@@ -15,53 +17,53 @@ namespace Pipaslot.Infrastructure.Security.EntityFramework
         {
         }
 
-        public bool IsAllowed(TKey roleId, string resource, string permission)
+        public virtual Task<bool> IsAllowedAsync(TKey roleId, string resource, string permission, CancellationToken token = default(CancellationToken))
         {
             var resourceId = default(TKey);
-            return IsAllowed(roleId, resource, resourceId, permission);
+            return IsAllowedAsync(roleId, resource, resourceId, permission, token);
         }
 
-        public bool IsAllowed(IEnumerable<TKey> roleIds, string resource, string permission)
+        public virtual Task<bool> IsAllowedAsync(IEnumerable<TKey> roleIds, string resource, string permission, CancellationToken token = default(CancellationToken))
         {
             var resourceId = default(TKey);
-            return IsAllowed(roleIds, resource, resourceId, permission);
+            return IsAllowedAsync(roleIds, resource, resourceId, permission, token);
         }
 
-        public bool IsAllowed(TKey roleId, string resource, TKey resourceId, string permission)
+        public virtual Task<bool> IsAllowedAsync(TKey roleId, string resource, TKey resourceId, string permission, CancellationToken token = default(CancellationToken))
         {
-            return IsAllowed(new []{ roleId }, resource, resourceId, permission);
+            return IsAllowedAsync(new[] { roleId }, resource, resourceId, permission, token);
         }
 
-        public bool IsAllowed(IEnumerable<TKey> roleIds, string resource, TKey resourceId, string permission)
+        public virtual async Task<bool> IsAllowedAsync(IEnumerable<TKey> roleIds, string resource, TKey resourceId, string permission, CancellationToken token = default(CancellationToken))
         {
-            return ContextReadOnly.SecurityPrivilege.Any(p => roleIds.Contains(p.Role) &&
+            return await ContextReadOnly.SecurityPrivilege.AnyAsync(p => roleIds.Contains(p.Role) &&
                                                               p.Resource == resource &&
                                                               p.ResourceInstance.Equals(resourceId) &&
                                                               p.Permission == permission &&
-                                                              p.IsAllowed);
+                                                              p.IsAllowed, token);
         }
 
-        public IEnumerable<TKey> GetAllowedResourceIds(TKey roleId, string resource, string permission)
+        public virtual Task<IEnumerable<TKey>> GetAllowedResourceIdsAsync(TKey roleId, string resource, string permission, CancellationToken token = default(CancellationToken))
         {
-            return GetAllowedResourceIds(new[] {roleId}, resource, permission);
+            return GetAllowedResourceIdsAsync(new[] { roleId }, resource, permission, token);
         }
 
-        public IEnumerable<TKey> GetAllowedResourceIds(IEnumerable<TKey> roleIds, string resource, string permission)
+        public virtual async Task<IEnumerable<TKey>> GetAllowedResourceIdsAsync(IEnumerable<TKey> roleIds, string resource, string permission, CancellationToken token = default(CancellationToken))
         {
-            return ContextReadOnly.SecurityPrivilege.Where(p => roleIds.Contains(p.Role) &&
+            return await ContextReadOnly.SecurityPrivilege.Where(p => roleIds.Contains(p.Role) &&
                                                                 p.Resource == resource &&
                                                                 p.Permission == permission &&
                                                                 p.IsAllowed)
                 .Select(d => d.ResourceInstance)
-                .ToList();
+                .ToListAsync(token);
         }
 
-        public void SetPrivilege(TKey roleId, string resource, string permission, bool isAllowed)
+        public virtual void SetPrivilege(TKey roleId, string resource, string permission, bool isAllowed)
         {
             SetPrivilege(roleId, resource, default(TKey), permission, isAllowed);
         }
 
-        public void SetPrivilege(TKey roleId, string resource, TKey resourceId, string permission, bool isAllowed)
+        public virtual void SetPrivilege(TKey roleId, string resource, TKey resourceId, string permission, bool isAllowed)
         {
             var existing = Context.SecurityPrivilege.FirstOrDefault(p => p.Role.Equals(roleId) &&
                                                      p.Resource == resource &&
@@ -82,21 +84,21 @@ namespace Pipaslot.Infrastructure.Security.EntityFramework
             existing.IsAllowed = isAllowed;
         }
 
-        public int GetResourceInstanceCount(string resourceName)
+        public virtual async Task<int> GetResourceInstanceCountAsync(string resourceName, CancellationToken token = default(CancellationToken))
         {
-            return ContextReadOnly.SecurityPrivilege
-                .Count(p => p.Resource == resourceName &&
-                            !p.ResourceInstance.Equals(default(TKey)));
+            return await ContextReadOnly.SecurityPrivilege
+                .CountAsync(p => p.Resource == resourceName &&
+                            !p.ResourceInstance.Equals(default(TKey)), token);
 
         }
 
-        public List<TKey> GetAllResourceInstancesIds(string resource)
+        public virtual async Task<List<TKey>> GetAllResourceInstancesIdsAsync(string resource, CancellationToken token = default(CancellationToken))
         {
-            return ContextReadOnly.SecurityPrivilege
+            return await ContextReadOnly.SecurityPrivilege
                 .Where(p => p.Resource == resource &&
                             !p.ResourceInstance.Equals(default(TKey)))
                 .Select(d => d.ResourceInstance)
-                .ToList();
+                .ToListAsync(token);
         }
     }
 }

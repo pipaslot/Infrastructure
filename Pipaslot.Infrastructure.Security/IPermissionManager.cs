@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Pipaslot.Infrastructure.Security.Data.Queries;
 
 namespace Pipaslot.Infrastructure.Security
@@ -10,23 +12,26 @@ namespace Pipaslot.Infrastructure.Security
         /// <summary>
         /// Returns information about existing resources and their instances amount
         /// </summary>
+        /// <param name="token"></param>
         /// <returns></returns>
-        IEnumerable<ResourceInfo> GetAllResources();
+        Task<IEnumerable<ResourceInfo>> GetAllResourcesAsync(CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Get all resource instances, ignores resources with default TKey
         /// </summary>
         /// <param name="resource"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        IEnumerable<ResourceInstanceInfo<TKey>> GetAllResourceInstances(string resource);
+        Task<IEnumerable<ResourceInstanceInfo<TKey>>> GetAllResourceInstancesAsync(string resource, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Returns all permission assigned to static resource and selected role
         /// </summary>
         /// <param name="roleId"></param>
         /// <param name="resource"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        IEnumerable<PermissionInfo<TKey>> GetAllPermissions(TKey roleId, string resource);
+        Task<IEnumerable<PermissionInfo<TKey>>> GetAllPermissionsAsync(TKey roleId, string resource, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Returns all permission assigned to resource instance and selected role
@@ -34,8 +39,9 @@ namespace Pipaslot.Infrastructure.Security
         /// <param name="roleId"></param>
         /// <param name="resource"></param>
         /// <param name="resourceId"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
-        IEnumerable<PermissionInfo<TKey>> GetAllPermissions(TKey roleId, string resource, TKey resourceId);
+        Task<IEnumerable<PermissionInfo<TKey>>> GetAllPermissionsAsync(TKey roleId, string resource, TKey resourceId, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Grant Permission for role and static resource

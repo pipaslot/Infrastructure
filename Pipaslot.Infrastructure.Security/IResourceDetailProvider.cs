@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Pipaslot.Infrastructure.Security
 {
     public interface IResourceDetailProvider<TKey> : IResourceDetailProvider
     {
-        IEnumerable<ResourceDetail<TKey>> GetResourceDetails(Type resource, List<TKey> identifiers);
+        Task<IEnumerable<ResourceDetail<TKey>>> GetResourceDetailsAsync(Type resource, List<TKey> identifiers, CancellationToken token = default(CancellationToken));
     }
 
     /// <summary>
@@ -13,6 +15,6 @@ namespace Pipaslot.Infrastructure.Security
     /// </summary>
     public interface IResourceDetailProvider
     {
-        IEnumerable<ResourceDetail<object>>GetResourceDetails(Type resource, List<object> identifiers);
+        Task<IEnumerable<ResourceDetail<object>>>GetResourceDetailsAsync(Type resource, List<object> identifiers, CancellationToken token = default(CancellationToken));
     }
 }

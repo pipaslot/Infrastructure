@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Pipaslot.Infrastructure.Security.Data;
 
 namespace Pipaslot.Infrastructure.SecurityTests.Mockups
@@ -9,42 +11,44 @@ namespace Pipaslot.Infrastructure.SecurityTests.Mockups
     {
         private readonly List<Record> _data = new List<Record>();
 
-        public bool IsAllowed(int roleId, string resource, string permission)
+        public Task<bool> IsAllowedAsync(int roleId, string resource, string permission, CancellationToken token = default(CancellationToken))
         {
-            return IsAllowed(roleId, resource, default(int), permission);
+            return IsAllowedAsync(roleId, resource, default(int), permission, token);
         }
 
-        public bool IsAllowed(IEnumerable<int> roleIds, string resource, string permission)
+        public Task<bool> IsAllowedAsync(IEnumerable<int> roleIds, string resource, string permission, CancellationToken token = default(CancellationToken))
         {
-            return IsAllowed(roleIds, resource, default(int), permission);
+            return IsAllowedAsync(roleIds, resource, default(int), permission, token);
         }
 
-        public bool IsAllowed(int roleId, string resource, int resourceId, string permission)
+        public Task<bool> IsAllowedAsync(int roleId, string resource, int resourceId, string permission, CancellationToken token = default(CancellationToken))
         {
-            return IsAllowed(new[] { roleId }, resource, resourceId, permission);
+            return IsAllowedAsync(new[] { roleId }, resource, resourceId, permission, token);
         }
 
-        public bool IsAllowed(IEnumerable<int> roleIds, string resource, int resourceId, string permission)
+        public Task<bool> IsAllowedAsync(IEnumerable<int> roleIds, string resource, int resourceId, string permission, CancellationToken token = default(CancellationToken))
         {
-            return _data.Any(d => roleIds.Contains(d.Role) &&
-                                  d.Resource == resource &&
-                                  d.ResourceId == resourceId &&
-                                  d.Permission == permission &&
-                                  d.IsAllowed);
+            var result = _data.Any(d => roleIds.Contains(d.Role) &&
+                                        d.Resource == resource &&
+                                        d.ResourceId == resourceId &&
+                                        d.Permission == permission &&
+                                        d.IsAllowed);
+            return Task.FromResult(result);
         }
 
-        public IEnumerable<int> GetAllowedResourceIds(int roleId, string resource, string permission)
+        public Task<IEnumerable<int>> GetAllowedResourceIdsAsync(int roleId, string resource, string permission, CancellationToken token = default(CancellationToken))
         {
-            return GetAllowedResourceIds(new[] { roleId }, resource, permission);
+            return GetAllowedResourceIdsAsync(new[] { roleId }, resource, permission, token);
         }
 
-        public IEnumerable<int> GetAllowedResourceIds(IEnumerable<int> roleIds, string resource, string permission)
+        public Task<IEnumerable<int>> GetAllowedResourceIdsAsync(IEnumerable<int> roleIds, string resource, string permission, CancellationToken token = default(CancellationToken))
         {
-            return _data.Where(d => roleIds.Contains(d.Role) &&
-                                    d.Resource == resource &&
-                                    d.Permission == permission &&
-                                    d.IsAllowed)
-                .Select(d => d.ResourceId).ToList();
+            var result = _data.Where(d => roleIds.Contains(d.Role) &&
+                                          d.Resource == resource &&
+                                          d.Permission == permission &&
+                                          d.IsAllowed)
+                .Select(d => d.ResourceId).ToList().AsEnumerable();
+            return Task.FromResult(result);
         }
 
         public void SetPrivilege(int roleId, string resource, string permission, bool isAllowed)
@@ -66,14 +70,14 @@ namespace Pipaslot.Infrastructure.SecurityTests.Mockups
             existing.IsAllowed = isAllowed;
         }
 
-        public int GetResourceInstanceCount(string resourceName)
+        public Task<int> GetResourceInstanceCountAsync(string resourceName, CancellationToken token = default(CancellationToken))
         {
-            return 2;
+            return Task.FromResult(2);
         }
 
-        public List<int> GetAllResourceInstancesIds(string resource)
+        public Task<List<int>> GetAllResourceInstancesIdsAsync(string resource, CancellationToken token = default(CancellationToken))
         {
-            return new List<int> { 1, 2 };
+            return Task.FromResult(new List<int> { 1, 2 });
         }
 
         internal class Record

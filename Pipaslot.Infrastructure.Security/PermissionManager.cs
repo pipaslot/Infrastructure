@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Pipaslot.Infrastructure.Security.Data;
 using Pipaslot.Infrastructure.Security.Data.Queries;
 
@@ -53,7 +55,7 @@ namespace Pipaslot.Infrastructure.Security
 
         #endregion
 
-        public IEnumerable<ResourceInfo> GetAllResources()
+        public virtual async Task<IEnumerable<ResourceInfo>> GetAllResourcesAsync(CancellationToken token = default(CancellationToken))
         {
             var result = new List<ResourceInfo>();
             foreach (var pair in _resourceRegistry.ResourceTypes)
@@ -62,24 +64,24 @@ namespace Pipaslot.Infrastructure.Security
                 var resourceName = _namingConvertor.GetResourceUniqueName(type);
                 var info = new ResourceInfo
                 {
-                    InstancesCount = _permissionStore.GetResourceInstanceCount(resourceName),
+                    InstancesCount = await _permissionStore.GetResourceInstanceCountAsync(resourceName, token),
                     UniquedName = resourceName,
                     Name = Helpers.GetResourceReadableName(type),
                     Description = Helpers.GetResourceReadableDescription(type)
                 };
-                
+
                 result.Add(info);
             }
             return result;
         }
 
         //todo Implement paging for future (as query)
-        public IEnumerable<ResourceInstanceInfo<TKey>> GetAllResourceInstances(string resource)
+        public virtual async Task<IEnumerable<ResourceInstanceInfo<TKey>>> GetAllResourceInstancesAsync(string resource, CancellationToken token = default(CancellationToken))
         {
             var result = new List<ResourceInstanceInfo<TKey>>();
             var resourceType = _namingConvertor.GetResourceTypeByUniqueName(resource);
-            var instances = _permissionStore.GetAllResourceInstancesIds(resource);
-            var instanceDetails = _resourceDetailProvider.GetResourceDetails(resourceType, instances);
+            var instances = await _permissionStore.GetAllResourceInstancesIdsAsync(resource, token);
+            var instanceDetails = await _resourceDetailProvider.GetResourceDetailsAsync(resourceType, instances, token);
             foreach (var detail in instanceDetails)
             {
                 result.Add(new ResourceInstanceInfo<TKey>
@@ -95,7 +97,7 @@ namespace Pipaslot.Infrastructure.Security
 
         #region GetAllPermissions
 
-        public IEnumerable<PermissionInfo<TKey>> GetAllPermissions(TKey roleId, string resource)
+        public virtual async Task<IEnumerable<PermissionInfo<TKey>>> GetAllPermissionsAsync(TKey roleId, string resource, CancellationToken token = default(CancellationToken))
         {
             var result = new List<PermissionInfo<TKey>>();
             var registeredResource = GetRegisteredResource(resource);
@@ -112,7 +114,7 @@ namespace Pipaslot.Infrastructure.Security
                         ResourceUniquedName = resource,
                         ResourceIdentifier = default(TKey),
                         UniqueIdentifier = permissionUniqueIdentifier,
-                        IsAllowed = _permissionStore.IsAllowed(roleId, resource, permissionUniqueIdentifier),
+                        IsAllowed = await _permissionStore.IsAllowedAsync(roleId, resource, permissionUniqueIdentifier, token),
                         Name = Helpers.GetPermissonReadableName(memberInfo),
                         Description = Helpers.GetPermissonReadableDescription(memberInfo)
                     };
@@ -123,7 +125,7 @@ namespace Pipaslot.Infrastructure.Security
             return result;
         }
 
-        public IEnumerable<PermissionInfo<TKey>> GetAllPermissions(TKey roleId, string resource, TKey resourceId)
+        public virtual async Task<IEnumerable<PermissionInfo<TKey>>> GetAllPermissionsAsync(TKey roleId, string resource, TKey resourceId, CancellationToken token = default(CancellationToken))
         {
             var result = new List<PermissionInfo<TKey>>();
             var registeredResource = GetRegisteredResource(resource);
@@ -140,7 +142,7 @@ namespace Pipaslot.Infrastructure.Security
                         ResourceUniquedName = resource,
                         ResourceIdentifier = resourceId,
                         UniqueIdentifier = permissionUniqueIdentifier,
-                        IsAllowed = _permissionStore.IsAllowed(roleId, resource, resourceId, permissionUniqueIdentifier),
+                        IsAllowed = await _permissionStore.IsAllowedAsync(roleId, resource, resourceId, permissionUniqueIdentifier, token),
                         Name = Helpers.GetPermissonReadableName(memberInfo),
                         Description = Helpers.GetPermissonReadableDescription(memberInfo)
                     };
