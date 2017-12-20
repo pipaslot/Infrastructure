@@ -1,14 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models
+﻿namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models
 {
-    public class Blog : IEntity<int>
+
+    public class Blog : IEntity<int>, IBlog
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        object IBlog.Id { get => Id; set => Id = (int)value; }
 
         public Blog()
         {
@@ -18,5 +15,11 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models
         {
             Name = name;
         }
+    }
+
+    public interface IBlog
+    {
+        object Id { get; set; }
+        string Name { get; set; }
     }
 }

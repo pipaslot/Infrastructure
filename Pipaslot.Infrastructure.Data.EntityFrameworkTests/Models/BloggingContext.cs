@@ -2,7 +2,7 @@
 
 namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models
 {
-    public class BloggingContext : DbContext
+    public class BloggingContext : DbContext, IBlogDatabase
     {
         public DbSet<Blog> Blog { get; set; }
 
@@ -14,5 +14,10 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models
             : base(options)
         {
         }
+    }
+
+    public interface IBlogDatabase
+    {
+        DbSet<Blog>Blog { get; set; }
     }
 }
