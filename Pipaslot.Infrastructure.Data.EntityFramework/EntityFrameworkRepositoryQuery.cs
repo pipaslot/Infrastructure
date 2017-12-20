@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Pipaslot.Infrastructure.Data.Queries;
 
@@ -11,19 +9,19 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
             where TDbContext : DbContext
             where TResult : class
 
+    {
+        public EntityFrameworkRepositoryQuery(IEntityFrameworkDbContextFactory dbContextFactory) : base(dbContextFactory)
         {
-            public EntityFrameworkRepositoryQuery(IEntityFrameworkDbContextFactory dbContextFactory) : base(dbContextFactory)
-            {
-            }
-
-            protected override IList<TResult> PostProcessResults(IList<TResult> results)
-            {
-                return results;
-            }
-
-            protected override IQueryable<TResult> GetQueryable()
-            {
-                throw new NotImplementedException();
-            }
         }
+
+        protected override IList<TResult> PostProcessResults(IList<TResult> results)
+        {
+            return results;
+        }
+
+        protected override IQueryable<TResult> GetQueryable()
+        {
+            return ContextReadOnly.Set<TResult>();
+        }
+    }
 }

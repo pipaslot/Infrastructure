@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Pipaslot.Infrastructure.Data.EntityFramework;
 using Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models;
@@ -10,7 +12,7 @@ using Pipaslot.Infrastructure.Data.Queries;
 namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
 {
     [TestClass]
-    public class EntityFrameworkQueryTest : IDisposable
+    public class EntityFrameworkQueryIntegrationTest : IDisposable
     {
         private readonly List<Blog> _defaultData = new List<Blog>
         {
@@ -38,7 +40,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
 
         private readonly BloggingContextFactory _dbFactory;
 
-        public EntityFrameworkQueryTest()
+        public EntityFrameworkQueryIntegrationTest()
         {
             _dbFactory = new BloggingContextFactory("EntitiFrameworkQueryTest" + Guid.NewGuid());
             _dbFactory.OnDbInit += (sender, context) =>
@@ -99,7 +101,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
             var first = result.First();
             Assert.AreEqual(skipNumber + 1, first.Id);
         }
-        
+
         [TestMethod]
         public void Take()
         {
@@ -113,7 +115,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
             var first = result.First();
             Assert.AreEqual(_defaultData.First().Name, first.Name);
         }
-       
+
         [TestMethod]
         public void AddSortCriteria_Function()
         {
@@ -161,5 +163,79 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
                 Assert.IsNotNull(existing);
             }
         }
+
+        #region Expected Query construction
+
+        [TestMethod]
+        public void ExpectedCustomQueryIsConstructible()
+        {
+            var factory = ResolveQueryFactory();
+            Assert.IsNotNull(factory);
+            var query = factory.Create();
+            Assert.IsNotNull(query);
+            Assert.IsTrue(query.GetTotalRowCount() > 0);
+        }
+        /// <summary>
+        /// Prepare concrete implementation
+        /// </summary>
+        /// <returns></returns>
+        private IQueryFactory<IQuery<IBlog>> ResolveQueryFactory()
+        {
+            return new EntityFrameworkQueryFactory<BlogQuery1<BloggingContext>>(_dbFactory);
+        }
+
+        [TestMethod]
+        public void ExpectedCustomQueryIsConstructible2()
+        {
+            var factory = ResolveQueryFactory2();
+            Assert.IsNotNull(factory);
+            var query = factory.Create();
+            Assert.IsNotNull(query);
+            Assert.IsTrue(query.GetTotalRowCount() > 0);
+        }
+        /// <summary>
+        /// Prepare concrete implementation
+        /// </summary>
+        /// <returns></returns>
+        private IQueryFactory<IExpectedQuery> ResolveQueryFactory2()
+        {
+            return new EntityFrameworkQueryFactory<BlogQuery1<BloggingContext>>(_dbFactory);
+        }
+
+        #region Test classes
+
+        public interface IExpectedQuery : IQuery<IBlog>
+        {
+        }
+
+        public class BlogQuery1<TDbContext> : EntityFrameworkQuery<TDbContext, IBlog>, IExpectedQuery
+            where TDbContext : DbContext, IBlogDatabase
+        {
+            public BlogQuery1(IEntityFrameworkDbContextFactory dbContextFactory) : base(dbContextFactory)
+            {
+            }
+            
+
+            //protected override IList<IBlog> PostProcessResults(IList<Blog> results)
+            //{
+            //    return (IList<IBlog>) results;
+            //}
+
+            protected override IQueryable<IBlog> GetQueryable()
+            {
+                return ContextReadOnly.Set<Blog>();
+            }
+
+            //public IList<Func<IQueryable<IBlog>, IOrderedQueryable<IBlog>>> SortCriteria => (IList<Func<IQueryable<IBlog>, IOrderedQueryable<IBlog>>>) base.SortCriteria;
+
+            //public void AddSortCriteria<TKey>(Expression<Func<IBlog, TKey>> field, SortDirection direction = SortDirection.Ascending)
+            //{
+            //    throw new NotImplementedException();
+            //}
+        }
+
+        #endregion
+        
+        #endregion
     }
 }

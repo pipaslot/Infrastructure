@@ -135,7 +135,7 @@
     <Compile Include="UnitOfWorkIntegrationTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EntityFrameworkRepositoryTest.cs" />
-    <Compile Include="EntityFrameworkQueryTest.cs" />
+    <Compile Include="EntityFrameworkQueryIntegrationTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
