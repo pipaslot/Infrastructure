@@ -10,7 +10,7 @@ using Pipaslot.Infrastructure.Data.Queries;
 namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
 {
     [TestClass]
-    public class EntitiFrameworkQueryTest : IDisposable
+    public class EntityFrameworkQueryTest : IDisposable
     {
         private readonly List<Blog> _defaultData = new List<Blog>
         {
@@ -38,7 +38,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
 
         private readonly BloggingContextFactory _dbFactory;
 
-        public EntitiFrameworkQueryTest()
+        public EntityFrameworkQueryTest()
         {
             _dbFactory = new BloggingContextFactory("EntitiFrameworkQueryTest" + Guid.NewGuid());
             _dbFactory.OnDbInit += (sender, context) =>

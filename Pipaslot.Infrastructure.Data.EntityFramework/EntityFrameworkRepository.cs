@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Pipaslot.Infrastructure.Data.Queries;
 
 namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
@@ -114,7 +115,12 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
                 Update(entity);
             }
         }
-        
+
+        public IQuery<TEntity> CreateQuery()
+        {
+            return new EntityFrameworkQuery<TDbContext,TEntity>(_dbContextFactory);
+        }
+
         public virtual void Delete(TEntity entity)
         {
             Context.Set<TEntity>().Remove(entity);

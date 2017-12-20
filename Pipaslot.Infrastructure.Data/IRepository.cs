@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Pipaslot.Infrastructure.Data.Queries;
 
 namespace Pipaslot.Infrastructure.Data
 {
@@ -91,5 +92,11 @@ namespace Pipaslot.Infrastructure.Data
         /// Marks the specified entities as updated.
         /// </summary>
         void Update(IEnumerable<TEntity> entities);
+
+        /// <summary>
+        /// Create a new query
+        /// </summary>
+        /// <returns></returns>
+        IQuery<TEntity> CreateQuery();
     }
 }

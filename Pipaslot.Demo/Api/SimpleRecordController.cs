@@ -2,7 +2,6 @@
 using Pipaslot.Demo.Models.Entities;
 using Pipaslot.Infrastructure.Data;
 using Pipaslot.Infrastructure.Data.Mvc;
-using Pipaslot.Infrastructure.Data.Queries;
 
 namespace Pipaslot.Demo.Api
 {
@@ -15,7 +14,7 @@ namespace Pipaslot.Demo.Api
     public class SimpleRecordController : RepositoryController<SimpleRecord, int>
     {
         /// <inheritdoc />
-        public SimpleRecordController(IUnitOfWorkFactory unitOfWorkFactory, IRepository<SimpleRecord, int> repository, IQueryFactory<IQuery<SimpleRecord>> queryFactory) : base(unitOfWorkFactory, repository, queryFactory)
+        public SimpleRecordController(IUnitOfWorkFactory unitOfWorkFactory, IRepository<SimpleRecord, int> repository) : base(unitOfWorkFactory, repository)
         {
         }
     }

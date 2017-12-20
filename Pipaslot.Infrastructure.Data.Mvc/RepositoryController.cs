@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Pipaslot.Infrastructure.Data.Queries;
 
 namespace Pipaslot.Infrastructure.Data.Mvc
 {
@@ -10,13 +9,11 @@ namespace Pipaslot.Infrastructure.Data.Mvc
     {
         private readonly IUnitOfWorkFactory _unitOfWorkFactory;
         private readonly IRepository<TEntity, TKey> _repository;
-        private readonly IQueryFactory<IQuery<TEntity>> _queryFactory;
 
-        protected RepositoryController(IUnitOfWorkFactory unitOfWorkFactory, IRepository<TEntity, TKey> repository, IQueryFactory<IQuery<TEntity>> queryFactory)
+        protected RepositoryController(IUnitOfWorkFactory unitOfWorkFactory, IRepository<TEntity, TKey> repository)
         {
             _unitOfWorkFactory = unitOfWorkFactory;
             _repository = repository;
-            _queryFactory = queryFactory;
         }
 
         /// <summary>
@@ -26,7 +23,7 @@ namespace Pipaslot.Infrastructure.Data.Mvc
         [HttpGet]
         public virtual IList<TEntity> GetAll()
         {
-            var query = _queryFactory.Create();
+            var query = _repository.CreateQuery();
             return query.Execute();
         }
 
@@ -37,7 +34,7 @@ namespace Pipaslot.Infrastructure.Data.Mvc
         [HttpGet("paged{pageIndex}/{pageSize}")]
         public virtual IList<TEntity> GetAll(int pageIndex, int pageSize = 10)
         {
-            var query = _queryFactory.Create();
+            var query = _repository.CreateQuery();
             query.SetPage(pageIndex, pageSize);
             return query.Execute();
         }
