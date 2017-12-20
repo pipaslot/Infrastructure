@@ -7,12 +7,12 @@ using Pipaslot.Infrastructure.Data.Queries;
 
 namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
-    public class EntityFrameworkQuery<TDbContext, TResult> : EntityFrameworkQuery<TDbContext, TResult, TResult>, IQuery<TResult>
+    public abstract class EntityFrameworkQuery<TDbContext, TResult> : EntityFrameworkQuery<TDbContext, TResult, TResult>, IQuery<TResult>
         where TDbContext : DbContext
         where TResult : class
 
     {
-        public EntityFrameworkQuery(IEntityFrameworkDbContextFactory dbContextFactory) : base(dbContextFactory)
+        protected EntityFrameworkQuery(IEntityFrameworkDbContextFactory dbContextFactory) : base(dbContextFactory)
         {
         }
 
@@ -38,11 +38,6 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
         /// </summary>
         protected TDbContext ContextReadOnly => _dbContextFactory.GetReadOnlyContext<TDbContext>();
         
-        protected override IQueryable<TQueryableResult> GetQueryable()
-        {
-            return ContextReadOnly.Set<TQueryableResult>();
-        }
-
         public override async Task<int> GetTotalRowCountAsync(CancellationToken cancellationToken)
         {
             return await GetQueryable().CountAsync(cancellationToken);

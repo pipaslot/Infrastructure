@@ -118,7 +118,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
 
         public IQuery<TEntity> CreateQuery()
         {
-            return new EntityFrameworkQuery<TDbContext,TEntity>(_dbContextFactory);
+            return new EntityFrameworkRepositoryQuery<TDbContext,TEntity>(_dbContextFactory);
         }
 
         public virtual void Delete(TEntity entity)
