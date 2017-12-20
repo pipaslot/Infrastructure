@@ -2,7 +2,7 @@
 
 namespace Pipaslot.Infrastructure.Security.Data
 {
-    public interface IRoleQuery<TKey>: IQuery<IRole<TKey>>
+    public interface IRoleQuery : IQuery<IRole>
     {
 
     }

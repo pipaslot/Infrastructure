@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Pipaslot.Demo.Models.Entities;
 using Pipaslot.Infrastructure.Data;
 using Pipaslot.Infrastructure.Data.Mvc;
+using Pipaslot.Infrastructure.Security.EntityFramework.Entities;
 
 namespace Pipaslot.Demo.Api
 {
@@ -11,10 +11,10 @@ namespace Pipaslot.Demo.Api
     /// </summary>
     [Area("Api")]
     [Route("api/[controller]")]
-    public class SimpleRecordController : RepositoryController<SimpleRecord, int>
+    public class RoleController : RepositoryController<Role<int>, int>
     {
         /// <inheritdoc />
-        public SimpleRecordController(IUnitOfWorkFactory unitOfWorkFactory, IRepository<SimpleRecord, int> repository) : base(unitOfWorkFactory, repository)
+        public RoleController(IUnitOfWorkFactory unitOfWorkFactory, IRepository<Role<int>, int> repository) : base(unitOfWorkFactory, repository)
         {
         }
     }

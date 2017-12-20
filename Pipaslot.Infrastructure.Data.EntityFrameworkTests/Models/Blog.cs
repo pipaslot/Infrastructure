@@ -15,6 +15,12 @@
         {
             Name = name;
         }
+
+        object IEntity.Id
+        {
+            get => Id;
+            set => Id = (int)value;
+        }
     }
 
     public interface IBlog

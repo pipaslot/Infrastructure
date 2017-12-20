@@ -5,8 +5,13 @@ namespace Pipaslot.Infrastructure.Security.EntityFramework.Entities
     public class Privilege<TKey> : IEntity<TKey>
     {
         public TKey Id { get; set; }
+        object IEntity.Id
+        {
+            get => Id;
+            set => Id = (TKey)value;
+        }
 
-        public TKey  Role { get; set; }
+        public TKey Role { get; set; }
 
         public string Resource{ get; set; }
 

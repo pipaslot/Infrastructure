@@ -10,15 +10,14 @@ using Microsoft.Extensions.PlatformAbstractions;
 using Pipaslot.Demo.Filters;
 using Pipaslot.Infrastructure.Data.EntityFramework;
 using Pipaslot.Infrastructure.Mvc;
-using Pipaslot.Infrastructure.Security;
 using Pipaslot.Infrastructure.Security.Data;
 using Pipaslot.Infrastructure.Security.EntityFramework;
 using Pipaslot.Infrastructure.Security.Identities;
 using Pipaslot.Infrastructure.SecurityUI;
 using Pipaslot.Demo.Models;
-using Pipaslot.Demo.Models.Entities;
 using Pipaslot.Infrastructure.Data;
 using Pipaslot.Infrastructure.Data.Queries;
+using Pipaslot.Infrastructure.Security.EntityFramework.Entities;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Pipaslot.Demo
@@ -70,10 +69,10 @@ namespace Pipaslot.Demo
             services.AddScoped<IUnitOfWorkFactory, EntityFrameworkUnitOfWorkFactory<AppDatabase>>();
 
             //Repositories
-            services.AddScoped<IRepository<SimpleRecord, int>, EntityFrameworkRepository<AppDatabase, SimpleRecord, int>>();
+            services.AddScoped<IRepository<Role<int>, int>, EntityFrameworkRepository<AppDatabase, Role<int>, int>>();
 
             //Queries
-            services.AddScoped<IQueryFactory<IQuery<SimpleRecord>>, EntityFrameworkQueryFactory<EntityFrameworkQuery<AppDatabase, SimpleRecord>>>();
+            services.AddScoped<IQueryFactory<IRoleQuery>, EntityFrameworkQueryFactory<RoleQuery<AppDatabase, int>>>();
 
             //Configure own services for Permission Manager
             services.AddScoped<IPermissionStore<int>, PermissionStore<int, AppDatabase>>();
@@ -83,7 +82,7 @@ namespace Pipaslot.Demo
             );
             //Add default configuration for Permission Manager
             services.AddSecurityUI<int>();
-
+            
             // Register the Swagger generator, defining one or more Swagger documents
             services.AddSwaggerGen(c =>
             {

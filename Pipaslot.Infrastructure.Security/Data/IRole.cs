@@ -1,8 +1,13 @@
 ﻿namespace Pipaslot.Infrastructure.Security.Data
 {
-    public interface IRole<TKey>
+    public interface IRole<out TKey> : IRole
     {
-        TKey Id { get; }
+        new TKey Id { get; }
+    }
+
+    public interface IRole
+    {
+        object Id { get; }
 
         /// <summary>
         /// Role name

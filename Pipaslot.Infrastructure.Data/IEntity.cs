@@ -1,19 +1,19 @@
 ﻿namespace Pipaslot.Infrastructure.Data
 {
 
-    public interface IEntity : IEntity<int>
-    {
-
-    }
-
     /// <summary>
     /// Represents an entity with single-column unique ID.
     /// </summary>
-    public interface IEntity<TKey>
+    public interface IEntity<TKey> : IEntity
     {
         /// <summary>
         /// Gets or sets the unique identification of the entity.
         /// </summary>
-        TKey Id { get; set; }
+        new TKey Id { get; set; }
+    }
+
+    public interface IEntity
+    {
+        object Id { get; set; }
     }
 }
