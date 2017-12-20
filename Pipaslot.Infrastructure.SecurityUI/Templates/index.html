@@ -1,0 +1,19 @@
+﻿<div id="app">
+    {{ message }}
+</div>
+<script type="text/javascript">
+    var data = {
+        roles: []
+    };
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Vue!'
+        }
+    })
+    $.getJSON("/{{routePrefix}}/json/roles.json",
+        function(data) {
+            console.log("success",data);
+        });
+
+</script>
