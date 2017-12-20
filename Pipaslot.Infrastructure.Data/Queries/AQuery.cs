@@ -82,7 +82,7 @@ namespace Pipaslot.Infrastructure.Data.Queries
             SortCriteria.Clear();
         }
 
-        private void AddSortCriteriaCore<TKey>(Expression<Func<TQueryableResult, TKey>> sortExpression, SortDirection direction)
+        protected void AddSortCriteriaCore<TKey>(Expression<Func<TQueryableResult, TKey>> sortExpression, SortDirection direction)
         {
             if (direction == SortDirection.Ascending)
                 SortCriteria.Add(x => x.OrderBy(sortExpression));
@@ -101,13 +101,7 @@ namespace Pipaslot.Infrastructure.Data.Queries
             var results = PostProcessResults(queryResults);
             return results;
         }
-
-        async Task<IList<object>> IExecutableQuery.ExecuteAsync()
-        {
-            var list = await ExecuteAsync();
-            return (IList<object>)list;
-        }
-
+        
         async Task<IList<object>> IExecutableQuery.ExecuteAsync(CancellationToken cancellationToken)
         {
             var list = await ExecuteAsync(cancellationToken);
@@ -119,19 +113,11 @@ namespace Pipaslot.Infrastructure.Data.Queries
             var list = Execute();
             return (IList<object>)list;
         }
-
-        /// <summary>
-        /// Asynchronously executes the query and returns the results.
-        /// </summary>
-        public virtual async Task<IList<TResult>> ExecuteAsync()
-        {
-            return await ExecuteAsync(default(CancellationToken));
-        }
-
+        
         /// <summary>
         ///     Asynchronously executes the query and returns the results.
         /// </summary>
-        public virtual async Task<IList<TResult>> ExecuteAsync(CancellationToken cancellationToken)
+        public virtual async Task<IList<TResult>> ExecuteAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             var query = PreProcessQuery();
             var queryResults = await ExecuteQueryAsync(query, cancellationToken);
