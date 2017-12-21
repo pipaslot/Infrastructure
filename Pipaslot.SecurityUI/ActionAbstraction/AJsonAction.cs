@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace Pipaslot.Infrastructure.SecurityUI.ActionAbstraction
+namespace Pipaslot.SecurityUI.ActionAbstraction
 {
     abstract class AJsonAction : IAction
     {

@@ -24,8 +24,8 @@
     <ProjectReference Include="..\Pipaslot.Infrastructure.Data\Pipaslot.Infrastructure.Data.csproj" />
     <ProjectReference Include="..\Pipaslot.Infrastructure.Mvc\Pipaslot.Infrastructure.Mvc.csproj" />
     <ProjectReference Include="..\Pipaslot.Infrastructure.Security.EntityFramework\Pipaslot.Infrastructure.Security.EntityFramework.csproj" />
-    <ProjectReference Include="..\Pipaslot.Infrastructure.SecurityUI\Pipaslot.Infrastructure.SecurityUI.csproj" />
     <ProjectReference Include="..\Pipaslot.Infrastructure.Security\Pipaslot.Infrastructure.Security.csproj" />
+    <ProjectReference Include="..\Pipaslot.SecurityUI\Pipaslot.SecurityUI.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\images\" />

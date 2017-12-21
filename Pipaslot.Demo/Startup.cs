@@ -13,10 +13,9 @@ using Pipaslot.Infrastructure.Mvc;
 using Pipaslot.Infrastructure.Security.Data;
 using Pipaslot.Infrastructure.Security.EntityFramework;
 using Pipaslot.Infrastructure.Security.Identities;
-using Pipaslot.Infrastructure.SecurityUI;
+using Pipaslot.SecurityUI;
 using Pipaslot.Demo.Models;
 using Pipaslot.Infrastructure.Data;
-using Pipaslot.Infrastructure.Data.Queries;
 using Pipaslot.Infrastructure.Security.EntityFramework.Entities;
 using Swashbuckle.AspNetCore.Swagger;
 

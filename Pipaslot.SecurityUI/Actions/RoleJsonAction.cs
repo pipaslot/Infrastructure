@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using Pipaslot.Infrastructure.Data;
 using Pipaslot.Infrastructure.Security.Data;
-using Pipaslot.Infrastructure.SecurityUI.ActionAbstraction;
+using Pipaslot.SecurityUI.ActionAbstraction;
 
-namespace Pipaslot.Infrastructure.SecurityUI.Actions
+namespace Pipaslot.SecurityUI.Actions
 {
     class RoleJsonAction : AJsonAction
     {

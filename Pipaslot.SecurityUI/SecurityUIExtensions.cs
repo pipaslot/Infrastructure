@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Pipaslot.Infrastructure.Security;
 
-namespace Pipaslot.Infrastructure.SecurityUI
+namespace Pipaslot.SecurityUI
 {
     public static class SecurityUIExtensions
     {

@@ -2,20 +2,20 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace Pipaslot.Infrastructure.SecurityUI.ActionAbstraction
+namespace Pipaslot.SecurityUI.ActionAbstraction
 {
-    class JavascriptAction : AFileAction
+    class StyleAction : AFileAction
     {
         public string FileName { get; set; }
 
-        public JavascriptAction(string fileName)
+        public StyleAction(string fileName)
         {
             FileName = fileName;
         }
 
         public override async Task ExecuteAsync(HttpContext context, IServiceProvider services)
         {
-            context.Response.ContentType = "application/javascript";
+            context.Response.ContentType = "text/css";
             var content = ReadResource($"Assets.{FileName}");
 
             await context.Response.WriteAsync(content);

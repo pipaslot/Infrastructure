@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace Pipaslot.Infrastructure.SecurityUI
+namespace Pipaslot.SecurityUI
 {
     public class SecurityUIMiddleware
     {

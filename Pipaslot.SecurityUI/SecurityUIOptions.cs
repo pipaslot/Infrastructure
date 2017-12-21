@@ -1,4 +1,4 @@
-﻿namespace Pipaslot.Infrastructure.SecurityUI
+﻿namespace Pipaslot.SecurityUI
 {
     public class SecurityUIOptions
     {

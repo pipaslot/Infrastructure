@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Sec
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Demo", "Pipaslot.Demo\Pipaslot.Demo.csproj", "{F54059A5-2FAE-43D9-9EC3-87C10B00E335}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.SecurityUI", "Pipaslot.Infrastructure.SecurityUI\Pipaslot.Infrastructure.SecurityUI.csproj", "{AE7D25BE-3EC0-4D26-948D-75D0387FBD45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.SecurityUI", "Pipaslot.SecurityUI\Pipaslot.SecurityUI.csproj", "{AE7D25BE-3EC0-4D26-948D-75D0387FBD45}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,7 +92,6 @@ Global
 		{4D05CAE3-15D3-499F-80A4-2493A2305E47} = {659C7A9A-FE81-4FD5-B669-694B78719F15}
 		{2640D025-8570-4277-A941-907F884B3F14} = {659C7A9A-FE81-4FD5-B669-694B78719F15}
 		{CED8940F-30B7-499F-B6BA-87A358F3037A} = {9222D47E-579F-4131-987A-5E708196ADFD}
-		{AE7D25BE-3EC0-4D26-948D-75D0387FBD45} = {9222D47E-579F-4131-987A-5E708196ADFD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B7E45BFF-3BEB-4B8F-8D1A-4C8194399F1D}

@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
-using Pipaslot.Infrastructure.SecurityUI.ActionAbstraction;
-using Pipaslot.Infrastructure.SecurityUI.Actions;
+using Pipaslot.SecurityUI.ActionAbstraction;
+using Pipaslot.SecurityUI.Actions;
 
-namespace Pipaslot.Infrastructure.SecurityUI
+namespace Pipaslot.SecurityUI
 {
     internal class Router
     {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace Pipaslot.Infrastructure.SecurityUI
+namespace Pipaslot.SecurityUI
 {
     internal abstract class APage
     {
