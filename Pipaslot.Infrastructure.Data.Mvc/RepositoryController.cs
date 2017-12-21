@@ -53,7 +53,7 @@ namespace Pipaslot.Infrastructure.Data.Mvc
         /// <summary>
         /// Create entity
         /// </summary>
-        [HttpPut]
+        [HttpPost]
         public virtual TKey Create([FromBody]TEntity entity)
         {
             using (var uow = _unitOfWorkFactory.Create())
@@ -66,13 +66,14 @@ namespace Pipaslot.Infrastructure.Data.Mvc
         }
 
         /// <summary>
-        /// Update entity
+        /// Update entity. Ignores Id from received object.
         /// </summary>
-        [HttpPost]
-        public virtual IActionResult Update([FromBody]TEntity entity)
+        [HttpPost("{id}")]
+        public virtual IActionResult Update(TKey id, [FromBody]TEntity entity)
         {
             using (var uow = _unitOfWorkFactory.Create())
             {
+                entity.Id = id;
                 _repository.Update(entity);
                 uow.Commit();
             }
