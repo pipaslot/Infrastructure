@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Razor;
@@ -15,7 +16,9 @@ using Pipaslot.Infrastructure.Security.EntityFramework;
 using Pipaslot.Infrastructure.Security.Identities;
 using Pipaslot.SecurityUI;
 using Pipaslot.Demo.Models;
+using Pipaslot.Demo.Models.Entities;
 using Pipaslot.Infrastructure.Data;
+using Pipaslot.Infrastructure.Security;
 using Pipaslot.Infrastructure.Security.EntityFramework.Entities;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -68,12 +71,19 @@ namespace Pipaslot.Demo
             services.AddScoped<IUnitOfWorkFactory, EntityFrameworkUnitOfWorkFactory<AppDatabase>>();
 
             //Repositories
+            services.AddScoped<IRepository<Company, int>, EntityFrameworkRepository<AppDatabase, Company, int>>();
             services.AddScoped<IRepository<Role<int>, int>, EntityFrameworkRepository<AppDatabase, Role<int>, int>>();
 
             //Queries
             services.AddScoped<IQueryFactory<IRoleQuery>, EntityFrameworkQueryFactory<RoleQuery<AppDatabase, int>>>();
 
             //Configure own services for Permission Manager
+            services.AddSingleton<ResourceRegistry<int>>(_=>
+            {
+                var registry = new ResourceRegistry<int>();
+                registry.Register(Assembly.GetExecutingAssembly());
+                return registry;
+            });
             services.AddScoped<IPermissionStore<int>, PermissionStore<int, AppDatabase>>();
             services.AddScoped<IIdentity<int>>(s =>
               //TODO implementovat zabezpečovací logiku

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Pipaslot.Demo.Models.Entities;
 using Pipaslot.Infrastructure.Security.EntityFramework;
 using Pipaslot.Infrastructure.Security.EntityFramework.Entities;
 
@@ -19,11 +20,17 @@ namespace Pipaslot.Demo.Models
         {
         }
 
-        public DbSet<Role<int>> SecurityRole { get; }
+        public DbSet<Company> Company{ get; set; }
+
+        #region ISecurityDbContext Implementation
+        
+        public DbSet<Role<int>> SecurityRole { get; set; }
 
         /// <summary>
         /// Entitied for ISecurityDbContext
         /// </summary>
-        public DbSet<Privilege<int>> SecurityPrivilege { get; }
+        public DbSet<Privilege<int>> SecurityPrivilege { get; set; }
+
+        #endregion
     }
 }
