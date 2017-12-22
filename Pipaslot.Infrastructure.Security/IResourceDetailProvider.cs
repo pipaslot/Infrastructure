@@ -7,7 +7,7 @@ namespace Pipaslot.Infrastructure.Security
 {
     public interface IResourceDetailProvider<TKey> : IResourceDetailProvider
     {
-        Task<IEnumerable<ResourceDetail<TKey>>> GetResourceDetailsAsync(Type resource, List<TKey> identifiers, CancellationToken token = default(CancellationToken));
+        Task<IEnumerable<ResourceDetail<TKey>>> GetResourceDetailsAsync(Type resource, IEnumerable<TKey> identifiers, CancellationToken token = default(CancellationToken));
     }
 
     /// <summary>
@@ -15,6 +15,6 @@ namespace Pipaslot.Infrastructure.Security
     /// </summary>
     public interface IResourceDetailProvider
     {
-        Task<IEnumerable<ResourceDetail<object>>>GetResourceDetailsAsync(Type resource, List<object> identifiers, CancellationToken token = default(CancellationToken));
+        Task<IEnumerable<ResourceDetail<object>>>GetResourceDetailsAsync(Type resource, IEnumerable<object> identifiers, CancellationToken token = default(CancellationToken));
     }
 }

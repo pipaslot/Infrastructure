@@ -13,13 +13,13 @@ namespace Pipaslot.Infrastructure.Security
     /// <typeparam name="TKey"></typeparam>
     public class DefaultResourceDetailProvider<TKey> : IResourceDetailProvider<TKey>
     {
-        public Task<IEnumerable<ResourceDetail<TKey>>> GetResourceDetailsAsync(Type resource, List<TKey> identifiers, CancellationToken token = default(CancellationToken))
+        public Task<IEnumerable<ResourceDetail<TKey>>> GetResourceDetailsAsync(Type resource, IEnumerable<TKey> identifiers, CancellationToken token = default(CancellationToken))
         {
             var result = identifiers.Select(id => new ResourceDetail<TKey>(id, id.ToString(), string.Empty));
             return Task.FromResult(result);
         }
 
-        public Task<IEnumerable<ResourceDetail<object>>> GetResourceDetailsAsync(Type resource, List<object> identifiers, CancellationToken token = default(CancellationToken))
+        public Task<IEnumerable<ResourceDetail<object>>> GetResourceDetailsAsync(Type resource, IEnumerable<object> identifiers, CancellationToken token = default(CancellationToken))
         {
             var result = identifiers.Select(id => new ResourceDetail<object>(id, id.ToString(), string.Empty));
             return Task.FromResult(result);
