@@ -31,7 +31,7 @@ namespace Pipaslot.Infrastructure.Data.Mvc
         /// Get all with applied paging
         /// </summary>
         /// <returns></returns>
-        [HttpGet("paged{pageIndex}/{pageSize}")]
+        [HttpGet("paged/{pageIndex}/{pageSize}")]
         public virtual IList<TEntity> GetAll(int pageIndex, int pageSize = 10)
         {
             var query = _repository.CreateQuery();
