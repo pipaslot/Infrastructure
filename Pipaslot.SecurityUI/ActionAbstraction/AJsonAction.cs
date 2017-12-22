@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Pipaslot.SecurityUI.ActionAbstraction
 {
@@ -13,8 +14,12 @@ namespace Pipaslot.SecurityUI.ActionAbstraction
 
             response.ContentType = "application/json";
             var data = GetData(context, services);
-                var json = JsonConvert.SerializeObject(data);
-                await response.WriteAsync(json);
+            var serializerSettings = new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
+            var json = JsonConvert.SerializeObject(data, serializerSettings);
+            await response.WriteAsync(json);
         }
 
         protected abstract object GetData(HttpContext context, IServiceProvider services);

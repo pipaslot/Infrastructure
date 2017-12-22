@@ -13,37 +13,42 @@ namespace Pipaslot.SecurityUI
         public Router(HttpRequest request, string routePrefix)
         {
             _request = request;
-            _routePrefix = routePrefix;
+            _routePrefix = "/" + routePrefix.TrimStart('/');
         }
 
         public IAction ResolveAction()
         {
             if (MatchFile("assets",".js"))
             {
-                var assetName = _request.Path.Value.Substring($"/{_routePrefix}/assets".Length);
+                var assetName = _request.Path.Value.Substring($"{_routePrefix}/assets".Length);
                 return new JavascriptAction(assetName);
             }
             if (MatchFile("assets", ".css"))
             {
-                var assetName = _request.Path.Value.Substring($"/{_routePrefix}/assets".Length);
+                var assetName = _request.Path.Value.Substring($"{_routePrefix}/assets".Length);
                 return new StyleAction(assetName);
             }
             if (Match("json/roles.json"))
             {
                 return new RoleJsonAction();
             }
+            if (Match("page/role/"))
+            {
+                return new TemplateAction(_routePrefix, "role");
+            }
+            // return new RoleResourcesJsonAction();
             return new TemplateAction(_routePrefix, "index");
         }
 
         private bool Match(string path, string method = "GET")
         {
-            var expectedPath = $"/{_routePrefix}/{path}";
+            var expectedPath = $"{_routePrefix}/{path}";
             return _request.Path.Value.StartsWith(expectedPath) && string.Equals(_request.Method, method, StringComparison.CurrentCultureIgnoreCase);
         }
 
         private bool MatchFile(string path, string suffix)
         {
-            var expectedPath = $"/{_routePrefix}/{path}";
+            var expectedPath = $"{_routePrefix}/{path}";
             return _request.Path.Value.StartsWith(expectedPath) && _request.Path.Value.EndsWith(suffix);
         }
     }

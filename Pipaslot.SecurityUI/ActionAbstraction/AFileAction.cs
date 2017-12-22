@@ -11,7 +11,7 @@ namespace Pipaslot.SecurityUI.ActionAbstraction
         {
             var path = relativePath.Replace('\\', '.').Replace('/', '.').Replace("..", ".").TrimStart('.');
             var assembly = GetType().Assembly;
-            using (var stream = assembly.GetManifestResourceStream($"Pipaslot.Infrastructure.SecurityUI.{path}"))
+            using (var stream = assembly.GetManifestResourceStream($"Pipaslot.SecurityUI.{path}"))
             using (var reader = new StreamReader(stream))
             {
                 return reader.ReadToEnd();
