@@ -70,16 +70,6 @@ namespace Pipaslot.Infrastructure.SecurityTests.Mockups
             existing.IsAllowed = isAllowed;
         }
 
-        public Task<int> GetResourceInstanceCountAsync(string resourceName, CancellationToken token = default(CancellationToken))
-        {
-            return Task.FromResult(2);
-        }
-
-        public Task<List<int>> GetAllResourceInstancesIdsAsync(string resource, CancellationToken token = default(CancellationToken))
-        {
-            return Task.FromResult(new List<int> { 1, 2 });
-        }
-
         internal class Record
         {
             public int Role { get; }

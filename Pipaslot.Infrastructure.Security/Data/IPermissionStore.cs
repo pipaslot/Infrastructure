@@ -90,21 +90,5 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// <param name="permission"></param>
         /// <param name="isAllowed"></param>
         void SetPrivilege(TKey roleId, string resource, TKey resourceId, string permission, bool isAllowed);
-
-        /// <summary>
-        /// Count all resource instances, but ignores default key value
-        /// </summary>
-        /// <param name="resourceName"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        Task<int> GetResourceInstanceCountAsync(string resourceName, CancellationToken token = default(CancellationToken));
-
-        /// <summary>
-        /// Returns all stored Instance Ids for resource
-        /// </summary>
-        /// <param name="resource"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        Task<List<TKey>> GetAllResourceInstancesIdsAsync(string resource, CancellationToken token = default(CancellationToken));
     }
 }

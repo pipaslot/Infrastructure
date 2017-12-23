@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -76,9 +78,22 @@ namespace Pipaslot.Demo
 
             //Queries
             services.AddScoped<IQueryFactory<IRoleQuery>, EntityFrameworkQueryFactory<RoleQuery<AppDatabase, int>>>();
+            services.AddScoped<IQueryFactory<IResourceInstanceQuery>, ResourceInstanceQueryFactory<AppDatabase>>(
+                s =>
+                {
+                    var factory = new ResourceInstanceQueryFactory<AppDatabase>(s.GetService<IEntityFrameworkDbContextFactory>());
+                    factory.AddResource(typeof(Company), db => db.Company.Select(c => new ResourceInstance
+                    {
+                        Id = c.Id,
+                        Name = c.Name,
+                        Description = c.Description
+                    })
+                        );
+                    return factory;
+                });
 
             //Configure own services for Permission Manager
-            services.AddSingleton<ResourceRegistry<int>>(_=>
+            services.AddSingleton<ResourceRegistry<int>>(_ =>
             {
                 var registry = new ResourceRegistry<int>();
                 registry.Register(Assembly.GetExecutingAssembly());
@@ -86,12 +101,12 @@ namespace Pipaslot.Demo
             });
             services.AddScoped<IPermissionStore<int>, PermissionStore<int, AppDatabase>>();
             services.AddScoped<IIdentity<int>>(s =>
-              //TODO implementovat zabezpečovací logiku
+               //TODO implementovat zabezpečovací logiku
                new GuestIdentity<int>()
             );
             //Add default configuration for Permission Manager
             services.AddSecurityUI<int>();
-            
+
             // Register the Swagger generator, defining one or more Swagger documents
             services.AddSwaggerGen(c =>
             {

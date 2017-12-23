@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Pipaslot.Infrastructure.Security.Data.Queries
+namespace Pipaslot.Infrastructure.Security.Data
 {
     /// <summary>
     /// Summany information about resource
     /// </summary>
-    public class ResourceInfo
+    /// <typeparam name="TKey"></typeparam>
+    public class ResourceInstanceInfo<TKey>
     {
+
         /// <summary>
         /// Unique name for object inherited from IResource
         /// </summary>
@@ -17,7 +19,7 @@ namespace Pipaslot.Infrastructure.Security.Data.Queries
         /// <summary>
         /// Resource instance identifier
         /// </summary>
-        public int InstancesCount{ get; set; }
+        public TKey Identifier { get; set; }
 
         /// <summary>
         /// User friendly name

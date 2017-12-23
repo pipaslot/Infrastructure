@@ -3,19 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Pipaslot.Infrastructure.Security.Data.Queries;
+using Pipaslot.Infrastructure.Security.Data;
 
 namespace Pipaslot.Infrastructure.Security
 {
-    public interface IPermissionManager<TKey>
+    public interface IPermissionManager<TKey> : IPermissionManager
     {
-        /// <summary>
-        /// Returns information about existing resources and their instances amount
-        /// </summary>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        Task<IEnumerable<ResourceInfo>> GetAllResourcesAsync(CancellationToken token = default(CancellationToken));
-
         /// <summary>
         /// Get all resource instances, ignores resources with default TKey
         /// </summary>
@@ -76,5 +69,10 @@ namespace Pipaslot.Infrastructure.Security
         /// <param name="resourceId"></param>
         /// <param name="permissionEnum"></param>
         void Deny(IUserRole<TKey> role, Type resource, TKey resourceId, IConvertible permissionEnum);
+    }
+
+    public interface IPermissionManager
+    {
+        Task<IEnumerable<ResourceInfo>> GetAllResourcesAsync(CancellationToken token = default(CancellationToken));
     }
 }

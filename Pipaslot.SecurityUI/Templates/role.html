@@ -3,29 +3,33 @@
     <table class="table">
         <thead>
             <tr>
+                <td></td>
                 <th>Name</th>
                 <th>Description</th>
                 <th>Actions</th>
             </tr>
         </thead>
 
-        <tbody>
-            <template v-for="resource in resources">
-                <tr class="bg-primary">
-                    <td>{{resource.name}}</td>
-                    <td>{{resource.description}}</td>
-                    <td>
-                        <a class="btn btn-primary" :href="'{{routePrefix}}/page/role/' + resource.id" role="button">Resources</a>
-                    </td>
-                </tr>
-                <template v-for="instance in resource.instances">
-                    <tr class="bg-secondary">
-                        <td>{{resource.name}}</td>
-                        <td>{{resource.description}}</td>
-                        <td></td>
-                    </tr>
-                </template>
-            </template>
+        <tbody v-for="resource in resources">
+            <tr>
+                <td>
+                    <span class="badge badge-pill badge-dark" title="Instance Count">{{resource.instancesCount}}</span>
+                    <span class="badge badge-pill badge-primary" title="Permissions">{{resource.permisionsCount}}</span>
+                </td>
+                <td>{{resource.name}}</td>
+                <td>{{resource.description}}</td>
+                <td>
+                    <a class="btn btn-primary" @click="load(resource)" role="button">Show Intstances </a>
+                </td>
+            </tr>
+            <tr v-for="instance in resource.instances">
+                <td>
+                    <span class="badge badge-pill badge-primary" title="Permissions">{{resource.permisionsCount}}</span>
+                </td>
+                <td>{{instance.name}}</td>
+                <td>{{instance.description}}</td>
+                <td></td>
+            </tr>
         </tbody>
     </table>
 </div>
@@ -34,10 +38,21 @@
         el: '#app',
         data: {
             resources: []
+        },
+        methods: {
+            load: function (resource) {
+                $.getJSON("{{routePrefix}}/json/resource/" + resource.uniqueName + ".json",
+                    function (response) {
+                        resource.instances = response;
+                    });
+            }
         }
     });
     $.getJSON("{{routePrefix}}/json/resources.json",
         function (response) {
-            app.roles = response;
+            for (var i in response) {
+                response[i].instances = [];
+            }
+            app.resources = response;
         });
 </script>

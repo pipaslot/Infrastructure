@@ -9,13 +9,13 @@ namespace Pipaslot.Infrastructure.Data.Queries
         /// <summary>
         /// Executes the query and returns the results.
         /// </summary>
-        new IList<TResult> Execute();
+        new IEnumerable<TResult> Execute();
         
         /// <summary>
         /// Asynchronously executes the query and returns the results.
         /// </summary>
         /// <param name="cancellationToken"></param>
-        new Task<IList<TResult>> ExecuteAsync(CancellationToken cancellationToken = default(CancellationToken));
+        new Task<IEnumerable<TResult>> ExecuteAsync(CancellationToken cancellationToken = default(CancellationToken));
     }
 
     public interface IExecutableQuery
@@ -23,12 +23,12 @@ namespace Pipaslot.Infrastructure.Data.Queries
         /// <summary>
         /// Executes the query and returns the results.
         /// </summary>
-        IList<object> Execute();
+        IEnumerable<object> Execute();
 
         /// <summary>
         /// Asynchronously executes the query and returns the results.
         /// </summary>
         /// <param name="cancellationToken"></param>
-        Task<IList<object>> ExecuteAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<IEnumerable<object>> ExecuteAsync(CancellationToken cancellationToken = default(CancellationToken));
     }
 }

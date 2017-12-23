@@ -83,22 +83,5 @@ namespace Pipaslot.Infrastructure.Security.EntityFramework
             }
             existing.IsAllowed = isAllowed;
         }
-
-        public virtual async Task<int> GetResourceInstanceCountAsync(string resourceName, CancellationToken token = default(CancellationToken))
-        {
-            return await ContextReadOnly.SecurityPrivilege
-                .CountAsync(p => p.Resource == resourceName &&
-                            !p.ResourceInstance.Equals(default(TKey)), token);
-
-        }
-
-        public virtual async Task<List<TKey>> GetAllResourceInstancesIdsAsync(string resource, CancellationToken token = default(CancellationToken))
-        {
-            return await ContextReadOnly.SecurityPrivilege
-                .Where(p => p.Resource == resource &&
-                            !p.ResourceInstance.Equals(default(TKey)))
-                .Select(d => d.ResourceInstance)
-                .ToListAsync(token);
-        }
     }
 }

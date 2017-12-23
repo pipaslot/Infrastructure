@@ -10,7 +10,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests.Models
         {
         }
 
-        protected override IList<BlogIdName> PostProcessResults(IList<Blog> results)
+        protected override IEnumerable<BlogIdName> PostProcessResults(IEnumerable<Blog> results)
         {
             return results.Select(b => new BlogIdName(b.Id, b.Name)).ToList();
         }

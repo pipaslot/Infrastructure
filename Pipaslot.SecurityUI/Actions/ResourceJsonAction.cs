@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
-using Pipaslot.Infrastructure.Security.Data;
+using Pipaslot.Infrastructure.Security;
 using Pipaslot.SecurityUI.ActionAbstraction;
 
 namespace Pipaslot.SecurityUI.Actions
@@ -9,12 +9,12 @@ namespace Pipaslot.SecurityUI.Actions
     {
         protected override object GetData(HttpContext context, IServiceProvider services)
         {
-            var store = (IPermissionStore)services.GetService(typeof(IPermissionStore));
-            if (store == null)
+            var manager= (IPermissionManager)services.GetService(typeof(IPermissionManager));
+            if (manager == null)
             {
-                throw new ApplicationException($"Can not resolve service {typeof(IPermissionStore)} from Dependency Injection.");
+                throw new ApplicationException($"Can not resolve service {typeof(IPermissionManager)} from Dependency Injection.");
             }
-            return new object(); //store.GetAllResourceInstancesIdsAsync<>()
+            return manager.GetAllResourcesAsync().Result;
         }
     }
 }

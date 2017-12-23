@@ -18,6 +18,7 @@ namespace Pipaslot.SecurityUI
 
         public IAction ResolveAction()
         {
+            //Assets
             if (MatchFile("assets",".js"))
             {
                 var assetName = _request.Path.Value.Substring($"{_routePrefix}/assets".Length);
@@ -28,15 +29,28 @@ namespace Pipaslot.SecurityUI
                 var assetName = _request.Path.Value.Substring($"{_routePrefix}/assets".Length);
                 return new StyleAction(assetName);
             }
+
+            //API
             if (Match("json/roles.json"))
             {
                 return new RoleJsonAction();
             }
+            if (Match("json/resources.json"))
+            {
+                return new ResourceJsonAction();
+            }
+            if (MatchFile("json/resource/", ".json"))
+            {
+                var resourceNameWithSuffix = _request.Path.Value.Substring($"{_routePrefix}/json/resource/".Length);
+                var resourceName = resourceNameWithSuffix.Substring(0, resourceNameWithSuffix.Length-5);
+                return new ResourceInstanceJsonAction(resourceName);
+            }
+
+            //Pages
             if (Match("page/role/"))
             {
                 return new TemplateAction(_routePrefix, "role");
             }
-            // return new RoleResourcesJsonAction();
             return new TemplateAction(_routePrefix, "index");
         }
 

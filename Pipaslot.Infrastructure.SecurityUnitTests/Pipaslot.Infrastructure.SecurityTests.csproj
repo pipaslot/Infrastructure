@@ -75,6 +75,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Pipaslot.Infrastructure.Data\Pipaslot.Infrastructure.Data.csproj">
+      <Project>{C07E0F0B-0A21-43AB-BF5B-21D02C0B10D7}</Project>
+      <Name>Pipaslot.Infrastructure.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Pipaslot.Infrastructure.Security\Pipaslot.Infrastructure.Security.csproj">
       <Project>{DB13E6AD-761D-4459-9B06-A8FA1EBEBD25}</Project>
       <Name>Pipaslot.Infrastructure.Security</Name>

@@ -14,7 +14,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
         {
         }
 
-        protected override IList<TResult> PostProcessResults(IList<TResult> results)
+        protected override IEnumerable<TResult> PostProcessResults(IEnumerable<TResult> results)
         {
             return results;
         }

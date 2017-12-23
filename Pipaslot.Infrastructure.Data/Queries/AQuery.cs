@@ -15,7 +15,7 @@ namespace Pipaslot.Infrastructure.Data.Queries
         /// When overriden in derived class, it allows to modify the materialized results of the query before they are returned
         /// to the caller.
         /// </summary>
-        protected override IList<TResult> PostProcessResults(IList<TResult> results)
+        protected override IEnumerable<TResult> PostProcessResults(IEnumerable<TResult> results)
         {
             return results;
         }
@@ -94,7 +94,7 @@ namespace Pipaslot.Infrastructure.Data.Queries
 
         #region ExecutableQuery Implementation
         
-        public virtual IList<TResult> Execute()
+        public virtual IEnumerable<TResult> Execute()
         {
             var query = PreProcessQuery();
             var queryResults = query.ToList();
@@ -102,13 +102,13 @@ namespace Pipaslot.Infrastructure.Data.Queries
             return results;
         }
         
-        async Task<IList<object>> IExecutableQuery.ExecuteAsync(CancellationToken cancellationToken)
+        async Task<IEnumerable<object>> IExecutableQuery.ExecuteAsync(CancellationToken cancellationToken)
         {
             var list = await ExecuteAsync(cancellationToken);
             return (IList<object>)list;
         }
 
-        IList<object> IExecutableQuery.Execute()
+        IEnumerable<object> IExecutableQuery.Execute()
         {
             var list = Execute();
             return (IList<object>)list;
@@ -117,7 +117,7 @@ namespace Pipaslot.Infrastructure.Data.Queries
         /// <summary>
         ///     Asynchronously executes the query and returns the results.
         /// </summary>
-        public virtual async Task<IList<TResult>> ExecuteAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public virtual async Task<IEnumerable<TResult>> ExecuteAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             var query = PreProcessQuery();
             var queryResults = await ExecuteQueryAsync(query, cancellationToken);
@@ -125,13 +125,13 @@ namespace Pipaslot.Infrastructure.Data.Queries
             return results;
         }
 
-        protected abstract Task<IList<TQueryableResult>> ExecuteQueryAsync(IQueryable<TQueryableResult> query, CancellationToken cancellationToken);
+        protected abstract Task<IEnumerable<TQueryableResult>> ExecuteQueryAsync(IQueryable<TQueryableResult> query, CancellationToken cancellationToken);
 
         /// <summary>
         ///     When overriden in derived class, it allows to modify the materialized results of the query before they are returned
         ///     to the caller.
         /// </summary>
-        protected abstract IList<TResult> PostProcessResults(IList<TQueryableResult> results);
+        protected abstract IEnumerable<TResult> PostProcessResults(IEnumerable<TQueryableResult> results);
 
         protected abstract IQueryable<TQueryableResult> GetQueryable();
 

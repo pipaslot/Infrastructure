@@ -60,7 +60,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
         {
             var query = new BlogQuery(_dbFactory);
             var result = query.Execute();
-            Assert.AreEqual(_defaultData.Count, result.Count);
+            Assert.AreEqual(_defaultData.Count, result.Count());
         }
 
         [TestMethod]
@@ -68,7 +68,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
         {
             var query = new BlogQuery(_dbFactory);
             var result = await query.ExecuteAsync();
-            Assert.AreEqual(_defaultData.Count, result.Count);
+            Assert.AreEqual(_defaultData.Count, result.Count());
         }
 
         [TestMethod]
@@ -96,7 +96,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
             query.Skip = skipNumber;
 
             var result = query.Execute();
-            Assert.AreEqual(_defaultData.Count - 10, result.Count);
+            Assert.AreEqual(_defaultData.Count - 10, result.Count());
 
             var first = result.First();
             Assert.AreEqual(skipNumber + 1, first.Id);
@@ -110,7 +110,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkTests
             query.Take = takeNumber;
 
             var result = query.Execute();
-            Assert.AreEqual(takeNumber, result.Count);
+            Assert.AreEqual(takeNumber, result.Count());
 
             var first = result.First();
             Assert.AreEqual(_defaultData.First().Name, first.Name);

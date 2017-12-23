@@ -8,7 +8,7 @@ namespace Pipaslot.Demo.Models.Entities
     /// <summary>
     /// Company Entity
     /// </summary>
-    public class Company : IEntity<int>, IResource<CompanyPermissions>
+    public class Company : IEntity<int>, IResourceInstance<int, CompanyPermissions>
     {
         /// <summary>
         /// Primary key
@@ -28,5 +28,7 @@ namespace Pipaslot.Demo.Models.Entities
         /// Company details
         /// </summary>
         public string Description { get; set; }
+
+        public int ResourceUniqueIdentifier => Id;
     }
 }

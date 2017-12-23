@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Pipaslot.Infrastructure.Security.Data.Queries
+namespace Pipaslot.Infrastructure.Security.Data
 {
     public class PermissionInfo<TKey>
     {

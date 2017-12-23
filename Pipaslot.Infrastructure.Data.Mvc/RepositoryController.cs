@@ -21,7 +21,7 @@ namespace Pipaslot.Infrastructure.Data.Mvc
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public virtual IList<TEntity> GetAll()
+        public virtual IEnumerable<TEntity> GetAll()
         {
             var query = _repository.CreateQuery();
             return query.Execute();
@@ -32,7 +32,7 @@ namespace Pipaslot.Infrastructure.Data.Mvc
         /// </summary>
         /// <returns></returns>
         [HttpGet("paged/{pageIndex}/{pageSize}")]
-        public virtual IList<TEntity> GetAll(int pageIndex, int pageSize = 10)
+        public virtual IEnumerable<TEntity> GetAll(int pageIndex, int pageSize = 10)
         {
             var query = _repository.CreateQuery();
             query.SetPage(pageIndex, pageSize);

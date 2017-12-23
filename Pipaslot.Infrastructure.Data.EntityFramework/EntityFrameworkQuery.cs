@@ -16,7 +16,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
         {
         }
 
-        protected override IList<TResult> PostProcessResults(IList<TResult> results)
+        protected override IEnumerable<TResult> PostProcessResults(IEnumerable<TResult> results)
         {
             return results;
         }
@@ -44,7 +44,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFramework
         }
 
 
-        protected override async Task<IList<TQueryableResult>> ExecuteQueryAsync(IQueryable<TQueryableResult> query, CancellationToken cancellationToken)
+        protected override async Task<IEnumerable<TQueryableResult>> ExecuteQueryAsync(IQueryable<TQueryableResult> query, CancellationToken cancellationToken)
         {
             return await query.ToListAsync(cancellationToken);
         }

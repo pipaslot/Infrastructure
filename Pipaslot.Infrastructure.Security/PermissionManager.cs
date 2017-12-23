@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Pipaslot.Infrastructure.Data;
 using Pipaslot.Infrastructure.Security.Data;
-using Pipaslot.Infrastructure.Security.Data.Queries;
 
 namespace Pipaslot.Infrastructure.Security
 {
@@ -12,15 +12,15 @@ namespace Pipaslot.Infrastructure.Security
     {
         private readonly IPermissionStore<TKey> _permissionStore;
         private readonly ResourceRegistry<TKey> _resourceRegistry;
-        private readonly IResourceDetailProvider<TKey> _resourceDetailProvider;
+        private readonly IQueryFactory<IResourceInstanceQuery> _resourceInstanceQueryFactory;
         private readonly INamingConvertor _namingConvertor;
 
-        public PermissionManager(IPermissionStore<TKey> permissionStore, ResourceRegistry<TKey> resourceRegistry, IResourceDetailProvider<TKey> resourceDetailProvider, INamingConvertor namingConvertor)
+        public PermissionManager(IPermissionStore<TKey> permissionStore, ResourceRegistry<TKey> resourceRegistry, IQueryFactory<IResourceInstanceQuery> resourceInstanceQueryFactory, INamingConvertor namingConvertor)
         {
             _permissionStore = permissionStore;
             _resourceRegistry = resourceRegistry;
             _namingConvertor = namingConvertor;
-            _resourceDetailProvider = resourceDetailProvider;
+            _resourceInstanceQueryFactory = resourceInstanceQueryFactory;
         }
 
         #region Setup Privilege
@@ -62,10 +62,12 @@ namespace Pipaslot.Infrastructure.Security
             {
                 var type = pair.ResourceType;
                 var resourceName = _namingConvertor.GetResourceUniqueName(type);
+                var instanceQuery = _resourceInstanceQueryFactory.Create();
+                instanceQuery.Resource = type;
                 var info = new ResourceInfo
                 {
-                    InstancesCount = await _permissionStore.GetResourceInstanceCountAsync(resourceName, token),
-                    UniquedName = resourceName,
+                    InstancesCount = await instanceQuery.GetTotalRowCountAsync(token),
+                    UniqueName = resourceName,
                     Name = Helpers.GetResourceReadableName(type),
                     Description = Helpers.GetResourceReadableDescription(type)
                 };
@@ -80,13 +82,14 @@ namespace Pipaslot.Infrastructure.Security
         {
             var result = new List<ResourceInstanceInfo<TKey>>();
             var resourceType = _namingConvertor.GetResourceTypeByUniqueName(resource);
-            var instances = await _permissionStore.GetAllResourceInstancesIdsAsync(resource, token);
-            var instanceDetails = await _resourceDetailProvider.GetResourceDetailsAsync(resourceType, instances, token);
+            var instanceQuery = _resourceInstanceQueryFactory.Create();
+            instanceQuery.Resource = resourceType;
+            var instanceDetails = await instanceQuery.ExecuteAsync(token);
             foreach (var detail in instanceDetails)
             {
                 result.Add(new ResourceInstanceInfo<TKey>
                 {
-                    Identifier = detail.Id,
+                    Identifier = (TKey)detail.Id,
                     UniquedName = resource,
                     Name = detail.Name,
                     Description = detail.Description

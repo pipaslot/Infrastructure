@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Pipaslot.Infrastructure.Data;
+using Pipaslot.Infrastructure.Security.Data;
 using Pipaslot.Infrastructure.Security.Identities;
 
 namespace Pipaslot.Infrastructure.Security
@@ -15,9 +17,8 @@ namespace Pipaslot.Infrastructure.Security
     public class User<TKey> : IUser<TKey>
     {
         private readonly IAuthorizator<TKey> _authorizator;
-
         private readonly IIdentity<TKey> _identity;
-        private readonly IResourceDetailProvider<TKey> _resourceDetailProvider;
+        private readonly IQueryFactory<IResourceInstanceQuery> _resourcenstanceQueryFactory;
 
         public TKey Id => _identity.Id;
 
@@ -25,11 +26,11 @@ namespace Pipaslot.Infrastructure.Security
 
         public IEnumerable<IUserRole<TKey>> Roles => _identity.Roles;
 
-        public User(IAuthorizator<TKey> authorizator, IIdentity<TKey> identity, IResourceDetailProvider<TKey> resourceDetailProvider)
+        public User(IAuthorizator<TKey> authorizator, IIdentity<TKey> identity, IQueryFactory<IResourceInstanceQuery> resourcenstanceQueryFactory)
         {
             _authorizator = authorizator;
             _identity = identity;
-            _resourceDetailProvider = resourceDetailProvider;
+            _resourcenstanceQueryFactory = resourcenstanceQueryFactory;
         }
         
         public virtual async Task CheckPermissionAsync(IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
@@ -56,7 +57,10 @@ namespace Pipaslot.Infrastructure.Security
             {
                 throw new AuthorizationException(resourceInstance.GetType(), permissionEnum, async() =>
                 {
-                    var details = await _resourceDetailProvider.GetResourceDetailsAsync(resourceInstance.GetType(), new List<object>() { resourceInstance.ResourceUniqueIdentifier },token);
+                    var query = _resourcenstanceQueryFactory.Create();
+                    query.Resource = resourceInstance.GetType();
+                    query.ResourceIdentifier = resourceInstance.ResourceUniqueIdentifier;
+                    var details = await query.ExecuteAsync(token);
                     return details.FirstOrDefault();
                 });
             }
@@ -69,8 +73,10 @@ namespace Pipaslot.Infrastructure.Security
             {
                 throw new AuthorizationException(resource, permissionEnum, async () =>
                 {
-                    var details = await _resourceDetailProvider.GetResourceDetailsAsync(resource,
-                        new List<object>() {resourceIdentifier}, token);
+                    var query = _resourcenstanceQueryFactory.Create();
+                    query.Resource = resource;
+                    query.ResourceIdentifier = resourceIdentifier;
+                    var details = await query.ExecuteAsync(token);
                     return details.FirstOrDefault();
                 });
             }
