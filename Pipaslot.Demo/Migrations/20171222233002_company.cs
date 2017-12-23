@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 namespace Pipaslot.Demo.Migrations
 {
+#pragma warning disable 1591
     public partial class company : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)

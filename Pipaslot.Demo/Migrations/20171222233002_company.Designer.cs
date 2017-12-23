@@ -10,6 +10,7 @@ using System;
 
 namespace Pipaslot.Demo.Migrations
 {
+#pragma warning disable 1591
     [DbContext(typeof(AppDatabase))]
     [Migration("20171222233002_company")]
     partial class company

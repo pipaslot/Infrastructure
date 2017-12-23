@@ -19,15 +19,20 @@ namespace Pipaslot.Demo.Models
         public AppDatabase(DbContextOptions options) : base(options)
         {
         }
-
+        /// <summary>
+        /// Company
+        /// </summary>
         public DbSet<Company> Company{ get; set; }
 
         #region ISecurityDbContext Implementation
-        
+
+        /// <summary>
+        /// Entity for ISecurityDbContext
+        /// </summary>
         public DbSet<Role<int>> SecurityRole { get; set; }
 
         /// <summary>
-        /// Entitied for ISecurityDbContext
+        /// Entity for ISecurityDbContext
         /// </summary>
         public DbSet<Privilege<int>> SecurityPrivilege { get; set; }
 

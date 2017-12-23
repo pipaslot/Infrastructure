@@ -6,10 +6,13 @@ namespace Pipaslot.Demo.Models.Entities
 {
     /// <inheritdoc />
     /// <summary>
-    /// Company
+    /// Company Entity
     /// </summary>
     public class Company : IEntity<int>, IResource<CompanyPermissions>
     {
+        /// <summary>
+        /// Primary key
+        /// </summary>
         public int Id { get; set; }
         object IEntity.Id
         {
