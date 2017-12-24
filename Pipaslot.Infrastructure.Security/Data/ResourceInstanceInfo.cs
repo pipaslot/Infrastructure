@@ -7,19 +7,12 @@ namespace Pipaslot.Infrastructure.Security.Data
     /// <summary>
     /// Summany information about resource
     /// </summary>
-    /// <typeparam name="TKey"></typeparam>
-    public class ResourceInstanceInfo<TKey>
+    public class ResourceInstanceInfo
     {
-
-        /// <summary>
-        /// Unique name for object inherited from IResource
-        /// </summary>
-        public string UniquedName { get; set; }
-
         /// <summary>
         /// Resource instance identifier
         /// </summary>
-        public TKey Identifier { get; set; }
+        public object Identifier { get; set; }
 
         /// <summary>
         /// User friendly name
@@ -30,5 +23,10 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// User friendly description
         /// </summary>
         public string Description { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Number of assigned permissions
+        /// </summary>
+        public int PermissionsCount { get; set; }
     }
 }

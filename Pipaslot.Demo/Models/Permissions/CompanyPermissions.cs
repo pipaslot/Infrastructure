@@ -5,14 +5,16 @@ namespace Pipaslot.Demo.Models.Permissions
     /// <summary>
     /// Permissions related to Company Entity
     /// </summary>
-    [Name("Companies")]
     public enum CompanyPermissions
     {
         /// <summary>
         /// User can view single company
         /// </summary>
-        [Name("View Company")]
         [Description("Can view single Company")]
-        View
+        View,
+        /// <summary>
+        /// User can delete single company
+        /// </summary>
+        Delete
     }
 }

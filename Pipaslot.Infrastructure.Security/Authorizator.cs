@@ -88,14 +88,14 @@ namespace Pipaslot.Infrastructure.Security
 
         private readonly Dictionary<string, bool> _privilegeCache = new Dictionary<string, bool>();
 
-        private async Task<bool> LoadCachedAsync(Func<Task<bool>> callback, IEnumerable<TKey> roleIds, string permission, string resource, string resourceId = "")
+        private async Task<bool> LoadCachedAsync(Func<Task<bool?>> callback, IEnumerable<TKey> roleIds, string permission, string resource, string resourceId = "")
         {
             var key = string.Join("###", roleIds) + "#|#|#" + resource + "#|#|#" + permission + "#|#|#" + resourceId;
             if (_privilegeCache.ContainsKey(key))
             {
                 return _privilegeCache[key];
             }
-            var result = await callback();
+            var result = await callback() ?? false;
             _privilegeCache.Add(key, result);
             return result;
         }

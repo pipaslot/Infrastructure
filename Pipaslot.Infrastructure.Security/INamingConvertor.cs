@@ -38,5 +38,12 @@ namespace Pipaslot.Infrastructure.Security
         /// <param name="property"></param>
         /// <returns></returns>
         string GetPermissionUniqueIdentifier(Type permissionClass, MemberInfo property);
+
+        /// <summary>
+        /// Returns permission enum type acording to unique name
+        /// </summary>
+        /// <param name="uniqueName"></param>
+        /// <returns></returns>
+        IConvertible GetPermissionByUniqueName(string uniqueName);
     }
 }

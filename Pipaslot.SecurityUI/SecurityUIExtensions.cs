@@ -10,11 +10,11 @@ namespace Pipaslot.SecurityUI
 {
     public static class SecurityUIExtensions
     {
-        public static IApplicationBuilder UseSecurityUI(this IApplicationBuilder builder, Action<SecurityUIOptions> setup = null)
+        public static IApplicationBuilder UseSecurityUI<TKey>(this IApplicationBuilder builder, Action<SecurityUIOptions> setup = null)
         {
             var options = new SecurityUIOptions();
             setup?.Invoke(options);
-            return builder.UseMiddleware<SecurityUIMiddleware>(options);
+            return builder.UseMiddleware<SecurityUIMiddleware<TKey>>(options);
         }
 
         public static IServiceCollection AddSecurityUI<TKey>(this IServiceCollection services)

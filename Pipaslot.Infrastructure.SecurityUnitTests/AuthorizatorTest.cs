@@ -35,7 +35,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             //Pre-Condition
             permissionStore.Setup(p => p.IsAllowedAsync(new []{ roleId }, ConstantNamingConvertor.RESOURCE, resourceId, ConstantNamingConvertor.PERMISSION, tokenSource.Token))
-                .Returns(Task.FromResult(true));
+                .Returns(Task.FromResult((bool?)true));
 
             //Act
             await auth.IsAllowedAsync(new[] { role }, resource, permission, tokenSource.Token);
@@ -61,7 +61,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             //Pre-Condition
             permissionStore
                 .Setup(p => p.IsAllowedAsync(new[] { roleId }, Authorizator<int>.GLOBAL_RESOURCE_NAME, convertor.GetPermissionUniqueIdentifier(permission), tokenSource.Token))
-                .Returns(Task.FromResult(true));
+                .Returns(Task.FromResult((bool?)true));
 
             //Act
             Assert.IsTrue(auth.IsAllowedAsync(new[] { role }, permission, tokenSource.Token).Result);
@@ -88,7 +88,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             permissionStore
                 .Setup(p => p.IsAllowedAsync(new[] { roleId }, convertor.GetResourceUniqueName(typeof(FirstResource)),
                     convertor.GetPermissionUniqueIdentifier(permission), tokenSource.Token))
-                .Returns(Task.FromResult(true));
+                .Returns(Task.FromResult((bool?)true));
 
             //Act
             Assert.IsTrue(auth.IsAllowedAsync(new[] { role }, typeof(FirstResource), permission, tokenSource.Token).Result);
@@ -130,7 +130,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             permissionStore
                 .Setup(p => p.IsAllowedAsync(new[] { roleId }, convertor.GetResourceUniqueName(resource.GetType()), resourceId,
                     convertor.GetPermissionUniqueIdentifier(permission), tokenSource.Token))
-                .Returns(Task.FromResult(true));
+                .Returns(Task.FromResult((bool?)true));
 
             //Act
             Assert.IsTrue(auth.IsAllowedAsync(new[] { role }, resource, permission, tokenSource.Token).Result);
@@ -158,7 +158,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             permissionStore
                 .Setup(p => p.IsAllowedAsync(new[] { roleId }, convertor.GetResourceUniqueName(typeof(FirstResource)), resourceId,
                     convertor.GetPermissionUniqueIdentifier(permission), tokenSource.Token))
-                .Returns(Task.FromResult(true));
+                .Returns(Task.FromResult((bool?)true));
 
             //Act
             Assert.IsTrue(auth.IsAllowedAsync(new[] { role }, typeof(FirstResource), resourceId, permission, tokenSource.Token).Result);
@@ -238,7 +238,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             //Pre-Condition
             permissionStore
                 .Setup(p => p.IsAllowedAsync(new[] { roleId }, convertor.GetResourceUniqueName(typeof(FirstResource)), convertor.GetPermissionUniqueIdentifier(permission), tokenSource.Token))
-                .Returns(Task.FromResult(true));
+                .Returns(Task.FromResult((bool?)true));
 
             //Act
             await auth.IsAllowedAsync(new[] { role }, typeof(FirstResource), permission, tokenSource.Token);
@@ -276,6 +276,11 @@ namespace Pipaslot.Infrastructure.SecurityTests
             public string GetPermissionUniqueIdentifier(Type permissionClass, MemberInfo property)
             {
                 return PERMISSION;
+            }
+
+            public IConvertible GetPermissionByUniqueName(string uniqueName)
+            {
+                throw new NotImplementedException();
             }
         }
 

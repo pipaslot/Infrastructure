@@ -23,10 +23,11 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var permissionStore = new Mock<IPermissionStore<int>>();
             var resourceRegistry = new Mock<ResourceRegistry<int>>();
             var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
+            var namigConvertor = new DefaultNamingConvertor<int>(resourceRegistry.Object);
             var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry.Object, resourceInstanceQueryFactory.Object, new DefaultNamingConvertor<int>(resourceRegistry.Object));
 
             //Act
-            manager.Allow(new UserRole(1), typeof(FirstResource), default(int), SecondPermissions.Edit);
+            manager.SetPermission(1, typeof(FirstResource).FullName, default(int), namigConvertor.GetPermissionUniqueIdentifier(SecondPermissions.Edit),true);
         }
 
         [TestMethod]
@@ -37,10 +38,11 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var permissionStore = new Mock<IPermissionStore<int>>();
             var resourceRegistry = new Mock<ResourceRegistry<int>>();
             var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
+            var namigConvertor = new DefaultNamingConvertor<int>(resourceRegistry.Object);
             var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry.Object, resourceInstanceQueryFactory.Object, new DefaultNamingConvertor<int>(resourceRegistry.Object));
 
             //Act
-            manager.Deny(new UserRole(1), typeof(FirstResource), default(int), SecondPermissions.Edit);
+            manager.SetPermission(1, typeof(FirstResource).FullName, default(int), namigConvertor.GetPermissionUniqueIdentifier(SecondPermissions.Edit),false);
         }
 
         [TestMethod]
@@ -92,11 +94,9 @@ namespace Pipaslot.Infrastructure.SecurityTests
             //Act
             var manager = new PermissionManager<int>(permissionStoreMock.Object, resourceRegistry, resourceInstanceQueryFactory.Object, new DefaultNamingConvertor<int>(resourceRegistry));
             var resources = manager.GetAllResourceInstancesAsync(resourceType.FullName, tokenSource.Token).Result;
-            var firstResource = resources
-                .First(r => r.UniquedName == resourceType.FullName);
+            var firstResource = resources.First();
 
             //Assert
-            Assert.IsFalse(string.IsNullOrWhiteSpace(firstResource.UniquedName));
             Assert.AreEqual(resourceId, firstResource.Identifier);
             Assert.AreEqual(providerResult.Name, firstResource.Name);
             Assert.AreEqual(providerResult.Description, firstResource.Description);
@@ -129,7 +129,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var permissionStoreMock = new Mock<IPermissionStore<int>>();
             permissionStoreMock
                 .Setup(p => p.IsAllowedAsync(roleId, resourceName, namingConvertor.GetPermissionUniqueIdentifier(StaticPermissions.Create), tokenSource.Token))
-                .Returns(Task.FromResult(isAllowed));
+                .Returns(Task.FromResult((bool?)isAllowed));
 
             //Act
             var manager = new PermissionManager<int>(permissionStoreMock.Object, resourceRegistry, resourceInstanceQueryFactory.Object, new DefaultNamingConvertor<int>(resourceRegistry));
@@ -138,8 +138,6 @@ namespace Pipaslot.Infrastructure.SecurityTests
             Assert.AreEqual(3, permissions.Count());
 
             var create = permissions.Last();
-            Assert.AreEqual(resourceName, create.ResourceUniquedName);
-            Assert.AreEqual(default(int), create.ResourceIdentifier);
             Assert.AreEqual(namingConvertor.GetPermissionUniqueIdentifier(StaticPermissions.Create), create.UniqueIdentifier);
             Assert.IsFalse(string.IsNullOrWhiteSpace(create.Name));
             Assert.IsFalse(string.IsNullOrWhiteSpace(create.Description));
@@ -175,7 +173,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var permissionStoreMock = new Mock<IPermissionStore<int>>();
             permissionStoreMock
                 .Setup(p => p.IsAllowedAsync(roleId, resourceName, resourceId, namingConvertor.GetPermissionUniqueIdentifier(FirstPermissions.Edit), tokenSource.Token))
-                .Returns(Task.FromResult(isAllowed));
+                .Returns(Task.FromResult((bool?)isAllowed));
 
             //Act
             var manager = new PermissionManager<int>(permissionStoreMock.Object, resourceRegistry, resourceInstanceQueryFactory.Object, new DefaultNamingConvertor<int>(resourceRegistry));
@@ -184,8 +182,6 @@ namespace Pipaslot.Infrastructure.SecurityTests
             Assert.AreEqual(2, permissions.Count());
 
             var edit = permissions.Last();
-            Assert.AreEqual(resourceName, edit.ResourceUniquedName);
-            Assert.AreEqual(resourceId, edit.ResourceIdentifier);
             Assert.AreEqual(namingConvertor.GetPermissionUniqueIdentifier(FirstPermissions.Edit), edit.UniqueIdentifier);
             Assert.IsFalse(string.IsNullOrWhiteSpace(edit.Name));
             Assert.IsFalse(string.IsNullOrWhiteSpace(edit.Description));

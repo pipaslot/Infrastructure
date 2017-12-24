@@ -54,6 +54,7 @@ namespace Pipaslot.Infrastructure.Security
                 if (_reloadAll)
                 {
                     Load();
+                    _reloadAll = false;
                 }
                 return _loadedResources;
             }

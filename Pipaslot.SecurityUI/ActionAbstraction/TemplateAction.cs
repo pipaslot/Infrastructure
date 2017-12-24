@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
@@ -6,11 +7,13 @@ namespace Pipaslot.SecurityUI.ActionAbstraction
 {
     class TemplateAction : AFileAction
     {
+        private readonly Dictionary<string, object> _templateParameters;
         public string RoutePrefix { get; set; }
         public string PageName { get; set; }
 
-        public TemplateAction(string routePrefix, string pageName)
+        public TemplateAction(string routePrefix, string pageName, Dictionary<string, object>templateParameters = null)
         {
+            _templateParameters = templateParameters ?? new Dictionary<string, object>();
             RoutePrefix = routePrefix;
             PageName = pageName;
         }
@@ -24,6 +27,10 @@ namespace Pipaslot.SecurityUI.ActionAbstraction
             var html = layout
                 .Replace("{{pageBody}}", body)
                 .Replace("{{routePrefix}}",RoutePrefix);
+            foreach (var parameter in _templateParameters)
+            {
+                html = html.Replace("{{"+ parameter.Key+"}}", parameter.Value.ToString());
+            }
             
             await response.WriteAsync(html);
         }

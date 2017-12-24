@@ -17,30 +17,31 @@ namespace Pipaslot.Infrastructure.Security.EntityFramework
         {
         }
 
-        public virtual Task<bool> IsAllowedAsync(TKey roleId, string resource, string permission, CancellationToken token = default(CancellationToken))
+        public virtual Task<bool?> IsAllowedAsync(TKey roleId, string resource, string permission, CancellationToken token = default(CancellationToken))
         {
             var resourceId = default(TKey);
             return IsAllowedAsync(roleId, resource, resourceId, permission, token);
         }
 
-        public virtual Task<bool> IsAllowedAsync(IEnumerable<TKey> roleIds, string resource, string permission, CancellationToken token = default(CancellationToken))
+        public virtual Task<bool?> IsAllowedAsync(IEnumerable<TKey> roleIds, string resource, string permission, CancellationToken token = default(CancellationToken))
         {
             var resourceId = default(TKey);
             return IsAllowedAsync(roleIds, resource, resourceId, permission, token);
         }
 
-        public virtual Task<bool> IsAllowedAsync(TKey roleId, string resource, TKey resourceId, string permission, CancellationToken token = default(CancellationToken))
+        public virtual Task<bool?> IsAllowedAsync(TKey roleId, string resource, TKey resourceId, string permission, CancellationToken token = default(CancellationToken))
         {
             return IsAllowedAsync(new[] { roleId }, resource, resourceId, permission, token);
         }
 
-        public virtual async Task<bool> IsAllowedAsync(IEnumerable<TKey> roleIds, string resource, TKey resourceId, string permission, CancellationToken token = default(CancellationToken))
+        public virtual async Task<bool?> IsAllowedAsync(IEnumerable<TKey> roleIds, string resource, TKey resourceId, string permission, CancellationToken token = default(CancellationToken))
         {
-            return await ContextReadOnly.SecurityPrivilege.AnyAsync(p => roleIds.Contains(p.Role) &&
-                                                              p.Resource == resource &&
-                                                              p.ResourceInstance.Equals(resourceId) &&
-                                                              p.Permission == permission &&
-                                                              p.IsAllowed, token);
+            var privilege = await ContextReadOnly.SecurityPrivilege.FirstOrDefaultAsync(p => roleIds.Contains(p.Role) &&
+                                                                                        p.Resource == resource &&
+                                                                                        p.ResourceInstance.Equals(resourceId) &&
+                                                                                        p.Permission == permission &&
+                                                                                        p.IsAllowed, token);
+            return privilege?.IsAllowed;
         }
 
         public virtual Task<IEnumerable<TKey>> GetAllowedResourceIdsAsync(TKey roleId, string resource, string permission, CancellationToken token = default(CancellationToken))
@@ -58,17 +59,26 @@ namespace Pipaslot.Infrastructure.Security.EntityFramework
                 .ToListAsync(token);
         }
 
-        public virtual void SetPrivilege(TKey roleId, string resource, string permission, bool isAllowed)
+        public virtual void SetPrivilege(TKey roleId, string resource, string permission, bool? isAllowed)
         {
             SetPrivilege(roleId, resource, default(TKey), permission, isAllowed);
         }
 
-        public virtual void SetPrivilege(TKey roleId, string resource, TKey resourceId, string permission, bool isAllowed)
+        public virtual void SetPrivilege(TKey roleId, string resource, TKey resourceId, string permission, bool? isAllowed)
         {
             var existing = Context.SecurityPrivilege.FirstOrDefault(p => p.Role.Equals(roleId) &&
                                                      p.Resource == resource &&
                                                      p.ResourceInstance.Equals(resourceId) &&
                                                      p.Permission == permission);
+            if (isAllowed == null)
+            {
+                //unset
+                if (existing != null)
+                {
+                    Context.SecurityPrivilege.Remove(existing);
+                }
+                return;
+            }
             if (existing == null)
             {
                 existing = new Privilege<TKey>()
@@ -77,11 +87,11 @@ namespace Pipaslot.Infrastructure.Security.EntityFramework
                     Resource = resource,
                     ResourceInstance = resourceId,
                     Permission = permission,
-                    IsAllowed = isAllowed
+                    IsAllowed = isAllowed ?? false
                 };
                 Context.SecurityPrivilege.Add(existing);
             }
-            existing.IsAllowed = isAllowed;
+            existing.IsAllowed = isAllowed ?? false;
         }
     }
 }

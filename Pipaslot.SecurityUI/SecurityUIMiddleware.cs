@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Pipaslot.SecurityUI
 {
-    public class SecurityUIMiddleware
+    public class SecurityUIMiddleware<TKey>
     {
         private readonly RequestDelegate _next;
         private readonly SecurityUIOptions _options;
@@ -19,7 +19,7 @@ namespace Pipaslot.SecurityUI
         {
             if (context.Request.Path.Value.StartsWith($"/{_options.RoutePrefix}"))
             {
-                var router = new Router(context.Request,_options.RoutePrefix);
+                var router = new Router<TKey>(context.Request,_options.RoutePrefix);
                 var action = router.ResolveAction();
                 return action.ExecuteAsync(context, services);
             }

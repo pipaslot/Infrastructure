@@ -9,7 +9,7 @@ namespace Pipaslot.SecurityUI.Actions
     {
         protected override object GetData(HttpContext context, IServiceProvider services)
         {
-            var manager= (IPermissionManager)services.GetService(typeof(IPermissionManager));
+            var manager = (IPermissionManager)services.GetService(typeof(IPermissionManager));
             if (manager == null)
             {
                 throw new ApplicationException($"Can not resolve service {typeof(IPermissionManager)} from Dependency Injection.");

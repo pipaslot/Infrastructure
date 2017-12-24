@@ -147,7 +147,7 @@ namespace Pipaslot.Demo
             });
 
             //Add Middleware for Permission Manager
-            app.UseSecurityUI(options =>
+            app.UseSecurityUI<int>(options =>
             {
                 options.RoutePrefix = "security";
             });

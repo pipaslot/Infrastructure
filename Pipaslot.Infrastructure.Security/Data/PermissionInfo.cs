@@ -1,21 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Pipaslot.Infrastructure.Security.Data
+﻿namespace Pipaslot.Infrastructure.Security.Data
 {
-    public class PermissionInfo<TKey>
+    public class PermissionInfo
     {
-        /// <summary>
-        /// Unique name for object inherited from IResource
-        /// </summary>
-        public string ResourceUniquedName { get; set; }
-
-        /// <summary>
-        /// Resource instance identifier
-        /// </summary>
-        public TKey ResourceIdentifier { get; set; }
-
         /// <summary>
         /// Permission unique identifier
         /// </summary>
@@ -34,6 +20,6 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// <summary>
         /// Is allowed or is deny
         /// </summary>
-        public bool IsAllowed { get; set; }
+        public bool? IsAllowed { get; set; }
     }
 }

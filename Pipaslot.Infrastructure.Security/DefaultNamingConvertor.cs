@@ -44,5 +44,22 @@ namespace Pipaslot.Infrastructure.Security
         {
             return permissionClass.FullName + "." + property.Name;
         }
+
+        public IConvertible GetPermissionByUniqueName(string uniqueName)
+        {
+            var lastDot = uniqueName.LastIndexOf('.');
+            var className = uniqueName.Substring(0, lastDot);
+            var permissionName = uniqueName.Substring(lastDot+1);
+            foreach (var assembly in _resourceRegistry.RegisteredAssemblies)
+            {
+                var type = Type.GetType(className + ", " + assembly);
+                if (type != null)
+                {
+                    return (IConvertible)Enum.Parse(type, permissionName, ignoreCase: true);
+                }
+            }
+            throw new ArgumentOutOfRangeException($"Can not find type '{uniqueName}' in assemblies: {_resourceRegistry.RegisteredAssemblies}");
+
+        }
     }
 }

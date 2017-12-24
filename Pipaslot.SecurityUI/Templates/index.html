@@ -13,7 +13,7 @@
                 <td>{{role.name}}</td>
                 <td>{{role.description}}</td>
                 <td>
-                    <a class="btn btn-primary" :href="'{{routePrefix}}/page/role/' + role.id" role="button">Resources</a>
+                    <a class="btn btn-primary" :href="'{{routePrefix}}/role?roleId=' + role.id + '&roleName=' + role.name" role="button">Resources</a>
                 </td>
             </tr>
         </tbody>
@@ -26,7 +26,7 @@
             roles: []
         }
     });
-    $.getJSON("{{routePrefix}}/json/roles.json",
+    $.getJSON("{{routePrefix}}/api/role",
         function (response) {
             app.roles = response;
         });

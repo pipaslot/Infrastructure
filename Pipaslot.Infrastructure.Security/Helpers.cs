@@ -35,7 +35,7 @@ namespace Pipaslot.Infrastructure.Security
             {
                 return nameAttr.Name;
             }
-            return string.Empty;
+            return field.Name;
         }
 
         internal static string GetPermissonReadableDescription(IConvertible permissionEnum)
@@ -63,7 +63,7 @@ namespace Pipaslot.Infrastructure.Security
             {
                 return nameAttr.Name;
             }
-            return type.FullName;
+            return type.Name;
         }
 
         internal static string GetResourceReadableDescription(Type type)

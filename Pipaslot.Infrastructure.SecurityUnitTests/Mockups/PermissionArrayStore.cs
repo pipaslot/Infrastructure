@@ -11,29 +11,29 @@ namespace Pipaslot.Infrastructure.SecurityTests.Mockups
     {
         private readonly List<Record> _data = new List<Record>();
 
-        public Task<bool> IsAllowedAsync(int roleId, string resource, string permission, CancellationToken token = default(CancellationToken))
+        public Task<bool?> IsAllowedAsync(int roleId, string resource, string permission, CancellationToken token = default(CancellationToken))
         {
             return IsAllowedAsync(roleId, resource, default(int), permission, token);
         }
 
-        public Task<bool> IsAllowedAsync(IEnumerable<int> roleIds, string resource, string permission, CancellationToken token = default(CancellationToken))
+        public Task<bool?> IsAllowedAsync(IEnumerable<int> roleIds, string resource, string permission, CancellationToken token = default(CancellationToken))
         {
             return IsAllowedAsync(roleIds, resource, default(int), permission, token);
         }
 
-        public Task<bool> IsAllowedAsync(int roleId, string resource, int resourceId, string permission, CancellationToken token = default(CancellationToken))
+        public Task<bool?> IsAllowedAsync(int roleId, string resource, int resourceId, string permission, CancellationToken token = default(CancellationToken))
         {
             return IsAllowedAsync(new[] { roleId }, resource, resourceId, permission, token);
         }
 
-        public Task<bool> IsAllowedAsync(IEnumerable<int> roleIds, string resource, int resourceId, string permission, CancellationToken token = default(CancellationToken))
+        public Task<bool?> IsAllowedAsync(IEnumerable<int> roleIds, string resource, int resourceId, string permission, CancellationToken token = default(CancellationToken))
         {
-            var result = _data.Any(d => roleIds.Contains(d.Role) &&
+            var result = _data.FirstOrDefault(d => roleIds.Contains(d.Role) &&
                                         d.Resource == resource &&
                                         d.ResourceId == resourceId &&
                                         d.Permission == permission &&
                                         d.IsAllowed);
-            return Task.FromResult(result);
+            return Task.FromResult(result?.IsAllowed);
         }
 
         public Task<IEnumerable<int>> GetAllowedResourceIdsAsync(int roleId, string resource, string permission, CancellationToken token = default(CancellationToken))

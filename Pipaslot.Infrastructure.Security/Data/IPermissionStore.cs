@@ -17,7 +17,7 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// <param name="permission"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<bool> IsAllowedAsync(TKey roleId, string resource, string permission, CancellationToken token = default(CancellationToken));
+        Task<bool?> IsAllowedAsync(TKey roleId, string resource, string permission, CancellationToken token = default(CancellationToken));
         
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// <param name="permission"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<bool> IsAllowedAsync(IEnumerable<TKey> roleIds, string resource, string permission,CancellationToken token = default(CancellationToken));
+        Task<bool?> IsAllowedAsync(IEnumerable<TKey> roleIds, string resource, string permission,CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Check if role has assigned instance permission
@@ -39,7 +39,7 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// <param name="permission"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<bool> IsAllowedAsync(TKey roleId, string resource, TKey resourceId, string permission, CancellationToken token = default(CancellationToken));
+        Task<bool?> IsAllowedAsync(TKey roleId, string resource, TKey resourceId, string permission, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Check if role has assigned static permission
@@ -50,7 +50,7 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// <param name="permission"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<bool> IsAllowedAsync(IEnumerable<TKey> roleIds, string resource, TKey resourceId, string permission, CancellationToken token = default(CancellationToken));
+        Task<bool?> IsAllowedAsync(IEnumerable<TKey> roleIds, string resource, TKey resourceId, string permission, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Returns all resource ID for which user has assigner permission
@@ -79,7 +79,7 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// <param name="resource"></param>
         /// <param name="permission"></param>
         /// <param name="isAllowed"></param>
-        void SetPrivilege(TKey roleId, string resource, string permission, bool isAllowed);
+        void SetPrivilege(TKey roleId, string resource, string permission, bool? isAllowed);
 
         /// <summary>
         /// Allow or Deny permission for user and resource instance
@@ -89,6 +89,6 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// <param name="resourceId"></param>
         /// <param name="permission"></param>
         /// <param name="isAllowed"></param>
-        void SetPrivilege(TKey roleId, string resource, TKey resourceId, string permission, bool isAllowed);
+        void SetPrivilege(TKey roleId, string resource, TKey resourceId, string permission, bool? isAllowed);
     }
 }

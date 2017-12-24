@@ -1,35 +1,70 @@
 ﻿<div id="app">
-    <h1>Resources</h1>
+    <h1>Resources for role: {{roleName}}</h1>
     <table class="table">
         <thead>
-            <tr>
-                <td></td>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Actions</th>
-            </tr>
+        <tr>
+            <td></td>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+            <td></td>
+        </tr>
         </thead>
 
         <tbody v-for="resource in resources">
-            <tr>
+        <tr class="text-light bg-dark">
+            <td>
+                <span class="badge badge-pill badge-light" title="Instance Count">{{resource.instancesCount}}</span>
+                <span class="badge badge-pill badge-primary" title="Permissions">{{resource.permissionsCount}}</span>
+            </td>
+            <td><strong>{{resource.name}}</strong></td>
+            <td>{{resource.description}}</td>
+            <td colspan="2">
+                <button class="btn btn-sm btn-light" @click="load(resource)" role="button">Show Intstances </button>
+                <button class="btn btn-sm btn-primary" @click="staticPermissions(resource)" role="button">Show Permissions</button>
+            </td>
+        </tr>
+        <tr v-for="permission in resource.permissions">
+            <td></td>
+            <td>{{permission.name}}</td>
+            <td>{{permission.description}}</td>
+            <td>
+                <button :disabled="permission.isAllowed===true" class="btn btn-sm btn-success" @click="switchStaticPermission(resource, permission, true)" role="button">Allow</button>
+                <button :disabled="permission.isAllowed===false" class="btn btn-sm btn-danger" @click="switchStaticPermission(resource, permission, false)" role="button">Deny</button>
+                <button :disabled="permission.isAllowed===null" class="btn btn-sm btn-secondary" @click="switchStaticPermission(resource, permission, null)" role="button">Unset</button>
+            </td>
+            <td>
+                <span v-if="permission.isAllowed === true" class="text-success">Allowed</span>
+                <span v-if="permission.isAllowed !== true" class="text-danger">Deny</span>
+            </td>
+        </tr>
+
+        <template v-for="instance in resource.instances">
+            <tr class="bg-light">
                 <td>
-                    <span class="badge badge-pill badge-dark" title="Instance Count">{{resource.instancesCount}}</span>
-                    <span class="badge badge-pill badge-primary" title="Permissions">{{resource.permisionsCount}}</span>
-                </td>
-                <td>{{resource.name}}</td>
-                <td>{{resource.description}}</td>
-                <td>
-                    <a class="btn btn-primary" @click="load(resource)" role="button">Show Intstances </a>
-                </td>
-            </tr>
-            <tr v-for="instance in resource.instances">
-                <td>
-                    <span class="badge badge-pill badge-primary" title="Permissions">{{resource.permisionsCount}}</span>
+                    <span class="badge badge-pill badge-primary" title="Permissions">{{instance.permissionsCount}}</span>
                 </td>
                 <td>{{instance.name}}</td>
                 <td>{{instance.description}}</td>
-                <td></td>
+                <td colspan="2">
+                    <button class="btn btn-sm btn-primary" @click="instancePermissions(resource, instance)" role="button">Show Permissions</button>
+                </td>
             </tr>
+            <tr v-for="permission in instance.permissions">
+                <td></td>
+                <td>{{permission.name}}</td>
+                <td>{{permission.description}}</td>
+                <td>
+                    <button :disabled="permission.isAllowed===true" class="btn btn-sm btn-success" @click="switchInstancePermission(resource, instance, permission, true)" role="button">Allow</button>
+                    <button :disabled="permission.isAllowed===false" class="btn btn-sm btn-danger" @click="switchInstancePermission(resource, instance, permission, false)" role="button">Deny</button>
+                    <button :disabled="permission.isAllowed===null" class="btn btn-sm btn-secondary" @click="switchInstancePermission(resource, instance, permission, null)" role="button">Unset</button>
+                </td>
+                <td>
+                    <span v-if="isInstanceAllowed(resource, permission)" class="text-success">Allowed</span>
+                    <span v-if="!isInstanceAllowed(resource, permission)" class="text-danger">Deny</span>
+                </td>
+            </tr>
+        </template>
         </tbody>
     </table>
 </div>
@@ -41,17 +76,56 @@
         },
         methods: {
             load: function (resource) {
-                $.getJSON("{{routePrefix}}/json/resource/" + resource.uniqueName + ".json",
+                $.getJSON("{{routePrefix}}/api/resource-instance?resource=" + resource.uniqueName,
                     function (response) {
+                        for (var i in response) {
+                            response[i].permissions = [];
+                        }
                         resource.instances = response;
                     });
+            },
+            staticPermissions: function (resource) {
+                $.getJSON("{{routePrefix}}/api/permission?role={{roleId}}&resource=" + resource.uniqueName,
+                    function (response) {
+                        resource.permissions = response;
+                    });
+            },
+            instancePermissions: function (resource, instance) {
+                $.getJSON("{{routePrefix}}/api/permission?role={{roleId}}&resource=" + resource.uniqueName
+                    + "&instance=" + instance.identifier,
+                    function (response) {
+                        instance.permissions = response;
+                    });
+            },
+            switchStaticPermission: function (resource, permission, isAllowed) {
+                permission.isAllowed = isAllowed;
+                $.getJSON("{{routePrefix}}/api/privilege?role={{roleId}}&resource=" + resource.uniqueName
+                    + "&permission=" + permission.uniqueIdentifier
+                    + "&isAllowed=" + isAllowed);
+            },
+            switchInstancePermission: function (resource, instance, permission, isAllowed) {
+                permission.isAllowed = isAllowed;
+                $.getJSON("{{routePrefix}}/api/privilege?role={{roleId}}&resource=" + resource.uniqueName
+                    + "&instance=" + instance.identifier
+                    + "&permission=" + permission.uniqueIdentifier
+                    + "&isAllowed=" + isAllowed);
+            },
+            isInstanceAllowed: function (staticResource, permission) {
+                if (permission.isAllowed !== null) return permission.isAllowed;
+                //Use Static resource permission
+                var resourcePermission = staticResource.permissions.filter(function(p) {
+                    return p.uniqueIdentifier == permission.uniqueIdentifier;
+                })[0];
+                if (resourcePermission && resourcePermission.isAllowed !== null) return resourcePermission.isAllowed;
+                return false;
             }
         }
     });
-    $.getJSON("{{routePrefix}}/json/resources.json",
+    $.getJSON("{{routePrefix}}/api/resource",
         function (response) {
             for (var i in response) {
                 response[i].instances = [];
+                response[i].permissions = [];
             }
             app.resources = response;
         });
