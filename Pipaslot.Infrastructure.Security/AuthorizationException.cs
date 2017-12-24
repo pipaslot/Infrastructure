@@ -16,6 +16,10 @@ namespace Pipaslot.Infrastructure.Security
 
         public string ResourceInstanceName => _resourceInstnanceName ?? (_resourceInstnanceName = _resourceDetailGetter().Result?.Name ?? "");
 
+        public AuthorizationException(string message) : base(message)
+        {
+        }
+
         public AuthorizationException(IConvertible permissionEnum)
         {
             Permission = permissionEnum;

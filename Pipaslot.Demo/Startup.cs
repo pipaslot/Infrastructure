@@ -102,7 +102,8 @@ namespace Pipaslot.Demo
             services.AddScoped<IPermissionStore<int>, PermissionStore<int, AppDatabase>>();
             services.AddScoped<IIdentity<int>>(s =>
                //TODO implementovat zabezpečovací logiku
-               new GuestIdentity<int>()
+                        new AdminIdentity<int>()
+            // new GuestIdentity<int>()
             );
             //Add default configuration for Permission Manager
             services.AddSecurityUI<int>();
