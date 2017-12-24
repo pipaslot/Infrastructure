@@ -20,11 +20,11 @@
             <td><strong>{{resource.name}}</strong></td>
             <td>{{resource.description}}</td>
             <td colspan="2">
-                <button class="btn btn-sm btn-light" @click="load(resource)" role="button">Show Intstances </button>
-                <button class="btn btn-sm btn-primary" @click="staticPermissions(resource)" role="button">Show Permissions</button>
+                <button class="btn btn-sm btn-light" @click="resourceInstances(resource)" role="button">{{resource.showInstances ? "Hide Instances" : "Show Instances"}}</button>
+                <button class="btn btn-sm btn-primary" @click="staticPermissions(resource)" role="button">{{resource.showPermissions ? "Hide Permissions" : "Show Permissions"}}</button>
             </td>
         </tr>
-        <tr v-for="permission in resource.permissions">
+        <tr v-if="resource.showPermissions" v-for="permission in resource.permissions">
             <td></td>
             <td>{{permission.name}}</td>
             <td>{{permission.description}}</td>
@@ -39,7 +39,7 @@
             </td>
         </tr>
 
-        <template v-for="instance in resource.instances">
+        <template v-if="resource.showInstances" v-for="instance in resource.instances">
             <tr class="bg-light">
                 <td>
                     <span class="badge badge-pill badge-primary" title="Permissions">{{instance.permissionsCount}}</span>
@@ -47,10 +47,10 @@
                 <td>{{instance.name}}</td>
                 <td>{{instance.description}}</td>
                 <td colspan="2">
-                    <button class="btn btn-sm btn-primary" @click="instancePermissions(resource, instance)" role="button">Show Permissions</button>
+                    <button class="btn btn-sm btn-primary" @click="instancePermissions(resource, instance)" role="button">{{instance.showPermissions ? "Hide Permissions" : "Show Permissions"}}</button>
                 </td>
             </tr>
-            <tr v-for="permission in instance.permissions">
+            <tr v-if="instance.showPermissions" v-for="permission in instance.permissions">
                 <td></td>
                 <td>{{permission.name}}</td>
                 <td>{{permission.description}}</td>
@@ -75,22 +75,38 @@
             resources: []
         },
         methods: {
-            load: function (resource) {
+            resourceInstances: function (resource) {
+                if (resource.showInstances) {
+                    resource.showInstances = false;
+                    return;
+                }
+                resource.showInstances = true;
                 $.getJSON("{{routePrefix}}/api/resource-instance?resource=" + resource.uniqueName,
                     function (response) {
                         for (var i in response) {
                             response[i].permissions = [];
+                            response[i].showPermissions = false;
                         }
                         resource.instances = response;
                     });
             },
             staticPermissions: function (resource) {
+                if (resource.showPermissions) {
+                    resource.showPermissions = false;
+                    return;
+                }
+                resource.showPermissions = true;
                 $.getJSON("{{routePrefix}}/api/permission?role={{roleId}}&resource=" + resource.uniqueName,
                     function (response) {
                         resource.permissions = response;
                     });
             },
             instancePermissions: function (resource, instance) {
+                if (instance.showPermissions) {
+                    instance.showPermissions = false;
+                    return;
+                }
+                instance.showPermissions = true;
                 $.getJSON("{{routePrefix}}/api/permission?role={{roleId}}&resource=" + resource.uniqueName
                     + "&instance=" + instance.identifier,
                     function (response) {
@@ -126,6 +142,8 @@
             for (var i in response) {
                 response[i].instances = [];
                 response[i].permissions = [];
+                response[i].showInstances = false;
+                response[i].showPermissions = false;
             }
             app.resources = response;
         });
