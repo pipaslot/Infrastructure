@@ -51,23 +51,28 @@ namespace Pipaslot.Infrastructure.SecurityTests.Mockups
             return Task.FromResult(result);
         }
 
-        public void SetPrivilege(int roleId, string resource, string permission, bool isAllowed)
+        public void SetPrivilege(int roleId, string resource, string permission, bool? isAllowed)
         {
             SetPrivilege(roleId, resource, default(int), permission, isAllowed);
         }
 
-        public void SetPrivilege(int roleId, string resource, int resourceId, string permission, bool isAllowed)
+        public void SetPrivilege(int roleId, string resource, int resourceId, string permission, bool? isAllowed)
         {
             var existing = _data.FirstOrDefault(d => d.Role == roleId &&
                                           d.Resource == resource &&
                                           d.ResourceId == resourceId &&
                                           d.Permission == permission);
+            if (isAllowed == null)
+            {
+                if (existing != null) _data.Remove(existing);
+                return;
+            }
             if (existing == null)
             {
-                existing = new Record(roleId, resource, resourceId, permission, isAllowed);
+                existing = new Record(roleId, resource, resourceId, permission, isAllowed ?? false);
                 _data.Add(existing);
             }
-            existing.IsAllowed = isAllowed;
+            existing.IsAllowed = isAllowed ?? false;
         }
 
         internal class Record

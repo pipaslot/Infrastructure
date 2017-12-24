@@ -21,10 +21,11 @@ namespace Pipaslot.Infrastructure.SecurityTests
         {
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var resourceRegistry = new Mock<ResourceRegistry<int>>();
+            var resourceRegistry = new ResourceRegistry<int>();
+            resourceRegistry.Register(GetType().Assembly);
             var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
-            var namigConvertor = new DefaultNamingConvertor<int>(resourceRegistry.Object);
-            var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry.Object, resourceInstanceQueryFactory.Object, new DefaultNamingConvertor<int>(resourceRegistry.Object));
+            var namigConvertor = new DefaultNamingConvertor<int>(resourceRegistry);
+            var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry, resourceInstanceQueryFactory.Object, new DefaultNamingConvertor<int>(resourceRegistry));
 
             //Act
             manager.SetPermission(1, typeof(FirstResource).FullName, default(int), namigConvertor.GetPermissionUniqueIdentifier(SecondPermissions.Edit),true);
@@ -36,10 +37,11 @@ namespace Pipaslot.Infrastructure.SecurityTests
         {
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var resourceRegistry = new Mock<ResourceRegistry<int>>();
+            var resourceRegistry = new ResourceRegistry<int>();
+            resourceRegistry.Register(GetType().Assembly);
             var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
-            var namigConvertor = new DefaultNamingConvertor<int>(resourceRegistry.Object);
-            var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry.Object, resourceInstanceQueryFactory.Object, new DefaultNamingConvertor<int>(resourceRegistry.Object));
+            var namigConvertor = new DefaultNamingConvertor<int>(resourceRegistry);
+            var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry, resourceInstanceQueryFactory.Object, new DefaultNamingConvertor<int>(resourceRegistry));
 
             //Act
             manager.SetPermission(1, typeof(FirstResource).FullName, default(int), namigConvertor.GetPermissionUniqueIdentifier(SecondPermissions.Edit),false);
@@ -75,8 +77,8 @@ namespace Pipaslot.Infrastructure.SecurityTests
         {
             var resourceId = 5;
             var resourceType = typeof(FirstResource);
-            var providerResult = new ResourceQueryResult(resourceId, "NAME", "DESCRIPTION");
-            var queryResult = (IEnumerable<ResourceInstance>)new List<ResourceQueryResult> { providerResult };
+            var providerResult = new ResourceInstance(resourceId, "NAME", "DESCRIPTION");
+            var queryResult = (IEnumerable<ResourceInstance>)new List<ResourceInstance> { providerResult };
             var tokenSource = new CancellationTokenSource();
 
             var permissionStoreMock = new Mock<IPermissionStore<int>>();
@@ -137,7 +139,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             Assert.AreEqual(3, permissions.Count());
 
-            var create = permissions.Last();
+            var create = permissions.First();
             Assert.AreEqual(namingConvertor.GetPermissionUniqueIdentifier(StaticPermissions.Create), create.UniqueIdentifier);
             Assert.IsFalse(string.IsNullOrWhiteSpace(create.Name));
             Assert.IsFalse(string.IsNullOrWhiteSpace(create.Description));
@@ -181,29 +183,11 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             Assert.AreEqual(2, permissions.Count());
 
-            var edit = permissions.Last();
+            var edit = permissions.First();
             Assert.AreEqual(namingConvertor.GetPermissionUniqueIdentifier(FirstPermissions.Edit), edit.UniqueIdentifier);
             Assert.IsFalse(string.IsNullOrWhiteSpace(edit.Name));
             Assert.IsFalse(string.IsNullOrWhiteSpace(edit.Description));
             Assert.AreEqual(isAllowed, edit.IsAllowed);
         }
     }
-    #region Test related objects
-
-    public class ResourceQueryResult : ResourceInstance
-    {
-        public object Id { get; set; }
-
-        public string Name { get; set; }
-
-        public string Description { get; set; }
-
-        public ResourceQueryResult(object id, string name, string description)
-        {
-            Id = id;
-            Name = name;
-            Description = description;
-        }
-    }
-    #endregion
 }
