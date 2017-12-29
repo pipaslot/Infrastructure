@@ -15,7 +15,7 @@ namespace Pipaslot.Infrastructure.Security
         /// <param name="permissionEnum"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<bool> IsAllowedAsync(IEnumerable<IUserRole<TKey>> roles, IConvertible permissionEnum, CancellationToken token = default(CancellationToken));
+        Task<bool> IsAllowedAsync(IEnumerable<TKey> roles, IConvertible permissionEnum, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Check if user has static permission for resource. This permission is NOT assigned to identifiers
@@ -25,7 +25,7 @@ namespace Pipaslot.Infrastructure.Security
         /// <param name="permissionEnum"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<bool> IsAllowedAsync(IEnumerable<IUserRole<TKey>> roles, Type resource, IConvertible permissionEnum, CancellationToken token = default(CancellationToken));
+        Task<bool> IsAllowedAsync(IEnumerable<TKey> roles, Type resource, IConvertible permissionEnum, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Check if user has permission for resourceInstance
@@ -35,7 +35,7 @@ namespace Pipaslot.Infrastructure.Security
         /// <param name="permissionEnum"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<bool> IsAllowedAsync<TPermissions>(IEnumerable<IUserRole<TKey>> roles, IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum, CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible;
+        Task<bool> IsAllowedAsync<TPermissions>(IEnumerable<TKey> roles, IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum, CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible;
         
         /// <summary>
         /// Check if user has permission for resourceInstance with specific ID
@@ -46,7 +46,7 @@ namespace Pipaslot.Infrastructure.Security
         /// <param name="permissionEnum"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<bool> IsAllowedAsync(IEnumerable<IUserRole<TKey>> roles, Type resource, TKey resourceIdentifier, IConvertible permissionEnum, CancellationToken token = default(CancellationToken));
+        Task<bool> IsAllowedAsync(IEnumerable<TKey> roles, Type resource, TKey resourceIdentifier, IConvertible permissionEnum, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Return all Ids from resourceInstance for which role has required permision
@@ -56,7 +56,7 @@ namespace Pipaslot.Infrastructure.Security
         /// <param name="permissionEnum"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<IEnumerable<TKey>> GetAllowedKeysAsync(IEnumerable<IUserRole<TKey>> roles, Type resource, IConvertible permissionEnum, CancellationToken token = default(CancellationToken));
+        Task<IEnumerable<TKey>> GetAllowedKeysAsync(IEnumerable<TKey> roles, Type resource, IConvertible permissionEnum, CancellationToken token = default(CancellationToken));
 
     }
 }

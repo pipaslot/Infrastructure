@@ -23,7 +23,7 @@ namespace Pipaslot.Infrastructure.Security
         /// <summary>
         /// Roles assigned to user 
         /// </summary>
-        IEnumerable<IUserRole<TKey>> Roles { get; }
+        IEnumerable<TKey> Roles { get; }
 
         /// <summary>
         /// Check if User has got required permission, if not, then Exception is thrown.

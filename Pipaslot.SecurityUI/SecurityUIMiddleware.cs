@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Pipaslot.Infrastructure.Security.Identities;
+using Pipaslot.Infrastructure.Security;
 
 namespace Pipaslot.SecurityUI
 {
@@ -20,12 +20,12 @@ namespace Pipaslot.SecurityUI
         {
             if (context.Request.Path.Value.StartsWith($"/{_options.RoutePrefix}"))
             {
-                var identity = (IIdentity<TKey>)services.GetService(typeof(IIdentity<TKey>));
+                var identity = (UserIdentity)services.GetService(typeof(UserIdentity));
                 if (identity == null)
                 {
-                    throw new ApplicationException($"Can not resolve service {typeof(IIdentity<TKey>)} from Dependency Injection.");
+                    throw new ApplicationException($"Can not resolve service {typeof(UserIdentity)} from Dependency Injection.");
                 }
-                if (!(identity is AdminIdentity<TKey>))
+                if (identity.IdentityType != UserIdentityType.Admin)
                 {
                     throw new UnauthorizedAccessException("Only user with AdminIdentity can access Security Management.");
                 }

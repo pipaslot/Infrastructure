@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Pipaslot.Infrastructure.Data;
 using Pipaslot.Infrastructure.Security.Data;
-using Pipaslot.Infrastructure.Security.Identities;
 
 namespace Pipaslot.Infrastructure.Security
 {
@@ -17,16 +16,16 @@ namespace Pipaslot.Infrastructure.Security
     public class User<TKey> : IUser<TKey>
     {
         private readonly IAuthorizator<TKey> _authorizator;
-        private readonly IIdentity<TKey> _identity;
+        private readonly UserIdentity _identity;
         private readonly IQueryFactory<IResourceInstanceQuery> _resourcenstanceQueryFactory;
 
-        public TKey Id => _identity.Id;
+        public TKey Id => (TKey)_identity.Id;
 
-        public bool IsAuthenticated => _identity is UserIdentity<TKey>;
+        public bool IsAuthenticated => _identity.IdentityType != UserIdentityType.Guest;
 
-        public IEnumerable<IUserRole<TKey>> Roles => _identity.Roles;
+        public IEnumerable<TKey> Roles => _identity.Roles.Select(r=>(TKey)r).ToList();
 
-        public User(IAuthorizator<TKey> authorizator, IIdentity<TKey> identity, IQueryFactory<IResourceInstanceQuery> resourcenstanceQueryFactory)
+        public User(IAuthorizator<TKey> authorizator, UserIdentity identity, IQueryFactory<IResourceInstanceQuery> resourcenstanceQueryFactory)
         {
             _authorizator = authorizator;
             _identity = identity;
@@ -84,7 +83,7 @@ namespace Pipaslot.Infrastructure.Security
 
         public virtual async Task<bool> IsAllowedAsync(IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
         {
-            if (_identity is AdminIdentity<TKey>)
+            if (_identity.IdentityType == UserIdentityType.Admin)
             {
                 return true;
             }
@@ -93,7 +92,7 @@ namespace Pipaslot.Infrastructure.Security
 
         public virtual async Task<bool> IsAllowedAsync(Type resource, IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
         {
-            if (_identity is AdminIdentity<TKey>)
+            if (_identity.IdentityType == UserIdentityType.Admin)
             {
                 return true;
             }
@@ -103,7 +102,7 @@ namespace Pipaslot.Infrastructure.Security
         public virtual async Task<bool> IsAllowedAsync<TPermissions>(IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum,
             CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible
         {
-            if (_identity is AdminIdentity<TKey>)
+            if (_identity.IdentityType == UserIdentityType.Admin)
             {
                 return true;
             }
@@ -113,7 +112,7 @@ namespace Pipaslot.Infrastructure.Security
         public virtual async Task<bool> IsAllowedAsync(Type resource, TKey resourceIdentifier, IConvertible permissionEnum,
             CancellationToken token = default(CancellationToken))
         {
-            if (_identity is AdminIdentity<TKey>)
+            if (_identity.IdentityType == UserIdentityType.Admin)
             {
                 return true;
             }

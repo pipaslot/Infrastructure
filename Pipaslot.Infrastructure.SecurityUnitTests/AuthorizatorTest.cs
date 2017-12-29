@@ -28,8 +28,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var permissionStore = new Mock<IPermissionStore<int>>();
             var convertor = new ConstantNamingConvertor();
             var auth = new Authorizator<int>(permissionStore.Object, convertor);
-
-            var role = new UserRole(roleId);
+            
             var resource = new FirstResource(resourceId);
             var tokenSource = new CancellationTokenSource();
 
@@ -38,7 +37,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 .Returns(Task.FromResult((bool?)true));
 
             //Act
-            await auth.IsAllowedAsync(new[] { role }, resource, permission, tokenSource.Token);
+            await auth.IsAllowedAsync(new[] { roleId }, resource, permission, tokenSource.Token);
 
             //Assertion
             permissionStore.VerifyAll();
@@ -54,8 +53,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var permissionStore = new Mock<IPermissionStore<int>>();
             var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry<int>());
             var auth = new Authorizator<int>(permissionStore.Object, convertor);
-
-            var role = new UserRole(roleId);
+            
             var tokenSource = new CancellationTokenSource();
 
             //Pre-Condition
@@ -64,7 +62,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 .Returns(Task.FromResult((bool?)true));
 
             //Act
-            Assert.IsTrue(auth.IsAllowedAsync(new[] { role }, permission, tokenSource.Token).Result);
+            Assert.IsTrue(auth.IsAllowedAsync(new[] { roleId }, permission, tokenSource.Token).Result);
 
             //Assertion
             permissionStore.VerifyAll();
@@ -80,8 +78,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var permissionStore = new Mock<IPermissionStore<int>>();
             var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry<int>());
             var auth = new Authorizator<int>(permissionStore.Object, convertor);
-
-            var role = new UserRole(roleId);
+            
             var tokenSource = new CancellationTokenSource();
 
             //Pre-Condition
@@ -91,7 +88,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 .Returns(Task.FromResult((bool?)true));
 
             //Act
-            Assert.IsTrue(auth.IsAllowedAsync(new[] { role }, typeof(FirstResource), permission, tokenSource.Token).Result);
+            Assert.IsTrue(auth.IsAllowedAsync(new[] { roleId }, typeof(FirstResource), permission, tokenSource.Token).Result);
 
             //Assertion
             permissionStore.VerifyAll();
@@ -107,7 +104,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var auth = new Authorizator<int>(permissionStore.Object, convertorMock.Object);
 
             //Act
-            await auth.IsAllowedAsync(new[] { new UserRole(1) }, typeof(FirstResource), SecondPermissions.Edit);
+            await auth.IsAllowedAsync(new[] { 1 }, typeof(FirstResource), SecondPermissions.Edit);
         }
 
         [TestMethod]
@@ -121,8 +118,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var permissionStore = new Mock<IPermissionStore<int>>();
             var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry<int>());
             var auth = new Authorizator<int>(permissionStore.Object, convertor);
-
-            var role = new UserRole(roleId);
+            
             var resource = new FirstResource(resourceId);
             var tokenSource = new CancellationTokenSource();
 
@@ -133,7 +129,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 .Returns(Task.FromResult((bool?)true));
 
             //Act
-            Assert.IsTrue(auth.IsAllowedAsync(new[] { role }, resource, permission, tokenSource.Token).Result);
+            Assert.IsTrue(auth.IsAllowedAsync(new[] { roleId }, resource, permission, tokenSource.Token).Result);
 
             //Assertion
             permissionStore.VerifyAll();
@@ -150,8 +146,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var permissionStore = new Mock<IPermissionStore<int>>();
             var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry<int>());
             var auth = new Authorizator<int>(permissionStore.Object, convertor);
-
-            var role = new UserRole(roleId);
+            
             var tokenSource = new CancellationTokenSource();
 
             //Pre-Condition
@@ -161,7 +156,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 .Returns(Task.FromResult((bool?)true));
 
             //Act
-            Assert.IsTrue(auth.IsAllowedAsync(new[] { role }, typeof(FirstResource), resourceId, permission, tokenSource.Token).Result);
+            Assert.IsTrue(auth.IsAllowedAsync(new[] { roleId }, typeof(FirstResource), resourceId, permission, tokenSource.Token).Result);
 
             //Assertion
             permissionStore.VerifyAll();
@@ -177,7 +172,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var auth = new Authorizator<int>(permissionStore.Object, convertorMock.Object);
 
             //Act
-            await auth.IsAllowedAsync(new[] { new UserRole(1) }, typeof(FirstResource), 1, SecondPermissions.Edit);
+            await auth.IsAllowedAsync(new[] { 1 }, typeof(FirstResource), 1, SecondPermissions.Edit);
         }
 
         [TestMethod]
@@ -190,7 +185,6 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var permissionStore = new Mock<IPermissionStore<int>>();
             var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry<int>());
             var auth = new Authorizator<int>(permissionStore.Object, convertor);
-            var role = new UserRole(roleId);
             var allowed = new List<int> { 1, 3, 5 };
             var tokenSource = new CancellationTokenSource();
 
@@ -201,7 +195,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 .Returns(Task.FromResult(allowed.AsEnumerable()));
 
             //Act
-            var allowedResult = auth.GetAllowedKeysAsync(new[] { role }, typeof(FirstResource), permission, tokenSource.Token).Result;
+            var allowedResult = auth.GetAllowedKeysAsync(new[] { roleId }, typeof(FirstResource), permission, tokenSource.Token).Result;
             Assert.AreEqual(allowed, allowedResult);
 
             //Assertion
@@ -218,7 +212,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var auth = new Authorizator<int>(permissionStore.Object, convertorMock.Object);
 
             //Act
-            await auth.GetAllowedKeysAsync(new[] { new UserRole(1) }, typeof(FirstResource), SecondPermissions.Edit);
+            await auth.GetAllowedKeysAsync(new[] { 1 }, typeof(FirstResource), SecondPermissions.Edit);
         }
 
         [TestMethod]
@@ -231,8 +225,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var permissionStore = new Mock<IPermissionStore<int>>();
             var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry<int>());
             var auth = new Authorizator<int>(permissionStore.Object, convertor);
-
-            var role = new UserRole(roleId);
+            
             var tokenSource = new CancellationTokenSource();
 
             //Pre-Condition
@@ -241,8 +234,8 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 .Returns(Task.FromResult((bool?)true));
 
             //Act
-            await auth.IsAllowedAsync(new[] { role }, typeof(FirstResource), permission, tokenSource.Token);
-            await auth.IsAllowedAsync(new[] { role }, typeof(FirstResource), permission, tokenSource.Token);
+            await auth.IsAllowedAsync(new[] { roleId }, typeof(FirstResource), permission, tokenSource.Token);
+            await auth.IsAllowedAsync(new[] { roleId }, typeof(FirstResource), permission, tokenSource.Token);
 
             //Assertion
             permissionStore

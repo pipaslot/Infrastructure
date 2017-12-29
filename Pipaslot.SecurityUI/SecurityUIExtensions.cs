@@ -19,6 +19,12 @@ namespace Pipaslot.SecurityUI
 
         public static IServiceCollection AddSecurityUI<TKey>(this IServiceCollection services)
         {
+            //Default identity is guest identity
+            services.AddScoped<UserIdentity>(s =>
+            {
+                var guest = 1;//TODO read from store
+                return new UserIdentity(guest);
+            });
             RegisterIfNotExists<INamingConvertor, DefaultNamingConvertor<TKey>>(services);
             RegisterIfNotExists<IQueryFactory<IResourceInstanceQuery>, NullResourceInstanceQueryFactory>(services);
             RegisterIfNotExists<IPermissionManager<TKey>, PermissionManager<TKey>>(services);
