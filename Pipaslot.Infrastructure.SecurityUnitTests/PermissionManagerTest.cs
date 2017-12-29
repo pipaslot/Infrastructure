@@ -21,7 +21,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
         {
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var resourceRegistry = new ResourceRegistry<int>();
+            var resourceRegistry = new ResourceRegistry();
             resourceRegistry.Register(GetType().Assembly);
             var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
             var namigConvertor = new DefaultNamingConvertor<int>(resourceRegistry);
@@ -37,7 +37,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
         {
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var resourceRegistry = new ResourceRegistry<int>();
+            var resourceRegistry = new ResourceRegistry();
             resourceRegistry.Register(GetType().Assembly);
             var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
             var namigConvertor = new DefaultNamingConvertor<int>(resourceRegistry);
@@ -54,7 +54,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var resourceType = typeof(FirstResource);
             var permissionStore = new Mock<IPermissionStore<int>>();
             var tokenSource = new CancellationTokenSource();
-            var resourceRegistry = new ResourceRegistry<int>();
+            var resourceRegistry = new ResourceRegistry();
             resourceRegistry
                 .Register(resourceType.Assembly);
             var queryMock = new Mock<IResourceInstanceQuery>();
@@ -83,7 +83,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             var permissionStoreMock = new Mock<IPermissionStore<int>>();
 
-            var resourceRegistry = new ResourceRegistry<int>();
+            var resourceRegistry = new ResourceRegistry();
             resourceRegistry.Register(resourceType.Assembly);
 
             var queryMock = new Mock<IResourceInstanceQuery>();
@@ -121,7 +121,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var resourceType = typeof(FirstResource);
             var resourceName = typeof(FirstResource).FullName;
 
-            var resourceRegistry = new ResourceRegistry<int>();
+            var resourceRegistry = new ResourceRegistry();
             resourceRegistry.Register(resourceType.Assembly);
             var tokenSource = new CancellationTokenSource();
 
@@ -165,7 +165,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var resourceId = 1;
 
 
-            var resourceRegistry = new ResourceRegistry<int>();
+            var resourceRegistry = new ResourceRegistry();
             resourceRegistry.Register(resourceType.Assembly);
             var tokenSource = new CancellationTokenSource();
 

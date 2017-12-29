@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,9 +23,11 @@ namespace Pipaslot.SecurityUI
             //Default identity is guest identity
             services.AddScoped<UserIdentity>(s =>
             {
-                var guest = 1;//TODO read from store
-                return new UserIdentity(guest);
+                var store = (IRoleStore) s.GetService(typeof(IRoleStore));
+                var guest = store.GetGuestRoleIdentifier();
+                return new UserIdentity(guest,new List<object>(),UserIdentityType.Admin);
             });
+            RegisterIfNotExists<ResourceRegistry>(services);
             RegisterIfNotExists<INamingConvertor, DefaultNamingConvertor<TKey>>(services);
             RegisterIfNotExists<IQueryFactory<IResourceInstanceQuery>, NullResourceInstanceQueryFactory>(services);
             RegisterIfNotExists<IPermissionManager<TKey>, PermissionManager<TKey>>(services);
@@ -37,6 +40,17 @@ namespace Pipaslot.SecurityUI
         private static void RegisterIfNotExists<TInterface, TImplementation>(IServiceCollection services)
         {
             var serviceType = typeof(TInterface);
+            if (services.All(s => s.ServiceType != serviceType))
+            {
+                var descriptor = new ServiceDescriptor(serviceType, typeof(TImplementation), ServiceLifetime.Scoped);
+                services.Add(descriptor);
+            }
+        }
+
+
+        private static void RegisterIfNotExists<TImplementation>(IServiceCollection services)
+        {
+            var serviceType = typeof(TImplementation);
             if (services.All(s => s.ServiceType != serviceType))
             {
                 var descriptor = new ServiceDescriptor(serviceType, typeof(TImplementation), ServiceLifetime.Scoped);

@@ -51,7 +51,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry<int>());
+            var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry());
             var auth = new Authorizator<int>(permissionStore.Object, convertor);
             
             var tokenSource = new CancellationTokenSource();
@@ -76,7 +76,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry<int>());
+            var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry());
             var auth = new Authorizator<int>(permissionStore.Object, convertor);
             
             var tokenSource = new CancellationTokenSource();
@@ -116,7 +116,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry<int>());
+            var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry());
             var auth = new Authorizator<int>(permissionStore.Object, convertor);
             
             var resource = new FirstResource(resourceId);
@@ -144,7 +144,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry<int>());
+            var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry());
             var auth = new Authorizator<int>(permissionStore.Object, convertor);
             
             var tokenSource = new CancellationTokenSource();
@@ -183,7 +183,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry<int>());
+            var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry());
             var auth = new Authorizator<int>(permissionStore.Object, convertor);
             var allowed = new List<int> { 1, 3, 5 };
             var tokenSource = new CancellationTokenSource();
@@ -223,7 +223,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry<int>());
+            var convertor = new DefaultNamingConvertor<int>(new ResourceRegistry());
             var auth = new Authorizator<int>(permissionStore.Object, convertor);
             
             var tokenSource = new CancellationTokenSource();

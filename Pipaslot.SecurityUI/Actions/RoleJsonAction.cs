@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
-using Pipaslot.Infrastructure.Data;
 using Pipaslot.Infrastructure.Security.Data;
 using Pipaslot.SecurityUI.ActionAbstraction;
 
@@ -10,13 +9,12 @@ namespace Pipaslot.SecurityUI.Actions
     {
         protected override object GetData(HttpContext context, IServiceProvider services)
         {
-            var roleQueryFactory = (IQueryFactory<IRoleQuery>)services.GetService(typeof(IQueryFactory<IRoleQuery>));
-            if (roleQueryFactory == null)
+            var store = (IRoleStore)services.GetService(typeof(IRoleStore));
+            if (store == null)
             {
-                throw new ApplicationException($"Can not resolve service {typeof(IQueryFactory<IRoleQuery>)} from Dependency Injection.");
+                throw new ApplicationException($"Can not resolve service {typeof(IRoleStore)} from Dependency Injection.");
             }
-            var query = roleQueryFactory.Create();
-            return query.Execute();
+            return store.GetAll();
         }
     }
 }

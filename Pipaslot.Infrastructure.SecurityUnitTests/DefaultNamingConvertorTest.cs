@@ -13,7 +13,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
         {
             var resourceType = typeof(FirstResource);
             
-            var resourceRegistry = new ResourceRegistry<int>();
+            var resourceRegistry = new ResourceRegistry();
             resourceRegistry.Register(resourceType.Assembly);
 
             var convertor = new DefaultNamingConvertor<int>(resourceRegistry);
@@ -29,7 +29,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void GetResourceTypeByUniqueName_ThrowExceptinIfTypeCanNotBeFound()
         {
-            var resourceRegistry = new ResourceRegistry<int>();
+            var resourceRegistry = new ResourceRegistry();
             var convertor = new DefaultNamingConvertor<int>(resourceRegistry);
 
             convertor.GetResourceTypeByUniqueName(typeof(FirstResource).FullName);

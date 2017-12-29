@@ -6,9 +6,9 @@ namespace Pipaslot.Infrastructure.Security
     /// <inheritdoc />
     public class DefaultNamingConvertor<TKey> : INamingConvertor
     {
-        private readonly ResourceRegistry<TKey> _resourceRegistry;
+        private readonly ResourceRegistry _resourceRegistry;
 
-        public DefaultNamingConvertor(ResourceRegistry<TKey> resourceRegistry)
+        public DefaultNamingConvertor(ResourceRegistry resourceRegistry)
         {
             _resourceRegistry = resourceRegistry;
         }

@@ -11,11 +11,11 @@ namespace Pipaslot.Infrastructure.Security
     public class PermissionManager<TKey> : IPermissionManager<TKey>
     {
         private readonly IPermissionStore<TKey> _permissionStore;
-        private readonly ResourceRegistry<TKey> _resourceRegistry;
+        private readonly ResourceRegistry _resourceRegistry;
         private readonly IQueryFactory<IResourceInstanceQuery> _resourceInstanceQueryFactory;
         private readonly INamingConvertor _namingConvertor;
 
-        public PermissionManager(IPermissionStore<TKey> permissionStore, ResourceRegistry<TKey> resourceRegistry, IQueryFactory<IResourceInstanceQuery> resourceInstanceQueryFactory, INamingConvertor namingConvertor)
+        public PermissionManager(IPermissionStore<TKey> permissionStore, ResourceRegistry resourceRegistry, IQueryFactory<IResourceInstanceQuery> resourceInstanceQueryFactory, INamingConvertor namingConvertor)
         {
             _permissionStore = permissionStore;
             _resourceRegistry = resourceRegistry;
@@ -162,7 +162,7 @@ namespace Pipaslot.Infrastructure.Security
             return result.OrderBy(r => r.Name).ToList();
         }
 
-        private ResourceRegistry<TKey>.RegisteredResource GetRegisteredResource(string resource)
+        private ResourceRegistry.RegisteredResource GetRegisteredResource(string resource)
         {
             var resourceType = _namingConvertor.GetResourceTypeByUniqueName(resource);
             return _resourceRegistry.ResourceTypes.FirstOrDefault(r => r.ResourceType == resourceType);

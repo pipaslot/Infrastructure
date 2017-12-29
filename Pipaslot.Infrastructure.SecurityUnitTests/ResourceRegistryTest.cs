@@ -12,7 +12,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
         [TestMethod]
         public void LoadResourcesAndPermissionsFromTestAssembly()
         {
-            var registry = new ResourceRegistry<int>();
+            var registry = new ResourceRegistry();
             registry.Register(typeof(FirstResource).Assembly);
 
             //Act

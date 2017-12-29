@@ -8,7 +8,7 @@ namespace Pipaslot.Infrastructure.Security
     /// <summary>
     /// Tool for automatic Resource registration from assemblies
     /// </summary>
-    public class ResourceRegistry<TKey>
+    public class ResourceRegistry
     {
         /// <summary>
         /// Registered assemblies for scaning
@@ -18,7 +18,7 @@ namespace Pipaslot.Infrastructure.Security
         /// <summary>
         /// Registered assemblies for scaning
         /// </summary>
-        public List<Assembly>RegisteredAssemblies => _scanedAsseblies.ToList();
+        public List<Assembly> RegisteredAssemblies => _scanedAsseblies.ToList();
 
         /// <summary>
         /// Flag if resources should be reloaded because new assembly was added
@@ -29,6 +29,12 @@ namespace Pipaslot.Infrastructure.Security
         /// Key is resource type and value is lis of assigned permission Enums
         /// </summary>
         private readonly List<RegisteredResource> _loadedResources = new List<RegisteredResource>();
+
+        public ResourceRegistry()
+        {
+            var entry = Assembly.GetEntryAssembly();
+            if (entry != null) Register(entry);
+        }
 
         /// <summary>
         /// Register new assembly to be scaned for resources
@@ -68,7 +74,6 @@ namespace Pipaslot.Infrastructure.Security
         {
             var resourceGenericType = typeof(IResource<>);
             var resourceInstanceGenericType = typeof(IResourceInstance<,>);
-            var keyType = typeof(TKey);
 
             _loadedResources.Clear();
 
@@ -78,10 +83,9 @@ namespace Pipaslot.Infrastructure.Security
                 var res = new RegisteredResource(type);
                 foreach (var iface in type.GetInterfaces())
                 {
-                    if(!iface.IsGenericType)continue;
+                    if (!iface.IsGenericType) continue;
                     var genericDef = iface.GetGenericTypeDefinition();
-                    var args = iface.GenericTypeArguments;
-                    if (resourceInstanceGenericType.IsAssignableFrom(genericDef) && args.First() == keyType)
+                    if (resourceInstanceGenericType.IsAssignableFrom(genericDef))
                     {
                         res.InstancePermissions.Add(iface.GenericTypeArguments.Last());
                     }
@@ -102,7 +106,7 @@ namespace Pipaslot.Infrastructure.Security
             /// <summary>
             /// Resource type implementing IResource interface
             /// </summary>
-            public Type ResourceType { get;}
+            public Type ResourceType { get; }
 
             /// <summary>
             /// Permissions defined by IResource interface
