@@ -14,6 +14,15 @@ namespace Pipaslot.Infrastructure.SecurityTests
     [TestClass]
     public class UserTest
     {
+        private readonly UserRole GuestRole = new UserRole(1000);
+
+        private readonly List<UserRole> TwoRoles = new List<UserRole>()
+        {
+            new UserRole(1),
+            new UserRole(2)
+        };
+        private IEnumerable<int> TwoRolesIds => TwoRoles.Select(r => r.Id).ToList();
+
         #region Constructor
 
         [TestMethod]
@@ -21,7 +30,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
         {
             var authorizatorMock = new Mock<IAuthorizator<int>>();
             var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
-            var user = new User<int>(authorizatorMock.Object, new UserIdentity(1), resourceInstanceQueryFactory.Object);
+            var user = new User<int>(authorizatorMock.Object, new UserIdentity(GuestRole), resourceInstanceQueryFactory.Object);
 
             Assert.AreEqual(0, user.Id);
             Assert.IsFalse(user.IsAuthenticated);
@@ -37,7 +46,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
         {
             var authorizatorMock = new Mock<IAuthorizator<int>>();
             var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
-            var user = new User<int>(authorizatorMock.Object, new UserIdentity(100, new[] { (object)10 }), resourceInstanceQueryFactory.Object);
+            var user = new User<int>(authorizatorMock.Object, new UserIdentity(100, TwoRoles), resourceInstanceQueryFactory.Object);
 
             Assert.AreEqual(100, user.Id);
             Assert.IsTrue(user.IsAuthenticated);
@@ -53,7 +62,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
         {
             var authorizatorMock = new Mock<IAuthorizator<string>>();
             var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
-            var user = new User<string>(authorizatorMock.Object, new UserIdentity("100", new[] { "user" }), resourceInstanceQueryFactory.Object);
+            var user = new User<string>(authorizatorMock.Object, new UserIdentity("100", new[] { new UserRoleString("123") }), resourceInstanceQueryFactory.Object);
 
             Assert.AreEqual("100", user.Id);
             Assert.IsTrue(user.IsAuthenticated);
@@ -71,8 +80,6 @@ namespace Pipaslot.Infrastructure.SecurityTests
         [TestMethod]
         public void IsAllowedWithPermissionOnly_AtLeastOneRoleMustHavePermission()
         {
-            var role1 = 1;
-            var role2 = 2;
             var sequence = new List<(bool expected, bool role1, bool role2)>
             {
                 (false, false, false),
@@ -84,10 +91,10 @@ namespace Pipaslot.Infrastructure.SecurityTests
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role1, role2 }, FirstPermissions.Edit, tokenSource.Token))
+                authorizatorMock.Setup(a => a.IsAllowedAsync(TwoRolesIds, FirstPermissions.Edit, tokenSource.Token))
                     .Returns(Task.FromResult(valueTuple.role1 | valueTuple.role2));
                 var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
-                var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, new[] { (object)role1, role2 }), resourceInstanceQueryFactory.Object);
+                var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, TwoRoles), resourceInstanceQueryFactory.Object);
 
                 //Act
                 Assert.AreEqual(valueTuple.expected, user.IsAllowedAsync(FirstPermissions.Edit, tokenSource.Token).Result);
@@ -97,8 +104,6 @@ namespace Pipaslot.Infrastructure.SecurityTests
         [TestMethod]
         public void IsAllowed_WithStaticResourceType_AtLeastOneRoleMustHavePermission()
         {
-            var role1 = 1;
-            var role2 = 2;
             var sequence = new List<(bool expected, bool role1, bool role2)>
             {
                 (false, false, false),
@@ -111,10 +116,10 @@ namespace Pipaslot.Infrastructure.SecurityTests
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role1, role2 }, resource, FirstPermissions.Edit, tokenSource.Token))
+                authorizatorMock.Setup(a => a.IsAllowedAsync(TwoRolesIds, resource, FirstPermissions.Edit, tokenSource.Token))
                     .Returns(Task.FromResult(valueTuple.role1 | valueTuple.role2));
                 var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
-                var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, new[] { (object)role1, role2 }), resourceInstanceQueryFactory.Object);
+                var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, TwoRoles), resourceInstanceQueryFactory.Object);
 
                 //Act
                 Assert.AreEqual(valueTuple.expected, user.IsAllowedAsync(resource, FirstPermissions.Edit, tokenSource.Token).Result);
@@ -124,8 +129,6 @@ namespace Pipaslot.Infrastructure.SecurityTests
         [TestMethod]
         public void IsAllowed_WithResource_AtLeastOneRoleMustHavePermission()
         {
-            var role1 = 1;
-            var role2 = 2;
             var sequence = new List<(bool expected, bool role1, bool role2)>
             {
                 (false, false, false),
@@ -138,10 +141,10 @@ namespace Pipaslot.Infrastructure.SecurityTests
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role1, role2 }, resource, FirstPermissions.Edit, tokenSource.Token))
+                authorizatorMock.Setup(a => a.IsAllowedAsync(TwoRolesIds, resource, FirstPermissions.Edit, tokenSource.Token))
                     .Returns(Task.FromResult(valueTuple.role1 | valueTuple.role2));
                 var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
-                var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, new[] { (object)role1, role2 }), resourceInstanceQueryFactory.Object);
+                var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, TwoRoles), resourceInstanceQueryFactory.Object);
 
                 //Act
                 Assert.AreEqual(valueTuple.expected, user.IsAllowedAsync(resource, FirstPermissions.Edit, tokenSource.Token).Result);
@@ -151,8 +154,6 @@ namespace Pipaslot.Infrastructure.SecurityTests
         [TestMethod]
         public void IsAllowed_WithResourceType_AtLeastOneRoleMustHavePermission()
         {
-            var role1 = 1;
-            var role2 = 2;
             var sequence = new List<(bool expected, bool role1, bool role2)>
             {
                 (false, false, false),
@@ -166,10 +167,10 @@ namespace Pipaslot.Infrastructure.SecurityTests
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role1, role2 }, resource, resourceId, FirstPermissions.Edit, tokenSource.Token))
+                authorizatorMock.Setup(a => a.IsAllowedAsync(TwoRolesIds, resource, resourceId, FirstPermissions.Edit, tokenSource.Token))
                     .Returns(Task.FromResult(valueTuple.role1 | valueTuple.role2));
                 var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
-                var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, new[] { (object)role1, role2 }), resourceInstanceQueryFactory.Object);
+                var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, TwoRoles), resourceInstanceQueryFactory.Object);
 
                 //Act
                 Assert.AreEqual(valueTuple.expected, user.IsAllowedAsync(resource, resourceId, FirstPermissions.Edit, tokenSource.Token).Result);
@@ -181,7 +182,11 @@ namespace Pipaslot.Infrastructure.SecurityTests
         {
             var authorizatorMock = new Mock<IAuthorizator<int>>();
             var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
-            var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, null, UserIdentityType.Admin), resourceInstanceQueryFactory.Object);
+            var adminRole = new UserRole(1)
+            {
+                Type = RoleType.Admin
+            };
+            var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, new[] { adminRole }), resourceInstanceQueryFactory.Object);
 
             //Act
             Assert.IsTrue(user.IsAllowedAsync(FirstPermissions.Edit).Result);
@@ -195,16 +200,13 @@ namespace Pipaslot.Infrastructure.SecurityTests
         [TestMethod]
         public void GetAllowed_ReturnDistinctOfIDs()
         {
-            var role1 = 1;
-            var role2 = 2;
-
             var resource = typeof(FirstResource);
             var authorizatorMock = new Mock<IAuthorizator<int>>();
             var tokenSource = new CancellationTokenSource();
-            authorizatorMock.Setup(a => a.GetAllowedKeysAsync(new[] { role1, role2 }, resource, FirstPermissions.Edit, tokenSource.Token))
+            authorizatorMock.Setup(a => a.GetAllowedKeysAsync(TwoRolesIds, resource, FirstPermissions.Edit, tokenSource.Token))
                 .Returns(Task.FromResult((new List<int> { 1, 2, 3 }).AsEnumerable()));
             var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
-            var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, new[] { (object)role1, role2 }), resourceInstanceQueryFactory.Object);
+            var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, TwoRoles), resourceInstanceQueryFactory.Object);
 
             //Act
             var result = user.GetAllowedKeysAsync(resource, FirstPermissions.Edit, tokenSource.Token).Result.ToList();
@@ -216,8 +218,6 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
         public async Task CheckPermission_WithPermissionOnly_AtLeastOneRoleMustHavePermission()
         {
-            var role1 = 1;
-            var role2 = 2;
             var sequence = new List<(bool expected, bool role1, bool role2)>
             {
                 (false, false, false),
@@ -229,12 +229,12 @@ namespace Pipaslot.Infrastructure.SecurityTests
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role1 }, FirstPermissions.Edit, tokenSource.Token))
+                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { TwoRolesIds.First() }, FirstPermissions.Edit, tokenSource.Token))
                     .Returns(Task.FromResult(valueTuple.role1));
-                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role2 }, FirstPermissions.Edit, tokenSource.Token))
+                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { TwoRolesIds.Last() }, FirstPermissions.Edit, tokenSource.Token))
                     .Returns(Task.FromResult(valueTuple.role2));
                 var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
-                var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, new[] { (object)role1, role2 }), resourceInstanceQueryFactory.Object);
+                var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, TwoRoles), resourceInstanceQueryFactory.Object);
 
                 //Act
                 if (valueTuple.expected)
@@ -257,8 +257,6 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
         public async Task CheckPermission_WithStaticResourceType_AtLeastOneRoleMustHavePermission()
         {
-            var role1 = 1;
-            var role2 = 2;
             var sequence = new List<(bool expected, bool role1, bool role2)>
             {
                 (false, false, false),
@@ -271,12 +269,12 @@ namespace Pipaslot.Infrastructure.SecurityTests
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role1 }, resource, FirstPermissions.Edit, tokenSource.Token))
+                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { TwoRolesIds.First() }, resource, FirstPermissions.Edit, tokenSource.Token))
                     .Returns(Task.FromResult(valueTuple.role1));
-                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role2 }, resource, FirstPermissions.Edit, tokenSource.Token))
+                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { TwoRolesIds.Last() }, resource, FirstPermissions.Edit, tokenSource.Token))
                     .Returns(Task.FromResult(valueTuple.role2));
                 var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
-                var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, new[] { (object)role1, role2 }), resourceInstanceQueryFactory.Object);
+                var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, TwoRoles), resourceInstanceQueryFactory.Object);
 
                 //Act
                 if (valueTuple.expected)
@@ -300,8 +298,6 @@ namespace Pipaslot.Infrastructure.SecurityTests
         [TestMethod]
         public async Task CheckPermission_WithResource_AtLeastOneRoleMustHavePermission()
         {
-            var role1 = 1;
-            var role2 = 2;
             var sequence = new List<(bool expected, bool role1, bool role2)>
             {
                 (false, false, false),
@@ -314,10 +310,10 @@ namespace Pipaslot.Infrastructure.SecurityTests
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role1, role2 }, resource, FirstPermissions.Edit, tokenSource.Token))
+                authorizatorMock.Setup(a => a.IsAllowedAsync(TwoRolesIds, resource, FirstPermissions.Edit, tokenSource.Token))
                     .Returns(Task.FromResult(valueTuple.role1 | valueTuple.role2));
                 var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
-                var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, new[] { (object)role1, role2 }), resourceInstanceQueryFactory.Object);
+                var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, TwoRoles), resourceInstanceQueryFactory.Object);
 
                 //Act
                 if (valueTuple.expected)
@@ -341,8 +337,6 @@ namespace Pipaslot.Infrastructure.SecurityTests
         [TestMethod]
         public async Task CheckPermission_WithResourceType_AtLeastOneRoleMustHavePermission()
         {
-            var role1 = 1;
-            var role2 = 2;
             var sequence = new List<(bool expected, bool role1, bool role2)>
             {
                 (false, false, false),
@@ -356,10 +350,10 @@ namespace Pipaslot.Infrastructure.SecurityTests
             foreach (var valueTuple in sequence)
             {
                 var authorizatorMock = new Mock<IAuthorizator<int>>();
-                authorizatorMock.Setup(a => a.IsAllowedAsync(new[] { role1, role2 }, resource, resourceId, FirstPermissions.Edit, tokenSource.Token))
+                authorizatorMock.Setup(a => a.IsAllowedAsync(TwoRolesIds, resource, resourceId, FirstPermissions.Edit, tokenSource.Token))
                     .Returns(Task.FromResult(valueTuple.role1 | valueTuple.role2));
                 var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
-                var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, new[] { (object)role1, role2 }), resourceInstanceQueryFactory.Object);
+                var user = new User<int>(authorizatorMock.Object, new UserIdentity(1, TwoRoles), resourceInstanceQueryFactory.Object);
 
                 //Act
                 if (valueTuple.expected)

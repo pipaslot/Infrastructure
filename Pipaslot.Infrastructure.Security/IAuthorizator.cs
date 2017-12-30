@@ -7,7 +7,6 @@ namespace Pipaslot.Infrastructure.Security
 {
     public interface IAuthorizator<TKey>
     {
-
         /// <summary>
         /// Check if user has global permission without resource
         /// </summary>

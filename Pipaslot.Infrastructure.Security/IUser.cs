@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Pipaslot.Infrastructure.Security.Data;
 
 namespace Pipaslot.Infrastructure.Security
 {
@@ -23,7 +24,7 @@ namespace Pipaslot.Infrastructure.Security
         /// <summary>
         /// Roles assigned to user 
         /// </summary>
-        IEnumerable<TKey> Roles { get; }
+        IEnumerable<IRole> Roles { get; }
 
         /// <summary>
         /// Check if User has got required permission, if not, then Exception is thrown.

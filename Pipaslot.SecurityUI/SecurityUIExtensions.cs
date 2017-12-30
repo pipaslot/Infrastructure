@@ -24,8 +24,8 @@ namespace Pipaslot.SecurityUI
             services.AddScoped<UserIdentity>(s =>
             {
                 var store = (IRoleStore) s.GetService(typeof(IRoleStore));
-                var guest = store.GetGuestRoleIdentifier();
-                return new UserIdentity(guest,new List<object>(),UserIdentityType.Admin);
+                var guest = store.GetGuestRole<IRole>();
+                return new UserIdentity(guest);
             });
             RegisterIfNotExists<ResourceRegistry>(services);
             RegisterIfNotExists<INamingConvertor, DefaultNamingConvertor<TKey>>(services);

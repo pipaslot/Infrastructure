@@ -8,12 +8,18 @@ namespace Pipaslot.Infrastructure.Security.Data
         /// Returns primary key for unauthenticated users (guests)
         /// </summary>
         /// <returns></returns>
-        object GetGuestRoleIdentifier();
-        
+        TRole GetGuestRole<TRole>() where TRole : IRole;
+
         /// <summary>
         /// Returns all roles
         /// </summary>
         /// <returns></returns>
-        IEnumerable<IRole> GetAll();
+        ICollection<TRole> GetAll<TRole>() where TRole : IRole;
+
+        /// <summary>
+        /// Returns all roles with type to be Guest, User or Admin
+        /// </summary>
+        /// <returns></returns>
+        ICollection<TRole> GetSystemRoles<TRole>() where TRole : IRole;
     }
 }

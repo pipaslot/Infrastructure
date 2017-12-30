@@ -14,7 +14,7 @@ namespace Pipaslot.SecurityUI.Actions
             {
                 throw new ApplicationException($"Can not resolve service {typeof(IRoleStore)} from Dependency Injection.");
             }
-            return store.GetAll();
+            return store.GetAll<IRole>();
         }
     }
 }

@@ -21,9 +21,11 @@ namespace Pipaslot.Infrastructure.Security
 
         public TKey Id => (TKey)(_identity.Id ?? default(TKey));
 
-        public bool IsAuthenticated => _identity.IdentityType != UserIdentityType.Guest;
+        public bool IsAuthenticated => _identity.Id != null && !_identity.Id.Equals(default(TKey));
 
-        public IEnumerable<TKey> Roles => _identity.Roles.Select(r => (TKey)r).ToList();
+        public IEnumerable<IRole> Roles => _identity.Roles.Select(r => r).ToList();
+        private bool IsAdmin => _identity.Roles.Any(r => r.Type == RoleType.Admin);
+        private List<TKey> RolesIds => _identity.Roles.Select(r => (TKey)r.Id).ToList();
 
         public User(IAuthorizator<TKey> authorizator, UserIdentity identity, IQueryFactory<IResourceInstanceQuery> resourcenstanceQueryFactory)
         {
@@ -83,46 +85,37 @@ namespace Pipaslot.Infrastructure.Security
 
         public virtual async Task<bool> IsAllowedAsync(IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
         {
-            if (_identity.IdentityType == UserIdentityType.Admin)
-            {
-                return true;
-            }
-            return await _authorizator.IsAllowedAsync(Roles, permissionEnum, token);
+            return IsAdmin || await _authorizator.IsAllowedAsync(RolesIds, permissionEnum, token);
         }
 
         public virtual async Task<bool> IsAllowedAsync(Type resource, IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
         {
-            if (_identity.IdentityType == UserIdentityType.Admin)
-            {
-                return true;
-            }
-            return await _authorizator.IsAllowedAsync(Roles, resource, permissionEnum, token);
+            return IsAdmin || await _authorizator.IsAllowedAsync(RolesIds, resource, permissionEnum, token);
         }
 
         public virtual async Task<bool> IsAllowedAsync<TPermissions>(IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum,
             CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible
         {
-            if (_identity.IdentityType == UserIdentityType.Admin)
-            {
-                return true;
-            }
-            return await _authorizator.IsAllowedAsync(Roles, resourceInstance, permissionEnum, token);
+            return IsAdmin || await _authorizator.IsAllowedAsync(RolesIds, resourceInstance, permissionEnum, token);
         }
 
         public virtual async Task<bool> IsAllowedAsync(Type resource, TKey resourceIdentifier, IConvertible permissionEnum,
             CancellationToken token = default(CancellationToken))
         {
-            if (_identity.IdentityType == UserIdentityType.Admin)
-            {
-                return true;
-            }
-            return await _authorizator.IsAllowedAsync(Roles, resource, resourceIdentifier, permissionEnum, token);
+            return IsAdmin || await _authorizator.IsAllowedAsync(RolesIds, resource, resourceIdentifier, permissionEnum, token);
         }
 
-        public virtual Task<IEnumerable<TKey>> GetAllowedKeysAsync(Type resource, IConvertible permissionEnum,
+        public virtual async Task<IEnumerable<TKey>> GetAllowedKeysAsync(Type resource, IConvertible permissionEnum,
             CancellationToken token = default(CancellationToken))
         {
-            return _authorizator.GetAllowedKeysAsync(Roles, resource, permissionEnum, token);
+            if (IsAdmin)
+            {
+                var query = _resourcenstanceQueryFactory.Create();
+                query.Resource = resource;
+                var result = await query.ExecuteAsync(token);
+                return result.Select(r => (TKey)r.Id).AsEnumerable();
+            }
+            return await _authorizator.GetAllowedKeysAsync(RolesIds, resource, permissionEnum, token);
         }
     }
 }

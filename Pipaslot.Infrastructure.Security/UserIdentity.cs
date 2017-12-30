@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Pipaslot.Infrastructure.Security.Data;
 
 namespace Pipaslot.Infrastructure.Security
 {
@@ -12,20 +13,15 @@ namespace Pipaslot.Infrastructure.Security
         /// <summary>
         /// Assigned role primary keys
         /// </summary>
-        public IEnumerable<object> Roles { get; }
-
-        /// <summary>
-        /// Identity type
-        /// </summary>
-        public UserIdentityType IdentityType { get; } = UserIdentityType.Guest;
-
+        public IEnumerable<IRole> Roles { get; }
+        
         /// <summary>
         /// Create guest identity and specify guest role
         /// </summary>
         /// <param name="guestRole"></param>
-        public UserIdentity(object guestRole)
+        public UserIdentity(IRole guestRole)
         {
-            Roles = new List<object>() { { guestRole } };
+            Roles = new List<IRole>() { { guestRole } };
         }
 
         /// <summary>
@@ -33,12 +29,10 @@ namespace Pipaslot.Infrastructure.Security
         /// </summary>
         /// <param name="id"></param>
         /// <param name="roles"></param>
-        /// <param name="identityType"></param>
-        public UserIdentity(object id, IEnumerable<object> roles, UserIdentityType identityType = UserIdentityType.User)
+        public UserIdentity(object id, IEnumerable<IRole> roles)
         {
             Id = id;
-            Roles = roles ?? new List<object>();
-            IdentityType = id == null ? UserIdentityType.Guest : identityType;
+            Roles = roles ?? new List<IRole>();
         }
     }
 }

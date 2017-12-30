@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Pipaslot.Infrastructure.Security;
+using Pipaslot.Infrastructure.Security.Data;
 
 namespace Pipaslot.SecurityUI
 {
@@ -25,7 +27,7 @@ namespace Pipaslot.SecurityUI
                 {
                     throw new ApplicationException($"Can not resolve service {typeof(UserIdentity)} from Dependency Injection.");
                 }
-                if (identity.IdentityType != UserIdentityType.Admin)
+                if (identity.Roles.Any(r=>r.Type == RoleType.Admin))
                 {
                     throw new UnauthorizedAccessException("Only user with AdminIdentity can access Security Management.");
                 }

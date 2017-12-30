@@ -64,6 +64,8 @@
     <Compile Include="Models\SecondPermissions.cs" />
     <Compile Include="Models\FirstResource.cs" />
     <Compile Include="Models\StaticPermissions.cs" />
+    <Compile Include="Models\UserRole.cs" />
+    <Compile Include="Models\UserRoleString.cs" />
     <Compile Include="ResourceRegistryTest.cs" />
     <Compile Include="PermissionManagerTest.cs" />
     <Compile Include="DefaultNamingConvertorTest.cs" />

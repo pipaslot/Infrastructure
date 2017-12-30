@@ -1,4 +1,6 @@
-﻿namespace Pipaslot.Infrastructure.Security.Data
+﻿using System.Runtime.Serialization;
+
+namespace Pipaslot.Infrastructure.Security.Data
 {
     public interface IRole<out TKey> : IRole
     {
@@ -18,5 +20,10 @@
         /// Role description
         /// </summary>
         string Description { get; }
+
+        /// <summary>
+        /// Specificate role type 
+        /// </summary>
+        RoleType Type { get; }
     }
 }
