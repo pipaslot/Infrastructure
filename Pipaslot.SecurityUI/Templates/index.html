@@ -10,9 +10,9 @@
         </thead>
         <tbody>
             <tr v-for="role in roles">
-                <td>{{role.name}}</td>
+                <td>{{role.name}} <span v-if="role.isSystem" class="badge badge-info" title="System role which can't be removed'">System</span></td>
                 <td>{{role.description}}</td>
-                <td>
+                <td v-if="role.showResources">
                     <a class="btn btn-primary" :href="'{{routePrefix}}/role?roleId=' + role.id + '&roleName=' + role.name" role="button">Resources</a>
                 </td>
             </tr>

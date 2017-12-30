@@ -27,7 +27,9 @@ namespace Pipaslot.Infrastructure.Security.EntityFramework
 
         public ICollection<TRole> GetAll<TRole>() where TRole : IRole
         {
-            return (ICollection<TRole>)ContextReadOnly.SecurityRole.ToList();
+            return (ICollection<TRole>)ContextReadOnly.SecurityRole
+                .Select(r=>(IRole)r)
+                .ToList();
         }
 
         public ICollection<TRole> GetSystemRoles<TRole>() where TRole : IRole

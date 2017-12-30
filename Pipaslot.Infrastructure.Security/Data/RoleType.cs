@@ -5,21 +5,21 @@
         /// <summary>
         /// Role assigned to all visitors
         /// </summary>
-        Guest,
+        Guest = 1,
 
         /// <summary>
         /// Role assigned only for authenticated users
         /// </summary>
-        User,
+        User = 2,
 
         /// <summary>
         /// Role for administrator with all permissions
         /// </summary>
-        Admin,
+        Admin = 3,
 
         /// <summary>
         /// Application specific role with full maintanance
         /// </summary>
-        Custom
+        Custom = 4
     }
 }
