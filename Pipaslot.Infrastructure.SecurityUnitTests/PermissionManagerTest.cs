@@ -23,7 +23,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var permissionStore = new Mock<IPermissionStore<int>>();
             var resourceRegistry = new ResourceRegistry();
             resourceRegistry.Register(GetType().Assembly);
-            var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
+            var resourceInstanceQueryFactory = new Mock<IResourceInstanceProvider>();
             var namigConvertor = new DefaultNamingConvertor<int>(resourceRegistry);
             var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry, resourceInstanceQueryFactory.Object, new DefaultNamingConvertor<int>(resourceRegistry));
 
@@ -39,7 +39,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var permissionStore = new Mock<IPermissionStore<int>>();
             var resourceRegistry = new ResourceRegistry();
             resourceRegistry.Register(GetType().Assembly);
-            var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
+            var resourceInstanceQueryFactory = new Mock<IResourceInstanceProvider>();
             var namigConvertor = new DefaultNamingConvertor<int>(resourceRegistry);
             var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry, resourceInstanceQueryFactory.Object, new DefaultNamingConvertor<int>(resourceRegistry));
 
@@ -57,13 +57,11 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var resourceRegistry = new ResourceRegistry();
             resourceRegistry
                 .Register(resourceType.Assembly);
-            var queryMock = new Mock<IResourceInstanceQuery>();
-            queryMock.Setup(q => q.GetTotalRowCountAsync(tokenSource.Token))
+            var resourceInstanceProvider = new Mock<IResourceInstanceProvider>();
+            resourceInstanceProvider
+                .Setup(q => q.GetInstanceCountAsync(resourceType,tokenSource.Token))
                 .Returns(Task.FromResult(instanceCount));
-            var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
-            resourceInstanceQueryFactory.Setup(q => q.Create())
-                .Returns(queryMock.Object);
-            var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry, resourceInstanceQueryFactory.Object, new DefaultNamingConvertor<int>(resourceRegistry));
+            var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry, resourceInstanceProvider.Object, new DefaultNamingConvertor<int>(resourceRegistry));
 
             var resources = manager.GetAllResourcesAsync(tokenSource.Token).Result;
             var firstResource = resources.First(r => r.UniqueName == resourceType.FullName);
@@ -77,24 +75,22 @@ namespace Pipaslot.Infrastructure.SecurityTests
         {
             var resourceId = 5;
             var resourceType = typeof(FirstResource);
-            var providerResult = new ResourceInstance(resourceId, "NAME", "DESCRIPTION");
-            var queryResult = (IEnumerable<ResourceInstance>)new List<ResourceInstance> { providerResult };
+            var providerResult = new FirstResource(resourceId, "NAME", "DESCRIPTION");
+            var queryResult = new List<IResourceInstance> { providerResult };
             var tokenSource = new CancellationTokenSource();
 
             var permissionStoreMock = new Mock<IPermissionStore<int>>();
 
             var resourceRegistry = new ResourceRegistry();
             resourceRegistry.Register(resourceType.Assembly);
-
-            var queryMock = new Mock<IResourceInstanceQuery>();
-            queryMock.Setup(q => q.ExecuteAsync(tokenSource.Token))
+            
+            var resourceInstanceProvider = new Mock<IResourceInstanceProvider>();
+            resourceInstanceProvider
+                .Setup(q => q.GetInstancesAsync(resourceType, 1,1000,tokenSource.Token))
                 .Returns(Task.FromResult(queryResult));
-            var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
-            resourceInstanceQueryFactory.Setup(q => q.Create())
-                .Returns(queryMock.Object);
 
             //Act
-            var manager = new PermissionManager<int>(permissionStoreMock.Object, resourceRegistry, resourceInstanceQueryFactory.Object, new DefaultNamingConvertor<int>(resourceRegistry));
+            var manager = new PermissionManager<int>(permissionStoreMock.Object, resourceRegistry, resourceInstanceProvider.Object, new DefaultNamingConvertor<int>(resourceRegistry));
             var resources = manager.GetAllResourceInstancesAsync(resourceType.FullName, tokenSource.Token).Result;
             var firstResource = resources.First();
 
@@ -126,7 +122,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var tokenSource = new CancellationTokenSource();
 
             var namingConvertor = new DefaultNamingConvertor<int>(resourceRegistry);
-            var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
+            var resourceInstanceQueryFactory = new Mock<IResourceInstanceProvider>();
 
             var permissionStoreMock = new Mock<IPermissionStore<int>>();
             permissionStoreMock
@@ -170,7 +166,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var tokenSource = new CancellationTokenSource();
 
             var namingConvertor = new DefaultNamingConvertor<int>(resourceRegistry);
-            var resourceInstanceQueryFactory = new Mock<IQueryFactory<IResourceInstanceQuery>>();
+            var resourceInstanceQueryFactory = new Mock<IResourceInstanceProvider>();
 
             var permissionStoreMock = new Mock<IPermissionStore<int>>();
             permissionStoreMock

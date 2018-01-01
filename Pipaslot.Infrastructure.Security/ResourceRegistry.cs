@@ -73,7 +73,7 @@ namespace Pipaslot.Infrastructure.Security
         private void Load()
         {
             var resourceGenericType = typeof(IResource<>);
-            var resourceInstanceGenericType = typeof(IResourceInstance<,>);
+            var resourceInstanceGenericType = typeof(IResourceInstance<>);
 
             _loadedResources.Clear();
 

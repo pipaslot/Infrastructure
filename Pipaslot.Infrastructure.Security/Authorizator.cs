@@ -46,12 +46,12 @@ namespace Pipaslot.Infrastructure.Security
                 res);
         }
 
-        public virtual async Task<bool> IsAllowedAsync<TPermissions>(IEnumerable<TKey> roles, IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum, CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible
+        public virtual async Task<bool> IsAllowedAsync<TPermissions>(IEnumerable<TKey> roles, IResourceInstance<TPermissions> resourceInstance, TPermissions permissionEnum, CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible
         {
             var res = _namingConvertor.GetResourceUniqueName(resourceInstance.GetType());
             var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
             return await LoadCachedAsync(
-                () => _permissionStore.IsAllowedAsync(roles, res, resourceInstance.ResourceUniqueIdentifier, perm, token),
+                () => _permissionStore.IsAllowedAsync(roles, res, (TKey)resourceInstance.ResourceUniqueIdentifier, perm, token),
                 roles,
                 perm,
                 res,

@@ -29,7 +29,7 @@ namespace Pipaslot.SecurityUI
             });
             RegisterIfNotExists<ResourceRegistry>(services);
             RegisterIfNotExists<INamingConvertor, DefaultNamingConvertor<TKey>>(services);
-            RegisterIfNotExists<IQueryFactory<IResourceInstanceQuery>, NullResourceInstanceQueryFactory>(services);
+            RegisterIfNotExists<IResourceInstanceProvider, NullResourceInstanceProvider>(services);
             RegisterIfNotExists<IPermissionManager<TKey>, PermissionManager<TKey>>(services);
             RegisterIfNotExists<IPermissionManager, PermissionManager<TKey>>(services);
             RegisterIfNotExists<IAuthorizator<TKey>, Authorizator<TKey>>(services);

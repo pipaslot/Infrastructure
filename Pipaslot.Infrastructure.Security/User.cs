@@ -17,7 +17,7 @@ namespace Pipaslot.Infrastructure.Security
     {
         private readonly IAuthorizator<TKey> _authorizator;
         private readonly UserIdentity _identity;
-        private readonly IQueryFactory<IResourceInstanceQuery> _resourcenstanceQueryFactory;
+        private readonly IResourceInstanceProvider _resourceInstanceProvider;
 
         public TKey Id => (TKey)(_identity.Id ?? default(TKey));
 
@@ -27,11 +27,11 @@ namespace Pipaslot.Infrastructure.Security
         private bool IsAdmin => _identity.Roles.Any(r => r.Type == RoleType.Admin);
         private List<TKey> RolesIds => _identity.Roles.Select(r => (TKey)r.Id).ToList();
 
-        public User(IAuthorizator<TKey> authorizator, UserIdentity identity, IQueryFactory<IResourceInstanceQuery> resourcenstanceQueryFactory)
+        public User(IAuthorizator<TKey> authorizator, UserIdentity identity, IResourceInstanceProvider resourceInstanceProvider)
         {
             _authorizator = authorizator;
             _identity = identity;
-            _resourcenstanceQueryFactory = resourcenstanceQueryFactory;
+            _resourceInstanceProvider = resourceInstanceProvider;
         }
 
         public virtual async Task CheckPermissionAsync(IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
@@ -51,19 +51,13 @@ namespace Pipaslot.Infrastructure.Security
             }
         }
 
-        public virtual async Task CheckPermissionAsync<TPermissions>(IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum,
+        public virtual async Task CheckPermissionAsync<TPermissions>(IResourceInstance<TPermissions> resourceInstance, TPermissions permissionEnum,
             CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible
         {
             if (!await IsAllowedAsync(resourceInstance, permissionEnum, token))
             {
-                throw new AuthorizationException(resourceInstance.GetType(), permissionEnum, async () =>
-                {
-                    var query = _resourcenstanceQueryFactory.Create();
-                    query.Resource = resourceInstance.GetType();
-                    query.ResourceIdentifier = resourceInstance.ResourceUniqueIdentifier;
-                    var details = await query.ExecuteAsync(token);
-                    return details.FirstOrDefault();
-                });
+                var instance = await _resourceInstanceProvider.GetInstanceAsync(resourceInstance.GetType(), (TKey)resourceInstance.ResourceUniqueIdentifier, token);
+                throw new AuthorizationException(resourceInstance.GetType(), permissionEnum, instance);
             }
         }
 
@@ -72,14 +66,8 @@ namespace Pipaslot.Infrastructure.Security
         {
             if (!await IsAllowedAsync(resource, resourceIdentifier, permissionEnum, token))
             {
-                throw new AuthorizationException(resource, permissionEnum, async () =>
-                {
-                    var query = _resourcenstanceQueryFactory.Create();
-                    query.Resource = resource;
-                    query.ResourceIdentifier = resourceIdentifier;
-                    var details = await query.ExecuteAsync(token);
-                    return details.FirstOrDefault();
-                });
+                var instance = await _resourceInstanceProvider.GetInstanceAsync(resource, resourceIdentifier, token);
+                throw new AuthorizationException(resource, permissionEnum, instance);
             }
         }
 
@@ -93,7 +81,7 @@ namespace Pipaslot.Infrastructure.Security
             return IsAdmin || await _authorizator.IsAllowedAsync(RolesIds, resource, permissionEnum, token);
         }
 
-        public virtual async Task<bool> IsAllowedAsync<TPermissions>(IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum,
+        public virtual async Task<bool> IsAllowedAsync<TPermissions>(IResourceInstance<TPermissions> resourceInstance, TPermissions permissionEnum,
             CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible
         {
             return IsAdmin || await _authorizator.IsAllowedAsync(RolesIds, resourceInstance, permissionEnum, token);
@@ -110,10 +98,8 @@ namespace Pipaslot.Infrastructure.Security
         {
             if (IsAdmin)
             {
-                var query = _resourcenstanceQueryFactory.Create();
-                query.Resource = resource;
-                var result = await query.ExecuteAsync(token);
-                return result.Select(r => (TKey)r.Id).AsEnumerable();
+                var result = await _resourceInstanceProvider.GetAllIdsAsync(resource,token);
+                return result.Select(id => (TKey)id).AsEnumerable();
             }
             return await _authorizator.GetAllowedKeysAsync(RolesIds, resource, permissionEnum, token);
         }

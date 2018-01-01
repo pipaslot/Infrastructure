@@ -12,15 +12,15 @@ namespace Pipaslot.Infrastructure.Security
     {
         private readonly IPermissionStore<TKey> _permissionStore;
         private readonly ResourceRegistry _resourceRegistry;
-        private readonly IQueryFactory<IResourceInstanceQuery> _resourceInstanceQueryFactory;
+        private readonly IResourceInstanceProvider _resourceInstanceProvider;
         private readonly INamingConvertor _namingConvertor;
 
-        public PermissionManager(IPermissionStore<TKey> permissionStore, ResourceRegistry resourceRegistry, IQueryFactory<IResourceInstanceQuery> resourceInstanceQueryFactory, INamingConvertor namingConvertor)
+        public PermissionManager(IPermissionStore<TKey> permissionStore, ResourceRegistry resourceRegistry, IResourceInstanceProvider resourceInstanceProvider, INamingConvertor namingConvertor)
         {
             _permissionStore = permissionStore;
             _resourceRegistry = resourceRegistry;
             _namingConvertor = namingConvertor;
-            _resourceInstanceQueryFactory = resourceInstanceQueryFactory;
+            _resourceInstanceProvider = resourceInstanceProvider;
         }
 
         #region Setup Privilege
@@ -47,11 +47,9 @@ namespace Pipaslot.Infrastructure.Security
             {
                 var type = pair.ResourceType;
                 var resourceName = _namingConvertor.GetResourceUniqueName(type);
-                var instanceQuery = _resourceInstanceQueryFactory.Create();
-                instanceQuery.Resource = type;
                 var info = new ResourceInfo
                 {
-                    InstancesCount = await instanceQuery.GetTotalRowCountAsync(token),
+                    InstancesCount = await _resourceInstanceProvider.GetInstanceCountAsync(pair.ResourceType, token),
                     UniqueName = resourceName,
                     Name = Helpers.GetResourceReadableName(type),
                     Description = Helpers.GetResourceReadableDescription(type),
@@ -60,7 +58,7 @@ namespace Pipaslot.Infrastructure.Security
 
                 result.Add(info);
             }
-            return result.OrderBy(r=>r.Name).ToList();
+            return result.OrderBy(r => r.Name).ToList();
         }
 
         private int GetStaticPermissionsCount(string resource)
@@ -75,21 +73,19 @@ namespace Pipaslot.Infrastructure.Security
             return count;
         }
 
-        //todo Implement paging for future (as query)
+        //todo Implement paging for future
         public virtual async Task<IEnumerable<ResourceInstanceInfo>> GetAllResourceInstancesAsync(string resource, CancellationToken token = default(CancellationToken))
         {
             var result = new List<ResourceInstanceInfo>();
             var resourceType = _namingConvertor.GetResourceTypeByUniqueName(resource);
-            var instanceQuery = _resourceInstanceQueryFactory.Create();
-            instanceQuery.Resource = resourceType;
-            var instanceDetails = await instanceQuery.ExecuteAsync(token);
+            var instanceDetails = await _resourceInstanceProvider.GetInstancesAsync(resourceType, 1, 1000, token);
             foreach (var detail in instanceDetails)
             {
                 result.Add(new ResourceInstanceInfo
                 {
-                    Identifier = (TKey)detail.Id,
-                    Name = detail.Name,
-                    Description = detail.Description,
+                    Identifier = (TKey)detail.ResourceUniqueIdentifier,
+                    Name = detail.ResourceName,
+                    Description = detail.ResourceDescription,
                     PermissionsCount = GetInstancePermissionsCount(resource)
                 });
             }

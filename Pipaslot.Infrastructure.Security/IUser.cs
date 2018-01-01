@@ -51,7 +51,7 @@ namespace Pipaslot.Infrastructure.Security
         /// <param name="permissionEnum"></param>
         /// <param name="token"></param>
         /// <exception cref="AuthorizationException"></exception>
-        Task CheckPermissionAsync<TPermissions>(IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum, CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible;
+        Task CheckPermissionAsync<TPermissions>(IResourceInstance<TPermissions> resourceInstance, TPermissions permissionEnum, CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible;
         
         /// <summary>
         ///  Check if User has got required permission, if not, then Exception is thrown.
@@ -87,7 +87,7 @@ namespace Pipaslot.Infrastructure.Security
         /// < param name="permissionEnum">Requested permission</param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<bool> IsAllowedAsync<TPermissions>(IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum, CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible;
+        Task<bool> IsAllowedAsync<TPermissions>(IResourceInstance<TPermissions> resourceInstance, TPermissions permissionEnum, CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible;
         
         /// <summary>
         /// Check if user has permission for resourceInstance with specific ID

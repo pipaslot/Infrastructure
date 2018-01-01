@@ -34,7 +34,7 @@ namespace Pipaslot.Infrastructure.Security
         /// <param name="permissionEnum"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        Task<bool> IsAllowedAsync<TPermissions>(IEnumerable<TKey> roles, IResourceInstance<TKey, TPermissions> resourceInstance, TPermissions permissionEnum, CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible;
+        Task<bool> IsAllowedAsync<TPermissions>(IEnumerable<TKey> roles, IResourceInstance<TPermissions> resourceInstance, TPermissions permissionEnum, CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible;
         
         /// <summary>
         /// Check if user has permission for resourceInstance with specific ID
