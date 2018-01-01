@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Pipaslot.Demo.App.Home
 {
@@ -6,6 +7,7 @@ namespace Pipaslot.Demo.App.Home
     /// <summary>
     /// Home Page
     /// </summary>
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         /// <summary>
