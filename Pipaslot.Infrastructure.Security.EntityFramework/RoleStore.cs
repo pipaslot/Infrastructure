@@ -28,7 +28,7 @@ namespace Pipaslot.Infrastructure.Security.EntityFramework
         public ICollection<TRole> GetAll<TRole>() where TRole : IRole
         {
             return (ICollection<TRole>)ContextReadOnly.SecurityRole
-                .Select(r=>(IRole)r)
+                .Select(r => (IRole)r)
                 .ToList();
         }
 
@@ -41,7 +41,7 @@ namespace Pipaslot.Infrastructure.Security.EntityFramework
             {
                 throw new ApplicationException($"System roles were not correctly configured. Were expected 3 roles but found {roles.Count}. Into application can be defined only one {nameof(RoleType.Guest)}, {nameof(RoleType.User)} and  {nameof(RoleType.Admin)} role type");
             }
-            return (ICollection<TRole>)roles;
+            return roles.Select(r => (TRole)(object)r).ToList();
         }
     }
 }

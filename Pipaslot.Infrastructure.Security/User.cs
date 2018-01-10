@@ -20,14 +20,15 @@ namespace Pipaslot.Infrastructure.Security
         private readonly IAuthorizator<TKey> _authorizator;
         private readonly IClaimsPrincipalProvider _claimsPrincipalProvider;
         private readonly IResourceInstanceProvider _resourceInstanceProvider;
+        private readonly IRoleStore _roleStore;
 
         public TKey Id => _identity.Id;
 
         public bool IsAuthenticated => _identity.Id != null && !_identity.Id.Equals(default(TKey));
 
         public IEnumerable<IRole> Roles => _identity.Roles;
-        private bool IsAdmin => _identity.Roles.Any(r => r.Type == RoleType.Admin);
         private List<TKey> RolesIds => _identity.Roles.Select(r => (TKey)r.Id).ToList();
+        private bool IsAdmin => _identity.Roles.Any(r => r.Type == RoleType.Admin);
 
         private (TKey Id, IEnumerable<IRole> Roles) _identity
         {
@@ -35,13 +36,21 @@ namespace Pipaslot.Infrastructure.Security
             {
                 var user = _claimsPrincipalProvider.GetClaimsPrincipal();
                 var roleClaims = user.FindAll(ClaimTypes.Role);
+                //Load assigned not system user roles from claims
                 var roles = Helpers.ClaimsToRoles(roleClaims);
+                //Auto assign guest role
+                roles.Add(SystemRoles.First(r=>r.Type == RoleType.Guest));
                 var name = user.Identity?.Name;
+                //If username is not empty, add User role
+                if (!string.IsNullOrWhiteSpace(name))
+                {
+                    roles.Add(SystemRoles.First(r => r.Type == RoleType.User));
+                }
                 if (typeof(TKey) == typeof(int))
                 {
                     foreach (var role in roles)
                     {
-                        role.Id = (object)ParseIntFromString(role.Id.ToString());
+                        role.Id = ParseIntFromString(role.Id?.ToString());
                     }
                     return (Id: ParseIntFromString(name), Roles: roles);
                 }
@@ -54,16 +63,27 @@ namespace Pipaslot.Infrastructure.Security
             }
         }
 
+        /// <summary>
+        /// System role cache
+        /// </summary>
+        private List<IRole> _systemRolesCache;
+
+        /// <summary>
+        /// Load system roles from database and cache them
+        /// </summary>
+        private List<IRole> SystemRoles => _systemRolesCache ?? (_systemRolesCache = _roleStore.GetSystemRoles<IRole>().ToList());
+
         private TKey ParseIntFromString(string value)
         {
             return string.IsNullOrWhiteSpace(value) ? default(TKey) : (TKey)(object)int.Parse(value);
         }
 
-        public User(IAuthorizator<TKey> authorizator, IClaimsPrincipalProvider claimsPrincipalProvider, IResourceInstanceProvider resourceInstanceProvider)
+        public User(IAuthorizator<TKey> authorizator, IClaimsPrincipalProvider claimsPrincipalProvider, IResourceInstanceProvider resourceInstanceProvider, IRoleStore roleStore)
         {
             _authorizator = authorizator;
             _claimsPrincipalProvider = claimsPrincipalProvider;
             _resourceInstanceProvider = resourceInstanceProvider;
+            _roleStore = roleStore;
         }
 
         public virtual async Task CheckPermissionAsync(IConvertible permissionEnum, CancellationToken token = default(CancellationToken))

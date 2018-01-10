@@ -47,30 +47,27 @@ namespace Pipaslot.Demo.Api
             using (var uow = _unitOfWorkFactory.Create())
             {
                 var systemRoles = _roleStore.GetSystemRoles<Role<int>>();
-                var roles = systemRoles.Where(r => r.Type == RoleType.Guest || r.Type == RoleType.User).ToList();
-                if (_userRepository.CreateQuery().GetTotalRowCount() == 0)
-                {
-                    //Creating first user which must be admin
-                    var adminRole = systemRoles.First(r => r.Type == RoleType.Admin);
-                    roles.Add(adminRole);
-                }
+
                 user = new User()
                 {
                     Login = username,
                     PasswordHash = HashPassword(password)
                 };
-                user.UserRoles = roles.Select(r => new UserRole(user, r)).ToList();
+                if (_userRepository.CreateQuery().GetTotalRowCount() == 0)
+                {
+                    //Creating first user which must be admin
+                    var adminRole = systemRoles.First(r => r.Type == RoleType.Admin);
+                    user.UserRoles.Add(new UserRole(user, adminRole));
+                }
                 _userRepository.Insert(user);
-
-                var claims = GetIdentityClaims(user);
-                var token = _tokenManager.CreateNewToken(claims);
+                var token = CreateToken(user);
 
                 uow.Commit();
                 return token;
             }
         }
         /// <summary>
-        /// Authenticate user and retursn authentication token
+        /// Authenticate user and returns token for Bearer authentication for future requests
         /// </summary>
         /// <param name="username"></param>
         /// <param name="password"></param>
@@ -78,37 +75,24 @@ namespace Pipaslot.Demo.Api
         [HttpPost("login")]
         public Token Login(string username, string password)
         {
-            var claims = GetIdentityClaims(username, password);
-            return _tokenManager.CreateNewToken(claims);
-        }
-
-        private List<Claim> GetIdentityClaims(string username, string password)
-        {
             var user = _userRepository.GetByLogin(username);
             if (user != null)
             {
                 var passwordHash = HashPassword(password);
                 if (user.PasswordHash == passwordHash)
                 {
-                    return GetIdentityClaims(user);
+                    return CreateToken(user);
                 }
             }
             throw new AuthenticationException("Bad User name or Password");
         }
 
-        private List<Claim> GetIdentityClaims(User user)
+        private Token CreateToken(User user)
         {
-            var claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.Name,user.Id.ToString())
-            };
-            foreach (var role in user.UserRoles)
-            {
-                var roleClaim = new Claim(ClaimTypes.Role, role.RoleId.ToString());
-                claims.Add(roleClaim);
-            }
-            return claims;
+            var roles = user.UserRoles.Select(ur => ur.Role).ToList();
+            return _tokenManager.CreateNewToken(user.Id, roles);
         }
+
         /// <summary>
         /// Create password hash
         /// </summary>
