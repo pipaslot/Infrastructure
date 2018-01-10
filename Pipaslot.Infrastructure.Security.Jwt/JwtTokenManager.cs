@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Reflection;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using Pipaslot.Infrastructure.Security.Data;
 using Pipaslot.Infrastructure.Security.Jwt;
 
@@ -13,8 +10,6 @@ namespace Pipaslot.Infrastructure.Security.JWT
 {
     public class JwtTokenManager
     {
-        public const string TokenUserId = "uid";
-        public const string TokenRole = "rol";
         private readonly JwtTokenParameters _parameters;
 
         public JwtTokenManager(JwtTokenParameters parameters)
@@ -23,24 +18,24 @@ namespace Pipaslot.Infrastructure.Security.JWT
         }
 
         /// <summary>
-        /// Create user from identity
+        /// Create new token from user unique identifier and his role unique identifiers
         /// </summary>
-        /// <param name="user"></param>
+        /// <param name="userId"></param>
+        /// <param name="roles"></param>
         /// <returns></returns>
-        public Token CreateToken(UserIdentity user)
+        public Token CreateNewToken(object userId, IEnumerable<IRole> roles)
         {
-            var claims = new List<Claim>
-            {
-                new Claim(TokenUserId, JsonConvert.SerializeObject(user.Id)),
-            };
-            foreach (var role in user.Roles)
-            {
-                var claim = new Claim(TokenRole, JsonConvert.SerializeObject(role));
-                claims.Add(claim);
-            }
+
+            var claims = Helpers.RolesToClaims(roles);
+            claims.Add(new Claim(ClaimTypes.Name, userId.ToString()));
             return CreateNewToken(claims);
         }
 
+        /// <summary>
+        /// Create new token for claims
+        /// </summary>
+        /// <param name="claims"></param>
+        /// <returns></returns>
         public Token CreateNewToken(IEnumerable<Claim> claims)
         {
             var signingCredentials = new SigningCredentials(_parameters.GetSymetricSecurityKey(), SecurityAlgorithms.HmacSha256Signature);
@@ -51,7 +46,7 @@ namespace Pipaslot.Infrastructure.Security.JWT
             {
                 Issuer = _parameters.Issuer,
                 Audience = _parameters.Audience,
-                Subject = new ClaimsIdentity(claims, "JWT", TokenUserId, TokenRole),
+                Subject = new ClaimsIdentity(claims, "JWT", ClaimTypes.Name, ClaimTypes.Role),
                 Expires = expiration,
                 SigningCredentials = signingCredentials
             };
@@ -65,22 +60,9 @@ namespace Pipaslot.Infrastructure.Security.JWT
             };
         }
 
-        public UserIdentity CreateIdentity<TKey, TRole>(IEnumerable<Claim> claims)
-            where TRole : IRole
+        public ClaimsIdentity CreateIdentity(IEnumerable<Claim> claims)
         {
-            var idClaim = claims.FirstOrDefault(c => c.Type == TokenUserId)?.Value;
-            var id = string.IsNullOrWhiteSpace(idClaim) ? default(TKey) : JsonConvert.DeserializeObject<TKey>(idClaim);
-            var roles = claims
-                .Where(c => c.Type == TokenRole)
-                .Select(c => (IRole)JsonConvert.DeserializeObject<TRole>(c.Value))
-            .ToList();
-            return new UserIdentity(id, roles);
-        }
-
-        public ClaimsPrincipal CreatePrincipal(IEnumerable<Claim> claims)
-        {
-            var identity = new ClaimsIdentity(claims, "JWT", TokenUserId, TokenRole);
-            return new ClaimsPrincipal(identity);
+            return new ClaimsIdentity(claims, "JWT", ClaimTypes.Name, ClaimTypes.Role);
         }
 
         public bool IsTokenValid(string token)

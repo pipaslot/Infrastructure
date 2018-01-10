@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Pipaslot.Infrastructure.Data;
 using Pipaslot.Infrastructure.Security;
 using Pipaslot.Infrastructure.Security.Data;
 
@@ -20,13 +18,7 @@ namespace Pipaslot.SecurityUI
 
         public static IServiceCollection AddSecurityUI<TKey>(this IServiceCollection services)
         {
-            //Default identity is guest identity
-            services.AddScoped<UserIdentity>(s =>
-            {
-                var store = (IRoleStore) s.GetService(typeof(IRoleStore));
-                var guest = store.GetGuestRole<IRole>();
-                return new UserIdentity(guest);
-            });
+            RegisterIfNotExists<IClaimsPrincipalProvider, ClaimsPrincipalProvider>(services);
             RegisterIfNotExists<ResourceRegistry>(services);
             RegisterIfNotExists<INamingConvertor, DefaultNamingConvertor<TKey>>(services);
             RegisterIfNotExists<IResourceInstanceProvider, NullResourceInstanceProvider>(services);

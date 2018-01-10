@@ -1,7 +1,6 @@
 ﻿using Pipaslot.Demo.Models.Permissions;
 using Pipaslot.Infrastructure.Data;
 using Pipaslot.Infrastructure.Security;
-using Pipaslot.Infrastructure.Security.Attributes;
 
 namespace Pipaslot.Demo.Models.Entities
 {
@@ -9,7 +8,7 @@ namespace Pipaslot.Demo.Models.Entities
     /// <summary>
     /// Company Entity
     /// </summary>
-    public class Company : IEntity<int>, IResourceInstance<int, CompanyPermissions>, IResource<CompanyStaticPermissions>
+    public class Company : IEntity<int>, IResourceInstance<CompanyPermissions>, IResource<CompanyStaticPermissions>
     {
         /// <summary>
         /// Primary key
@@ -30,6 +29,11 @@ namespace Pipaslot.Demo.Models.Entities
         /// </summary>
         public string Description { get; set; }
 
-        public int ResourceUniqueIdentifier => Id;
+        public object ResourceUniqueIdentifier => Id;
+
+        public string ResourceName => Name;
+
+        public string ResourceDescription => Description;
+
     }
 }

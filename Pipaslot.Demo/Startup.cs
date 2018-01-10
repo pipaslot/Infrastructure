@@ -97,21 +97,9 @@ namespace Pipaslot.Demo
             services.AddScoped<UserRepository>();
 
             #region Security
-
+            
             //Queries
-            services.AddScoped<IQueryFactory<IResourceInstanceQuery>, ResourceInstanceQueryFactory<AppDatabase>>(
-                s =>
-                {
-                    var factory = new ResourceInstanceQueryFactory<AppDatabase>(s.GetService<IEntityFrameworkDbContextFactory>());
-                    factory.AddResource(typeof(Company), db => db.Company.Select(c => new ResourceInstance
-                    {
-                        Id = c.Id,
-                        Name = c.Name,
-                        Description = c.Description
-                    })
-                        );
-                    return factory;
-                });
+            services.AddScoped<IResourceInstanceProvider, ResourceInstanceProvider<AppDatabase>>();
 
             //Configure own services for Permission Manager
             services.AddScoped<IPermissionStore<int>, PermissionStore<int, AppDatabase>>();
@@ -121,7 +109,7 @@ namespace Pipaslot.Demo
             services.AddSecurityUI<int>();
 
             //Add Jwt token
-            services.AddJwtAuthentication<int, Role<int>>(new JwtTokenParameters
+            services.AddJwtAuthentication(new JwtTokenParameters
             {
                 Issuer = Configuration["JwtSecurityToken:Issuer"],
                 Audience = Configuration["JwtSecurityToken:Audience"],

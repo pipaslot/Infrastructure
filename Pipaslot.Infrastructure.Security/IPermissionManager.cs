@@ -39,12 +39,14 @@ namespace Pipaslot.Infrastructure.Security
         Task<IEnumerable<ResourceInfo>> GetAllResourcesAsync(CancellationToken token = default(CancellationToken));
 
         /// <summary>
-        /// Get all resource instances, ignores resources with default TKey
+        /// Get all resource instances in paged result, ignores resources with default TKey
         /// </summary>
         /// <param name="resource"></param>
+        /// <param name="pageSize"></param>
         /// <param name="token"></param>
+        /// <param name="pageIndex"></param>
         /// <returns></returns>
-        Task<IEnumerable<ResourceInstanceInfo>> GetAllResourceInstancesAsync(string resource, CancellationToken token = default(CancellationToken));
+        Task<IEnumerable<ResourceInstanceInfo>> GetAllResourceInstancesAsync(string resource, int pageIndex = 1, int pageSize = 10, CancellationToken token = default(CancellationToken));
 
         /// <summary>
         /// Returns all permission assigned to static resource and selected role

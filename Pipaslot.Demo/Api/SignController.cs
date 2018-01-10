@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Security.Authentication;
+using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +11,6 @@ using Pipaslot.Infrastructure.Data;
 using Pipaslot.Infrastructure.Security;
 using Pipaslot.Infrastructure.Security.Data;
 using Pipaslot.Infrastructure.Security.EntityFramework.Entities;
-using Pipaslot.Infrastructure.Security.Jwt;
 using Pipaslot.Infrastructure.Security.JWT;
 
 namespace Pipaslot.Demo.Api
@@ -36,6 +35,7 @@ namespace Pipaslot.Demo.Api
             _userRepository = userRepository;
             _unitOfWorkFactory = unitOfWorkFactory;
         }
+
         [HttpPost("register")]
         public Token Register(string username, string password)
         {
@@ -61,8 +61,9 @@ namespace Pipaslot.Demo.Api
                 };
                 user.UserRoles = roles.Select(r => new UserRole(user, r)).ToList();
                 _userRepository.Insert(user);
-                var identity = new UserIdentity(user.Id, roles);
-                var token = _tokenManager.CreateToken(identity);
+
+                var claims = GetIdentityClaims(user);
+                var token = _tokenManager.CreateNewToken(claims);
 
                 uow.Commit();
                 return token;
@@ -77,11 +78,11 @@ namespace Pipaslot.Demo.Api
         [HttpPost("login")]
         public Token Login(string username, string password)
         {
-            var identity = GetIdentity(username, password);
-            return _tokenManager.CreateToken(identity);
+            var claims = GetIdentityClaims(username, password);
+            return _tokenManager.CreateNewToken(claims);
         }
 
-        private UserIdentity GetIdentity(string username, string password)
+        private List<Claim> GetIdentityClaims(string username, string password)
         {
             var user = _userRepository.GetByLogin(username);
             if (user != null)
@@ -89,12 +90,24 @@ namespace Pipaslot.Demo.Api
                 var passwordHash = HashPassword(password);
                 if (user.PasswordHash == passwordHash)
                 {
-                    return new UserIdentity(user.Id, user.UserRoles.Select(ur=>ur.Role));
+                    return GetIdentityClaims(user);
                 }
             }
             throw new AuthenticationException("Bad User name or Password");
+        }
 
-            //return new UserIdentity(user.Id, user.Roles);
+        private List<Claim> GetIdentityClaims(User user)
+        {
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Name,user.Id.ToString())
+            };
+            foreach (var role in user.UserRoles)
+            {
+                var roleClaim = new Claim(ClaimTypes.Role, role.RoleId.ToString());
+                claims.Add(roleClaim);
+            }
+            return claims;
         }
         /// <summary>
         /// Create password hash

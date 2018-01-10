@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace Pipaslot.Infrastructure.Security.Data
+﻿namespace Pipaslot.Infrastructure.Security.Data
 {
     public interface IRole<out TKey> : IRole
     {
@@ -9,7 +7,7 @@ namespace Pipaslot.Infrastructure.Security.Data
 
     public interface IRole
     {
-        object Id { get; }
+        object Id { get; set; }
 
         /// <summary>
         /// Role name

@@ -18,14 +18,12 @@ namespace Pipaslot.Infrastructure.Data.Mvc
         }
 
         /// <summary>
-        /// Get all 
+        /// Get objects by their primary keys
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
-        public virtual async Task<IEnumerable<TEntity>> GetAll()
+        protected virtual async Task<IEnumerable<TEntity>> GetByIds(IEnumerable<TKey> Ids)
         {
-            var query = _repository.CreateQuery();
-            return await query.ExecuteAsync();
+            return await _repository.GetByIdsAsync(Ids);
         }
 
         /// <summary>

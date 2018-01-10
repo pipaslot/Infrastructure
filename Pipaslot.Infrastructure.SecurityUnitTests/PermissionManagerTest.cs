@@ -28,7 +28,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry, resourceInstanceQueryFactory.Object, new DefaultNamingConvertor<int>(resourceRegistry));
 
             //Act
-            manager.SetPermission(1, typeof(FirstResource).FullName, default(int), namigConvertor.GetPermissionUniqueIdentifier(SecondPermissions.Edit),true);
+            manager.SetPermission(1, typeof(FirstResource).FullName, default(int), namigConvertor.GetPermissionUniqueIdentifier(SecondPermissions.Edit), true);
         }
 
         [TestMethod]
@@ -44,7 +44,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
             var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry, resourceInstanceQueryFactory.Object, new DefaultNamingConvertor<int>(resourceRegistry));
 
             //Act
-            manager.SetPermission(1, typeof(FirstResource).FullName, default(int), namigConvertor.GetPermissionUniqueIdentifier(SecondPermissions.Edit),false);
+            manager.SetPermission(1, typeof(FirstResource).FullName, default(int), namigConvertor.GetPermissionUniqueIdentifier(SecondPermissions.Edit), false);
         }
 
         [TestMethod]
@@ -59,7 +59,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
                 .Register(resourceType.Assembly);
             var resourceInstanceProvider = new Mock<IResourceInstanceProvider>();
             resourceInstanceProvider
-                .Setup(q => q.GetInstanceCountAsync(resourceType,tokenSource.Token))
+                .Setup(q => q.GetInstanceCountAsync(resourceType, tokenSource.Token))
                 .Returns(Task.FromResult(instanceCount));
             var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry, resourceInstanceProvider.Object, new DefaultNamingConvertor<int>(resourceRegistry));
 
@@ -83,15 +83,15 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             var resourceRegistry = new ResourceRegistry();
             resourceRegistry.Register(resourceType.Assembly);
-            
+
             var resourceInstanceProvider = new Mock<IResourceInstanceProvider>();
             resourceInstanceProvider
-                .Setup(q => q.GetInstancesAsync(resourceType, 1,1000,tokenSource.Token))
+                .Setup(q => q.GetInstancesAsync(resourceType, 1, 10, tokenSource.Token))
                 .Returns(Task.FromResult(queryResult));
 
             //Act
             var manager = new PermissionManager<int>(permissionStoreMock.Object, resourceRegistry, resourceInstanceProvider.Object, new DefaultNamingConvertor<int>(resourceRegistry));
-            var resources = manager.GetAllResourceInstancesAsync(resourceType.FullName, tokenSource.Token).Result;
+            var resources = manager.GetAllResourceInstancesAsync(resourceType.FullName, 1, 10, tokenSource.Token).Result;
             var firstResource = resources.First();
 
             //Assert

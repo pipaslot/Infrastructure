@@ -6,7 +6,13 @@ namespace Pipaslot.Infrastructure.Security.EntityFramework.Entities
     public class Role<TKey> : IRole, IEntity<TKey>
     {
         public TKey Id { get; set; }
-        object IRole.Id => Id;
+
+        object IRole.Id
+        {
+            get => Id;
+            set => Id = (TKey) value;
+        }
+
         object IEntity.Id
         {
             get => Id;

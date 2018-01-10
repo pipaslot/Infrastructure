@@ -1,13 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Claims;
 using Pipaslot.Infrastructure.Security.Attributes;
+using Pipaslot.Infrastructure.Security.Data;
 using Pipaslot.Infrastructure.Security.Exceptions;
 
 namespace Pipaslot.Infrastructure.Security
 {
-    internal static class Helpers
+    public static class Helpers
     {
+        /// <summary>
+        /// Delimiter used for role claim to joint role parameters into one string
+        /// </summary>
+        public static string RoleClaimFieldDelimiter = "|#|";
         internal static void CheckIfResourceHasAssignedPermission(Type resource, IConvertible permissionEnum)
         {
             var resourceGenericType = typeof(IResource<>);
@@ -75,6 +82,52 @@ namespace Pipaslot.Infrastructure.Security
             return string.Empty;
         }
 
+        #endregion
+
+        #region Role to Claim conversion
+
+        public static List<Claim> RolesToClaims(IEnumerable<IRole> roles)
+        {
+            var claims = new List<Claim>();
+            foreach (var role in roles)
+            {
+                var roleClaim = RoleToClaim(role);
+                claims.Add(roleClaim);
+            }
+            return claims;
+        }
+
+        public static Claim RoleToClaim(IRole role)
+        {
+            var roleClaim = string.Join(RoleClaimFieldDelimiter, role.Name, role.Id?.ToString(), ((int)role.Type).ToString());
+            return new Claim(ClaimTypes.Role, roleClaim);
+        }
+
+        public static List<IRole> ClaimsToRoles(IEnumerable<Claim> claims)
+        {
+            var roles = new List<IRole>();
+            foreach (var claim in claims)
+            {
+                var role = ClaimToRole(claim);
+                roles.Add(role);
+            }
+            return roles;
+        }
+
+        public static IRole ClaimToRole(Claim claim)
+        {
+            var roleFields = claim.Value.Split(new [] { RoleClaimFieldDelimiter },StringSplitOptions.None);
+            var role = new Role { Name = roleFields[0] };
+            if (roleFields.Length >= 2)
+            {
+                role.Id = roleFields[1];
+            }
+            if (roleFields.Length >= 3 && Enum.TryParse<RoleType>(roleFields[2], out var type))
+            {
+                role.Type = type;
+            }
+            return role;
+        }
         #endregion
     }
 }

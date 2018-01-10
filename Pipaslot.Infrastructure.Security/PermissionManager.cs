@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Pipaslot.Infrastructure.Data;
 using Pipaslot.Infrastructure.Security.Data;
 
 namespace Pipaslot.Infrastructure.Security
@@ -73,12 +72,11 @@ namespace Pipaslot.Infrastructure.Security
             return count;
         }
 
-        //todo Implement paging for future
-        public virtual async Task<IEnumerable<ResourceInstanceInfo>> GetAllResourceInstancesAsync(string resource, CancellationToken token = default(CancellationToken))
+        public virtual async Task<IEnumerable<ResourceInstanceInfo>> GetAllResourceInstancesAsync(string resource, int pageIndex = 1, int pageSize = 10, CancellationToken token = default(CancellationToken))
         {
             var result = new List<ResourceInstanceInfo>();
             var resourceType = _namingConvertor.GetResourceTypeByUniqueName(resource);
-            var instanceDetails = await _resourceInstanceProvider.GetInstancesAsync(resourceType, 1, 1000, token);
+            var instanceDetails = await _resourceInstanceProvider.GetInstancesAsync(resourceType, pageIndex, pageSize, token);
             foreach (var detail in instanceDetails)
             {
                 result.Add(new ResourceInstanceInfo

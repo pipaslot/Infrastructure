@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Pipaslot.Infrastructure.Security.JWT;
 using System.Linq;
-using Pipaslot.Infrastructure.Security.Data;
 
 namespace Pipaslot.Infrastructure.Security.Jwt
 {
@@ -18,10 +17,9 @@ namespace Pipaslot.Infrastructure.Security.Jwt
         /// </summary>
         /// <param name="services"></param>
         /// <param name="jwtTokenParameters"></param>
-        public static void AddJwtAuthentication<TKey, TRole>(this IServiceCollection services, JwtTokenParameters jwtTokenParameters)
-            where TRole : IRole
+        public static void AddJwtAuthentication(this IServiceCollection services, JwtTokenParameters jwtTokenParameters)
         {
-            AddJwtAuthentication<TKey, TRole>(services, jwtTokenParameters, null, null);
+            AddJwtAuthentication(services, jwtTokenParameters, null, null);
         }
 
         /// <summary>
@@ -30,11 +28,10 @@ namespace Pipaslot.Infrastructure.Security.Jwt
         /// <param name="services"></param>
         /// <param name="jwtTokenParameters"></param>
         /// <param name="jwtSetup"></param>
-        public static void AddJwtAuthentication<TKey, TRole>(this IServiceCollection services, JwtTokenParameters jwtTokenParameters,
+        public static void AddJwtAuthentication(this IServiceCollection services, JwtTokenParameters jwtTokenParameters,
             Action<JwtBearerOptions> jwtSetup)
-            where TRole : IRole
         {
-            AddJwtAuthentication<TKey, TRole>(services, jwtTokenParameters, null, jwtSetup);
+            AddJwtAuthentication(services, jwtTokenParameters, null, jwtSetup);
         }
 
         /// <summary>
@@ -44,8 +41,7 @@ namespace Pipaslot.Infrastructure.Security.Jwt
         /// <param name="jwtTokenParameters"></param>
         /// <param name="authSetup"></param>
         /// <param name="jwtSetup"></param>
-        public static void AddJwtAuthentication<TKey, TRole>(this IServiceCollection services, JwtTokenParameters jwtTokenParameters, Action<AuthenticationOptions> authSetup, Action<JwtBearerOptions> jwtSetup = null)
-            where TRole : IRole
+        public static void AddJwtAuthentication(this IServiceCollection services, JwtTokenParameters jwtTokenParameters, Action<AuthenticationOptions> authSetup, Action<JwtBearerOptions> jwtSetup = null)
         {
             services.AddScoped(s => new JwtTokenManager(jwtTokenParameters));
             services.AddAuthentication(o =>
@@ -75,12 +71,11 @@ namespace Pipaslot.Infrastructure.Security.Jwt
                             if (context.SecurityToken is JwtSecurityToken token)
                             {
                                 var manager = new JwtTokenManager(jwtTokenParameters);
-                                var claims = token.Claims.ToList();
-                                services.AddScoped<UserIdentity>(s => manager.CreateIdentity<TKey, TRole>(claims));
-                                context.Principal = manager.CreatePrincipal(claims);
+                                var jwtIdentity = manager.CreateIdentity(token.Claims);
+                                context.Principal.AddIdentity(jwtIdentity);
                                 if (jwtTokenParameters.SendNewKeyInEveryResponse)
                                 {
-                                    var newToken = manager.CreateNewToken(claims);
+                                    var newToken = manager.CreateNewToken(token.Claims);
                                     context.Response.Headers.Add("tokenValue", newToken.Value);
                                     context.Response.Headers.Add("tokenExpiration", newToken.Expiration.ToString("s") + "Z");
                                 }
