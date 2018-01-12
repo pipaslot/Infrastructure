@@ -22,9 +22,13 @@ namespace Pipaslot.Infrastructure.Security.EntityFramework
 
         public Task<int> GetInstanceCountAsync(Type resource, CancellationToken token = default(CancellationToken))
         {
-            var method = GetType().GetMethod(nameof(GetInstanceCountCore));
-            var genericMethod = method.MakeGenericMethod(resource);
-            return (Task<int>)genericMethod.Invoke(this, new object[] { token });
+            if (typeof(IResourceInstance).IsAssignableFrom(resource))
+            {
+                var method = GetType().GetMethod(nameof(GetInstanceCountCore));
+                var genericMethod = method.MakeGenericMethod(resource);
+                return (Task<int>)genericMethod.Invoke(this, new object[] { token });
+            }
+            return Task.FromResult(0);
         }
 
         public Task<int> GetInstanceCountCore<TResource>(CancellationToken token = default(CancellationToken))
@@ -52,7 +56,7 @@ namespace Pipaslot.Infrastructure.Security.EntityFramework
         {
             var method = GetType().GetMethod(nameof(GetInstanceCore));
             var genericMethod = method.MakeGenericMethod(resource);
-            return (Task<IResourceInstance>)genericMethod.Invoke(this, new object[] { id,token });
+            return (Task<IResourceInstance>)genericMethod.Invoke(this, new object[] { id, token });
         }
 
         public async Task<IResourceInstance> GetInstanceCore<TResource>(object id, CancellationToken token = default(CancellationToken))
@@ -66,9 +70,13 @@ namespace Pipaslot.Infrastructure.Security.EntityFramework
         public Task<List<IResourceInstance>> GetInstancesAsync(Type resource, int pageIndex = 1, int pageSize = 20,
             CancellationToken token = default(CancellationToken))
         {
-            var method = GetType().GetMethod(nameof(GetInstancesCore));
-            var genericMethod = method.MakeGenericMethod(resource);
-            return (Task<List<IResourceInstance>>)genericMethod.Invoke(this, new object[] { pageIndex, pageSize, token });
+            if (typeof(IResourceInstance).IsAssignableFrom(resource))
+            {
+                var method = GetType().GetMethod(nameof(GetInstancesCore));
+                var genericMethod = method.MakeGenericMethod(resource);
+                return (Task<List<IResourceInstance>>)genericMethod.Invoke(this, new object[] { pageIndex, pageSize, token });
+            }
+            return Task.FromResult(new List<IResourceInstance>());
         }
 
         public async Task<List<IResourceInstance>> GetInstancesCore<TResource>(int pageIndex = 1, int pageSize = 20,
@@ -77,7 +85,7 @@ namespace Pipaslot.Infrastructure.Security.EntityFramework
         {
             var queryable = GetQuery<TResource>();
             var result = await queryable.ToListAsync(token);
-            return result.Select(r=>(IResourceInstance)r).ToList();
+            return result.Select(r => (IResourceInstance)r).ToList();
         }
 
         private DbSet<TResult> GetQuery<TResult>() where TResult : class, IResourceInstance

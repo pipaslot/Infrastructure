@@ -35,7 +35,7 @@ namespace Pipaslot.Infrastructure.Security
         /// <summary>
         /// User friendly resource instance name
         /// </summary>
-        public string ResourceInstanceName =>  _resourceDetail?.ResourceName ?? "";
+        public string ResourceInstanceName => _resourceDetail?.ResourceName ?? "";
 
         public AuthorizationException(string message) : base(message)
         {

@@ -20,7 +20,7 @@
             <td><strong>{{resource.name}}</strong></td>
             <td>{{resource.description}}</td>
             <td colspan="2">
-                <button class="btn btn-sm btn-light" @click="resourceInstances(resource)" role="button">{{resource.showInstances ? "Hide Instances" : "Show Instances"}}</button>
+                <button class="btn btn-sm btn-light" v-if="resource.instancesCount > 0" @click="resourceInstances(resource)" role="button">{{resource.showInstances ? "Hide Instances" : "Show Instances"}}</button>
                 <button class="btn btn-sm btn-primary" @click="staticPermissions(resource)" role="button">{{resource.showPermissions ? "Hide Permissions" : "Show Permissions"}}</button>
             </td>
         </tr>
