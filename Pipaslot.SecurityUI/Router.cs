@@ -2,19 +2,23 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
+using Pipaslot.Infrastructure.Security;
 using Pipaslot.SecurityUI.ActionAbstraction;
 using Pipaslot.SecurityUI.Actions;
+using Pipaslot.SecurityUI.Privileges;
 
 namespace Pipaslot.SecurityUI
 {
     internal class Router<TKey>
     {
         private readonly HttpRequest _request;
+        private readonly IUser _user;
         private readonly string _routePrefix;
 
-        public Router(HttpRequest request, string routePrefix)
+        public Router(HttpRequest request, string routePrefix, IUser user)
         {
             _request = request;
+            _user = user;
             _routePrefix = "/" + routePrefix.TrimStart('/');
         }
 
@@ -33,27 +37,27 @@ namespace Pipaslot.SecurityUI
             }
 
             //API
-            if (Match("api/role"))
+            if (MatchAndAuthorize("api/role"))
             {
                 return new RoleJsonAction();
             }
-            if (Match("api/resource-instance"))
+            if (MatchAndAuthorize("api/resource-instance"))
             {
                 _request.Query.TryGetValue("resource", out var resource);
                 return new ResourceInstanceJsonAction(resource);
             }
-            if (Match("api/resource"))
+            if (MatchAndAuthorize("api/resource"))
             {
                 return new ResourceJsonAction();
             }
-            if (Match("api/permission"))
+            if (MatchAndAuthorize("api/permission"))
             {
                 _request.Query.TryGetValue("role", out var role);
                 _request.Query.TryGetValue("resource", out var resource);
                 _request.Query.TryGetValue("instance", out var identifier);
                 return new PermissionJsonAction<TKey>(ChangeType<TKey>(role), resource, ChangeType<TKey>(identifier));
             }
-            if (Match("api/privilege"))
+            if (MatchAndAuthorize("api/privilege"))
             {
                 _request.Query.TryGetValue("role", out var role);
                 _request.Query.TryGetValue("resource", out var resource);
@@ -67,7 +71,7 @@ namespace Pipaslot.SecurityUI
             }
 
             //Pages
-            if (Match("role"))
+            if (MatchAndAuthorize("role"))
             {
                 _request.Query.TryGetValue("roleId", out var roleId);
                 _request.Query.TryGetValue("roleName", out var roleName);
@@ -80,10 +84,17 @@ namespace Pipaslot.SecurityUI
             return new TemplateAction(_routePrefix, "index");
         }
 
-        private bool Match(string path, string method = "GET")
+        private bool MatchAndAuthorize(string path, string method = "GET")
         {
             var expectedPath = $"{_routePrefix}/{path}";
-            return _request.Path.Value.StartsWith(expectedPath) && string.Equals(_request.Method, method, StringComparison.CurrentCultureIgnoreCase);
+            var matches = _request.Path.Value.StartsWith(expectedPath) &&
+                          string.Equals(_request.Method, method, StringComparison.CurrentCultureIgnoreCase);
+            if (matches)
+            {
+                _user.CheckPermissionAsync(typeof(SecurityUIResource), SecurityUIPermissions.Access).RunSynchronously();
+            }
+            
+            return matches;
         }
 
         private bool MatchFile(string path, string suffix)

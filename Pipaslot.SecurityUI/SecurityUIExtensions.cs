@@ -26,6 +26,8 @@ namespace Pipaslot.SecurityUI
             RegisterIfNotExists<IPermissionManager, PermissionManager<TKey>>(services);
             RegisterIfNotExists<IAuthorizator<TKey>, Authorizator<TKey>>(services);
             RegisterIfNotExists<IUser<TKey>, User<TKey>>(services);
+            services.AddScoped(s => (IUser) s.GetService(typeof(IUser<TKey>)));
+
             return services;
         }
 
