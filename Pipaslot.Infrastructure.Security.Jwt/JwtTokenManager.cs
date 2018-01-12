@@ -59,23 +59,5 @@ namespace Pipaslot.Infrastructure.Security.JWT
                 Expiration = expiration
             };
         }
-
-        public ClaimsIdentity CreateIdentity(IEnumerable<Claim> claims)
-        {
-            return new ClaimsIdentity(claims, "JWT", ClaimTypes.Name, ClaimTypes.Role);
-        }
-
-        public bool IsTokenValid(string token)
-        {
-            try
-            {
-                var jwt = new JwtSecurityTokenHandler().ReadToken(token);
-                return jwt.ValidTo >= DateTime.UtcNow;
-            }
-            catch
-            {
-                return false;
-            }
-        }
     }
 }

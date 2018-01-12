@@ -1,12 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
-using Microsoft.IdentityModel.Tokens;
 using Pipaslot.Demo.Filters;
 using Pipaslot.Infrastructure.Data.EntityFramework;
 using Pipaslot.Infrastructure.Mvc;
@@ -26,10 +19,8 @@ using Pipaslot.SecurityUI;
 using Pipaslot.Demo.Models;
 using Pipaslot.Demo.Models.Entities;
 using Pipaslot.Infrastructure.Data;
-using Pipaslot.Infrastructure.Security;
 using Pipaslot.Infrastructure.Security.EntityFramework.Entities;
 using Pipaslot.Infrastructure.Security.Jwt;
-using Pipaslot.Infrastructure.Security.JWT;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Pipaslot.Demo

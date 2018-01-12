@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Pipaslot.Infrastructure.Security.JWT;
-using System.Linq;
 
 namespace Pipaslot.Infrastructure.Security.Jwt
 {
@@ -68,22 +67,13 @@ namespace Pipaslot.Infrastructure.Security.Jwt
                         OnTokenValidated = context =>
                         {
                             // Add the access_token as a claim, as we may actually need it
-                            if (context.SecurityToken is JwtSecurityToken token)
+                            if (context.SecurityToken is JwtSecurityToken token && jwtTokenParameters.SendNewKeyInEveryResponse)
                             {
                                 var manager = new JwtTokenManager(jwtTokenParameters);
-                                var jwtIdentity = manager.CreateIdentity(token.Claims);
-                                context.Principal.AddIdentity(jwtIdentity);
-                                if (jwtTokenParameters.SendNewKeyInEveryResponse)
-                                {
-                                    var newToken = manager.CreateNewToken(token.Claims);
-                                    context.Response.Headers.Add("tokenValue", newToken.Value);
-                                    context.Response.Headers.Add("tokenExpiration", newToken.Expiration.ToString("s") + "Z");
-                                }
+                                var newToken = manager.CreateNewToken(token.Claims);
+                                context.Response.Headers.Add("tokenValue", newToken.Value);
+                                context.Response.Headers.Add("tokenExpiration", newToken.Expiration.ToString("s") + "Z");
                             }
-                            return Task.CompletedTask;
-                        },
-                        OnAuthenticationFailed = context =>
-                        {
                             return Task.CompletedTask;
                         }
                     };
