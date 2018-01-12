@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using Pipaslot.Infrastructure.Security;
@@ -69,18 +70,7 @@ namespace Pipaslot.SecurityUI
                 else if (isAllowedString.Equals("false")) isAllowed = false;
                 return new PrivilegeJsonAction<TKey>(ChangeType<TKey>(role), resource, ChangeType<TKey>(identifier), permission, isAllowed);
             }
-
-            //Pages
-            if (MatchAndAuthorize("role"))
-            {
-                _request.Query.TryGetValue("roleId", out var roleId);
-                _request.Query.TryGetValue("roleName", out var roleName);
-                return new TemplateAction(_routePrefix, "role", new Dictionary<string, object>
-                {
-                    { "roleId", roleId },
-                    { "roleName", roleName }
-                });
-            }
+            
             return new TemplateAction(_routePrefix, "index");
         }
 
@@ -91,7 +81,9 @@ namespace Pipaslot.SecurityUI
                           string.Equals(_request.Method, method, StringComparison.CurrentCultureIgnoreCase);
             if (matches)
             {
-                _user.CheckPermissionAsync(typeof(SecurityUIResource), SecurityUIPermissions.Access).RunSynchronously();
+                _user.CheckPermissionAsync(typeof(SecurityUIResource), SecurityUIPermissions.Access)
+                    .GetAwaiter()
+                    .GetResult();
             }
             
             return matches;

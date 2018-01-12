@@ -13,7 +13,6 @@
     <None Remove="Assets\tether.min.js" />
     <None Remove="Assets\vue.min.js" />
     <None Remove="Templates\index.html" />
-    <None Remove="Templates\role.html" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,7 +25,6 @@
     <EmbeddedResource Include="Assets\vue.min.js" />
     <EmbeddedResource Include="Templates\index.html" />
     <EmbeddedResource Include="Templates\layout.html" />
-    <EmbeddedResource Include="Templates\role.html" />
   </ItemGroup>
 
   <ItemGroup>

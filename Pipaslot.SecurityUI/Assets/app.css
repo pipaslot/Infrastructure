@@ -1,3 +1,6 @@
-﻿button {
+﻿html {
+    font-size: 10pt;
+}
+button {
     cursor: pointer
 }

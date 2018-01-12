@@ -7,7 +7,6 @@ namespace Pipaslot.Demo.Models.Permissions
     /// </summary>
     public enum CompanyPermissions
     {
-        Create,
         /// <summary>
         /// User can view single company
         /// </summary>

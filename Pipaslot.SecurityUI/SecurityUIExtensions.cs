@@ -19,7 +19,7 @@ namespace Pipaslot.SecurityUI
         public static IServiceCollection AddSecurityUI<TKey>(this IServiceCollection services)
         {
             RegisterIfNotExists<IClaimsPrincipalProvider, ClaimsPrincipalProvider>(services);
-            RegisterIfNotExists<ResourceRegistry>(services);
+            RegisterIfNotExists<ResourceRegistry>(services, ServiceLifetime.Singleton);
             RegisterIfNotExists<INamingConvertor, DefaultNamingConvertor<TKey>>(services);
             RegisterIfNotExists<IResourceInstanceProvider, NullResourceInstanceProvider>(services);
             RegisterIfNotExists<IPermissionManager<TKey>, PermissionManager<TKey>>(services);
@@ -31,23 +31,23 @@ namespace Pipaslot.SecurityUI
             return services;
         }
 
-        private static void RegisterIfNotExists<TInterface, TImplementation>(IServiceCollection services)
+        private static void RegisterIfNotExists<TInterface, TImplementation>(IServiceCollection services, ServiceLifetime lifetime = ServiceLifetime.Scoped)
         {
             var serviceType = typeof(TInterface);
             if (services.All(s => s.ServiceType != serviceType))
             {
-                var descriptor = new ServiceDescriptor(serviceType, typeof(TImplementation), ServiceLifetime.Scoped);
+                var descriptor = new ServiceDescriptor(serviceType, typeof(TImplementation), lifetime);
                 services.Add(descriptor);
             }
         }
 
 
-        private static void RegisterIfNotExists<TImplementation>(IServiceCollection services)
+        private static void RegisterIfNotExists<TImplementation>(IServiceCollection services, ServiceLifetime lifetime = ServiceLifetime.Scoped)
         {
             var serviceType = typeof(TImplementation);
             if (services.All(s => s.ServiceType != serviceType))
             {
-                var descriptor = new ServiceDescriptor(serviceType, typeof(TImplementation), ServiceLifetime.Scoped);
+                var descriptor = new ServiceDescriptor(serviceType, typeof(TImplementation), lifetime);
                 services.Add(descriptor);
             }
         }

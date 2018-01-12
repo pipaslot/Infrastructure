@@ -42,7 +42,7 @@ namespace Pipaslot.Demo.Api
         /// <inheritdoc />
         public override async Task<int> Create(Company entity)
         {
-            await _user.CheckPermissionAsync(typeof(Company), CompanyPermissions.Create);
+            await _user.CheckPermissionAsync(typeof(Company), CompanyStaticPermissions.Create);
             return await base.Create(entity);
         }
 

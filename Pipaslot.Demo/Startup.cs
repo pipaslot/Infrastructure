@@ -154,13 +154,14 @@ namespace Pipaslot.Demo
                 c.RoutePrefix = "api";
             });
 
+            app.UseAuthentication();
+
             //Add Middleware for Permission Manager
             app.UseSecurityUI<int>(options =>
             {
                 options.RoutePrefix = "security";
             });
 
-            app.UseAuthentication();
             app.UseMvc(routes =>
             {
                 // API 

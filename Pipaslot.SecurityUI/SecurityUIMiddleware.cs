@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Authentication;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Pipaslot.Infrastructure.Security;
@@ -13,7 +14,7 @@ namespace Pipaslot.SecurityUI
     {
         private readonly RequestDelegate _next;
         private readonly SecurityUIOptions _options;
-        private bool _isInitialized = false;
+        private bool _isInitialized;
 
         public SecurityUIMiddleware(RequestDelegate next, SecurityUIOptions options)
         {
@@ -30,10 +31,17 @@ namespace Pipaslot.SecurityUI
             }
             if (context.Request.Path.Value.StartsWith($"/{_options.RoutePrefix}"))
             {
-                var user = (IUser) services.GetService(typeof(IUser));
-                var router = new Router<TKey>(context.Request, _options.RoutePrefix, user);
-                var action = router.ResolveAction();
-                await action.ExecuteAsync(context, services);
+                try
+                {
+                    var user = (IUser) services.GetService(typeof(IUser));
+                    var router = new Router<TKey>(context.Request, _options.RoutePrefix, user);
+                    var action = router.ResolveAction();
+                    await action.ExecuteAsync(context, services);
+                }
+                catch (AuthorizationException)
+                {
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                }
             }
             else
             {
