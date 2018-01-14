@@ -24,9 +24,15 @@ namespace Pipaslot.SecurityUI.ActionAbstraction
             response.ContentType = "text/html";
             var layout = ReadResource("Templates.layout.html");
             var body = ReadResource($"Templates.{PageName}.html");
+            var token = "";
+            if (context.Request.Query.TryGetValue("authentication", out var tokenValue))
+            {
+                token = tokenValue.ToString();
+            }
             var html = layout
                 .Replace("{{pageBody}}", body)
-                .Replace("{{routePrefix}}",RoutePrefix);
+                .Replace("{{routePrefix}}",RoutePrefix)
+                .Replace("{{authenticationToken}}",token);
             foreach (var parameter in _templateParameters)
             {
                 html = html.Replace("{{"+ parameter.Key+"}}", parameter.Value.ToString());

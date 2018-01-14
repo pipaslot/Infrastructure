@@ -1,11 +1,13 @@
 ﻿<div id="app">
-    Authentication using sending authentication header
-    <div class="row">
-        <div class="col-9">
-            <input type="text" class="form-control" v-model="authentication" />
-        </div>
-        <div class="col-3">
-            <button class="btn btn-primary" @click="authenticate()" role="button">Authenticate</button>
+    <div v-if="!isDefaultAuthhentication">
+        Authentication using sending authentication header
+        <div class="row">
+            <div class="col-9">
+                <input type="text" class="form-control" v-model="authentication" />
+            </div>
+            <div class="col-3">
+                <button class="btn btn-primary" @click="authenticate()" role="button">Authenticate</button>
+            </div>
         </div>
     </div>
     <div v-if="roles.length > 0">
@@ -22,16 +24,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                <tr v-for="role in roles" class="text-light bg-dark">
-                    <td>
-                        <span v-if="role.isSystem" class="badge badge-info" title="System role which can't be removed'">System</span>
-                    </td>
-                    <td>{{role.name}} </td>
-                    <td>{{role.description}}</td>
-                    <td>
-                        <button v-if="role.showResources" class="btn btn-secondary" @click="selectRole(role)" role="button">Resources</button>
-                    </td>
-                </tr>
+                    <tr v-for="role in roles" class="text-light bg-dark">
+                        <td>
+                            <span v-if="role.isSystem" class="badge badge-info" title="System role which can't be removed'">System</span>
+                        </td>
+                        <td>{{role.name}} </td>
+                        <td>{{role.description}}</td>
+                        <td>
+                            <button v-if="role.showResources" class="btn btn-secondary" @click="selectRole(role)" role="button">Resources</button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -111,9 +113,10 @@
     </div>
 </div>
 <script type="text/javascript">
-
+    var defaultAuthentication = "{{authenticationToken}}";
     var data = {
-        authentication: null,
+        isDefaultAuthhentication: !!defaultAuthentication,
+        authentication: defaultAuthentication ? defaultAuthentication : null,
         roles: [],
         activeRole: null,
         resources: []
@@ -237,4 +240,8 @@
             }
         }
     });
+    
+    if(app.isDefaultAuthhentication) {
+        app.authenticate();
+    }
 </script>
