@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Pipaslot.Infrastructure.Data;
 using Pipaslot.Infrastructure.Security;
 using Pipaslot.Infrastructure.Security.Data;
 using Pipaslot.Infrastructure.Security.Exceptions;
@@ -219,7 +218,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
         public void GlobalPermission_ShouldPass()
         {
             const int roleId = 1;
-            var permission = FirstPermissions.Edit;
+            var permission = StaticPermissions.Create;
 
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
@@ -230,7 +229,7 @@ namespace Pipaslot.Infrastructure.SecurityTests
 
             //Pre-Condition
             permissionStore
-                .Setup(p => p.IsAllowedAsync(new[] { roleId }, PermissionManager<int>.GLOBAL_RESOURCE_NAME, convertor.GetPermissionUniqueIdentifier(permission), tokenSource.Token))
+                .Setup(p => p.IsAllowedAsync(new[] { roleId }, convertor.GetResourceUniqueName(typeof(FirstResource)), convertor.GetPermissionUniqueIdentifier(permission), tokenSource.Token))
                 .Returns(Task.FromResult((bool?)true));
 
             //Act

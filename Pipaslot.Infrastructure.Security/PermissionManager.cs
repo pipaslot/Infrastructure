@@ -9,7 +9,6 @@ namespace Pipaslot.Infrastructure.Security
 {
     public class PermissionManager<TKey> : IPermissionManager<TKey>
     {
-        public const string GLOBAL_RESOURCE_NAME = "global";
         private readonly IPermissionStore<TKey> _permissionStore;
         private readonly ResourceRegistry _resourceRegistry;
         private readonly IResourceInstanceProvider _resourceInstanceProvider;
@@ -26,14 +25,10 @@ namespace Pipaslot.Infrastructure.Security
 
         #region ReadingPermissions
 
-        public virtual async Task<bool> IsAllowedAsync(IEnumerable<TKey> roles, IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
+        public virtual Task<bool> IsAllowedAsync(IEnumerable<TKey> roles, IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
         {
-            var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
-            return await _cache.LoadAsync(
-                () => _permissionStore.IsAllowedAsync(roles, GLOBAL_RESOURCE_NAME, perm, token),
-                roles,
-                perm,
-                GLOBAL_RESOURCE_NAME);
+            var resource = _resourceRegistry.ResolveResource(permissionEnum);
+            return IsAllowedAsync(roles, resource, permissionEnum, token);
         }
 
         public virtual async Task<bool> IsAllowedAsync(IEnumerable<TKey> roles, Type resource, IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
@@ -48,16 +43,9 @@ namespace Pipaslot.Infrastructure.Security
                 res);
         }
 
-        public virtual async Task<bool> IsAllowedAsync<TPermissions>(IEnumerable<TKey> roles, IResourceInstance<TPermissions> resourceInstance, TPermissions permissionEnum, CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible
+        public virtual Task<bool> IsAllowedAsync<TPermissions>(IEnumerable<TKey> roles, IResourceInstance<TPermissions> resourceInstance, TPermissions permissionEnum, CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible
         {
-            var res = _namingConvertor.GetResourceUniqueName(resourceInstance.GetType());
-            var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
-            return await _cache.LoadAsync(
-                () => _permissionStore.IsAllowedAsync(roles, res, (TKey)resourceInstance.ResourceUniqueIdentifier, perm, token),
-                roles,
-                perm,
-                res,
-                resourceInstance.ResourceUniqueIdentifier.ToString());
+            return IsAllowedAsync(roles, resourceInstance.GetType(), (TKey)resourceInstance.ResourceUniqueIdentifier, permissionEnum, token);
         }
 
         public virtual async Task<bool> IsAllowedAsync(IEnumerable<TKey> roles, Type resource, TKey resourceIdentifier, IConvertible permissionEnum, CancellationToken token = default(CancellationToken))

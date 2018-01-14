@@ -28,7 +28,17 @@ namespace Pipaslot.Infrastructure.Security
         /// <summary>
         /// Key is resource type and value is lis of assigned permission Enums
         /// </summary>
-        private readonly List<RegisteredResource> _loadedResources = new List<RegisteredResource>();
+        private List<RegisteredResource> _loadedResources = new List<RegisteredResource>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private Dictionary<Type, List<Type>> _staticPermissionsUsedInResources = new Dictionary<Type, List<Type>>();
+
+        /// <summary>
+        /// Lock object for load operation
+        /// </summary>
+        private readonly object _loadLock = new object();
 
         public ResourceRegistry()
         {
@@ -57,13 +67,23 @@ namespace Pipaslot.Infrastructure.Security
         {
             get
             {
-                if (_reloadAll)
-                {
-                    Load();
-                    _reloadAll = false;
-                }
+                Load();
                 return _loadedResources;
             }
+        }
+
+        public Type ResolveResource(IConvertible permissionEnum)
+        {
+            Load();
+            if (_staticPermissionsUsedInResources.TryGetValue(permissionEnum.GetType(), out var resources))
+            {
+                if (resources.Count == 1)
+                {
+                    return resources.First();
+                }
+                throw new ApplicationException($"Static Permission {permissionEnum.GetType().FullName} is used in {resources.Count} resources, but only single ussage is supported.");
+            }
+            throw new ApplicationException("No resource found for permission enum "+ permissionEnum.GetType().FullName);
         }
 
         /// <summary>
@@ -72,11 +92,33 @@ namespace Pipaslot.Infrastructure.Security
         /// <returns></returns>
         private void Load()
         {
+            if (!_reloadAll)
+            {
+                return;
+            }
+            lock (_loadLock)
+            {
+                if (!_reloadAll)
+                {
+                    return;
+                }
+                _loadedResources = LoadResources();
+                _staticPermissionsUsedInResources = LoadPermissions(_loadedResources);
+                
+                _reloadAll = false;
+            }
+        }
+
+        /// <summary>
+        /// Load resources from all registered assemblies
+        /// </summary>
+        /// <returns></returns>
+        private List<RegisteredResource> LoadResources()
+        {
             var resourceGenericType = typeof(IResource<>);
             var resourceInstanceGenericType = typeof(IResourceInstance<>);
 
-            _loadedResources.Clear();
-
+            var resources = new List<RegisteredResource>();
             foreach (var type in _scanedAsseblies.SelectMany(s => s.GetTypes()))
             {
                 if (type.IsAbstract || type.IsInterface) continue;
@@ -96,9 +138,38 @@ namespace Pipaslot.Infrastructure.Security
                 }
                 if (res.StaticPermissions.Count > 0 || res.InstancePermissions.Count > 0)
                 {
-                    _loadedResources.Add(res);
+                    resources.Add(res);
                 }
             }
+            return resources;
+        }
+
+        /// <summary>
+        /// Prepare cache object for permission reading from all registered resources
+        /// </summary>
+        /// <param name="loadedResources"></param>
+        /// <returns></returns>
+        private Dictionary<Type, List<Type>> LoadPermissions(List<RegisteredResource> loadedResources)
+        {
+            var result = new Dictionary<Type, List<Type>>();
+            foreach (var registeredResource in loadedResources)
+            {
+                foreach (var permission in registeredResource.StaticPermissions)
+                {
+                    if (result.TryGetValue(permission, out var resources))
+                    {
+                        if (!resources.Contains(registeredResource.ResourceType))
+                        {
+                            resources.Add(registeredResource.ResourceType);
+                        }
+                    }
+                    else
+                    {
+                        result.Add(permission,new List<Type>() { registeredResource.ResourceType});
+                    }
+                }
+            }
+            return result;
         }
 
         public class RegisteredResource

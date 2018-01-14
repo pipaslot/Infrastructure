@@ -9,7 +9,7 @@ namespace Pipaslot.Infrastructure.Security
     public interface IPermissionManager<TKey> : IPermissionManager
     {
         /// <summary>
-        /// Check if user has global permission without resource
+        /// Automatically resolve resource and check if user has permission.
         /// </summary>
         /// <param name="roles"></param>
         /// <param name="permissionEnum"></param>

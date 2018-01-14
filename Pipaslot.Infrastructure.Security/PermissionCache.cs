@@ -74,13 +74,13 @@ namespace Pipaslot.Infrastructure.Security
             }
         }
 
-        internal class RoleList<TKey>
+        internal class RoleList<TKey2>
         {
             public string Key { get; }
-            public List<TKey> Ids { get; }
+            public List<TKey2> Ids { get; }
             public List<Resource> Resources { get; } = new List<Resource>();
 
-            public RoleList(IEnumerable<TKey> ids)
+            public RoleList(IEnumerable<TKey2> ids)
             {
                 Ids = ids.OrderBy(i => i).ToList();
                 Key = string.Join("#", Ids);

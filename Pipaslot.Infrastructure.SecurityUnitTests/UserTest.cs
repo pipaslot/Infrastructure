@@ -3,8 +3,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Pipaslot.Infrastructure.Security;
