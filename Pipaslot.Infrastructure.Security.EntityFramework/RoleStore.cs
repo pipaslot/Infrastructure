@@ -16,15 +16,6 @@ namespace Pipaslot.Infrastructure.Security.EntityFramework
         {
         }
 
-        public TRole GetGuestRole<TRole>() where TRole : IRole
-        {
-            var role = ContextReadOnly.SecurityRole
-                .Where(r => r.Name.Equals("Guest"))
-                .Select(r => (IRole)r)
-                .FirstOrDefault();
-            return (TRole)role;
-        }
-
         public ICollection<TRole> GetAll<TRole>() where TRole : IRole
         {
             return (ICollection<TRole>)ContextReadOnly.SecurityRole
