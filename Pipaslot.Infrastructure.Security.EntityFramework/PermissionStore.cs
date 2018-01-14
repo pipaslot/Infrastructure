@@ -39,8 +39,7 @@ namespace Pipaslot.Infrastructure.Security.EntityFramework
             var privilege = await ContextReadOnly.SecurityPrivilege.FirstOrDefaultAsync(p => roleIds.Contains(p.Role) &&
                                                                                         p.Resource == resource &&
                                                                                         p.ResourceInstance.Equals(resourceId) &&
-                                                                                        p.Permission == permission &&
-                                                                                        p.IsAllowed, token);
+                                                                                        p.Permission == permission, token);
             return privilege?.IsAllowed;
         }
 

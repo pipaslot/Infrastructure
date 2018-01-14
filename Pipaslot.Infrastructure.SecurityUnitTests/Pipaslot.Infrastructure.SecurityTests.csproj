@@ -140,7 +140,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthorizatorTest.cs" />
     <Compile Include="Mockups\PermissionArrayStore.cs" />
     <Compile Include="Models\FirstPermissions.cs" />
     <Compile Include="Models\FirstResource2.cs" />

@@ -9,10 +9,12 @@ namespace Pipaslot.Infrastructure.Security
 {
     public class PermissionManager<TKey> : IPermissionManager<TKey>
     {
+        public const string GLOBAL_RESOURCE_NAME = "global";
         private readonly IPermissionStore<TKey> _permissionStore;
         private readonly ResourceRegistry _resourceRegistry;
         private readonly IResourceInstanceProvider _resourceInstanceProvider;
         private readonly INamingConvertor _namingConvertor;
+        private readonly PermissionCache<TKey> _cache = new PermissionCache<TKey>();
 
         public PermissionManager(IPermissionStore<TKey> permissionStore, ResourceRegistry resourceRegistry, IResourceInstanceProvider resourceInstanceProvider, INamingConvertor namingConvertor)
         {
@@ -21,6 +23,65 @@ namespace Pipaslot.Infrastructure.Security
             _namingConvertor = namingConvertor;
             _resourceInstanceProvider = resourceInstanceProvider;
         }
+
+        #region ReadingPermissions
+
+        public virtual async Task<bool> IsAllowedAsync(IEnumerable<TKey> roles, IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
+        {
+            var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
+            return await _cache.LoadAsync(
+                () => _permissionStore.IsAllowedAsync(roles, GLOBAL_RESOURCE_NAME, perm, token),
+                roles,
+                perm,
+                GLOBAL_RESOURCE_NAME);
+        }
+
+        public virtual async Task<bool> IsAllowedAsync(IEnumerable<TKey> roles, Type resource, IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
+        {
+            Helpers.CheckIfResourceHasAssignedPermission(resource, permissionEnum);
+            var res = _namingConvertor.GetResourceUniqueName(resource);
+            var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
+            return await _cache.LoadAsync(
+                () => _permissionStore.IsAllowedAsync(roles, res, perm, token),
+                roles,
+                perm,
+                res);
+        }
+
+        public virtual async Task<bool> IsAllowedAsync<TPermissions>(IEnumerable<TKey> roles, IResourceInstance<TPermissions> resourceInstance, TPermissions permissionEnum, CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible
+        {
+            var res = _namingConvertor.GetResourceUniqueName(resourceInstance.GetType());
+            var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
+            return await _cache.LoadAsync(
+                () => _permissionStore.IsAllowedAsync(roles, res, (TKey)resourceInstance.ResourceUniqueIdentifier, perm, token),
+                roles,
+                perm,
+                res,
+                resourceInstance.ResourceUniqueIdentifier.ToString());
+        }
+
+        public virtual async Task<bool> IsAllowedAsync(IEnumerable<TKey> roles, Type resource, TKey resourceIdentifier, IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
+        {
+            Helpers.CheckIfResourceHasAssignedPermission(resource, permissionEnum);
+            var res = _namingConvertor.GetResourceUniqueName(resource);
+            var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
+            return await _cache.LoadAsync(
+                () => _permissionStore.IsAllowedAsync(roles, res, resourceIdentifier, perm, token),
+                roles,
+                perm,
+                res,
+                resourceIdentifier.ToString());
+        }
+
+        public virtual Task<IEnumerable<TKey>> GetAllowedKeysAsync(IEnumerable<TKey> roles, Type resource, IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
+        {
+            Helpers.CheckIfResourceHasAssignedPermission(resource, permissionEnum);
+            var res = _namingConvertor.GetResourceUniqueName(resource);
+            var perm = _namingConvertor.GetPermissionUniqueIdentifier(permissionEnum);
+            return _permissionStore.GetAllowedResourceIdsAsync(roles, res, perm, token);
+        }
+
+        #endregion
 
         #region Setup Privilege
 
@@ -31,6 +92,7 @@ namespace Pipaslot.Infrastructure.Security
 
         public void SetPermission(TKey role, string resource, TKey resourceId, string permission, bool? isEnabled)
         {
+            _cache.Clear(role, resource, resourceId.ToString(), permission);
             var resourcetype = _namingConvertor.GetResourceTypeByUniqueName(resource);
             var convertible = _namingConvertor.GetPermissionByUniqueName(permission);
             Helpers.CheckIfResourceHasAssignedPermission(resourcetype, convertible);

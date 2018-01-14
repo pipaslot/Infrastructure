@@ -18,15 +18,14 @@ namespace Pipaslot.SecurityUI
 
         public static IServiceCollection AddSecurityUI<TKey>(this IServiceCollection services)
         {
-            RegisterIfNotExists<IClaimsPrincipalProvider, ClaimsPrincipalProvider>(services);
+            RegisterIfNotExists<IClaimsPrincipalProvider, ClaimsPrincipalProvider>(services, ServiceLifetime.Singleton);
             RegisterIfNotExists<ResourceRegistry>(services, ServiceLifetime.Singleton);
-            RegisterIfNotExists<INamingConvertor, DefaultNamingConvertor<TKey>>(services);
-            RegisterIfNotExists<IResourceInstanceProvider, NullResourceInstanceProvider>(services);
-            RegisterIfNotExists<IPermissionManager<TKey>, PermissionManager<TKey>>(services);
-            RegisterIfNotExists<IPermissionManager, PermissionManager<TKey>>(services);
-            RegisterIfNotExists<IAuthorizator<TKey>, Authorizator<TKey>>(services);
-            RegisterIfNotExists<IUser<TKey>, User<TKey>>(services);
-            services.AddScoped(s => (IUser) s.GetService(typeof(IUser<TKey>)));
+            RegisterIfNotExists<INamingConvertor, DefaultNamingConvertor<TKey>>(services, ServiceLifetime.Singleton);
+            RegisterIfNotExists<IResourceInstanceProvider, NullResourceInstanceProvider>(services, ServiceLifetime.Singleton);
+            RegisterIfNotExists<IPermissionManager<TKey>, PermissionManager<TKey>>(services, ServiceLifetime.Singleton);
+            services.AddSingleton(s => (IPermissionManager)s.GetService(typeof(IPermissionManager<TKey>)));
+            RegisterIfNotExists<IUser<TKey>, User<TKey>>(services, ServiceLifetime.Singleton);
+            services.AddSingleton(s => (IUser)s.GetService(typeof(IUser<TKey>)));
 
             return services;
         }

@@ -17,16 +17,15 @@ namespace Pipaslot.Infrastructure.Security
     /// <typeparam name="TKey"></typeparam>
     public class User<TKey> : IUser<TKey>
     {
-        private readonly IAuthorizator<TKey> _authorizator;
+        private readonly IPermissionManager<TKey> _permissionManager;
         private readonly IClaimsPrincipalProvider _claimsPrincipalProvider;
         private readonly IResourceInstanceProvider _resourceInstanceProvider;
         private readonly IRoleStore _roleStore;
 
         public TKey Id => _identity.Id;
-
         public bool IsAuthenticated => _identity.Id != null && !_identity.Id.Equals(default(TKey));
-
         public IEnumerable<IRole> Roles => _identity.Roles;
+
         private List<TKey> RolesIds => _identity.Roles.Select(r => (TKey)r.Id).ToList();
         private bool IsAdmin => _identity.Roles.Any(r => r.Type == RoleType.Admin);
 
@@ -78,9 +77,9 @@ namespace Pipaslot.Infrastructure.Security
             return string.IsNullOrWhiteSpace(value) ? default(TKey) : (TKey)(object)int.Parse(value);
         }
 
-        public User(IAuthorizator<TKey> authorizator, IClaimsPrincipalProvider claimsPrincipalProvider, IResourceInstanceProvider resourceInstanceProvider, IRoleStore roleStore)
+        public User(IPermissionManager<TKey> permissionManager, IClaimsPrincipalProvider claimsPrincipalProvider, IResourceInstanceProvider resourceInstanceProvider, IRoleStore roleStore)
         {
-            _authorizator = authorizator;
+            _permissionManager = permissionManager;
             _claimsPrincipalProvider = claimsPrincipalProvider;
             _resourceInstanceProvider = resourceInstanceProvider;
             _roleStore = roleStore;
@@ -125,24 +124,24 @@ namespace Pipaslot.Infrastructure.Security
 
         public virtual async Task<bool> IsAllowedAsync(IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
         {
-            return IsAdmin || await _authorizator.IsAllowedAsync(RolesIds, permissionEnum, token);
+            return IsAdmin || await _permissionManager.IsAllowedAsync(RolesIds, permissionEnum, token);
         }
 
         public virtual async Task<bool> IsAllowedAsync(Type resource, IConvertible permissionEnum, CancellationToken token = default(CancellationToken))
         {
-            return IsAdmin || await _authorizator.IsAllowedAsync(RolesIds, resource, permissionEnum, token);
+            return IsAdmin || await _permissionManager.IsAllowedAsync(RolesIds, resource, permissionEnum, token);
         }
 
         public virtual async Task<bool> IsAllowedAsync<TPermissions>(IResourceInstance<TPermissions> resourceInstance, TPermissions permissionEnum,
             CancellationToken token = default(CancellationToken)) where TPermissions : IConvertible
         {
-            return IsAdmin || await _authorizator.IsAllowedAsync(RolesIds, resourceInstance, permissionEnum, token);
+            return IsAdmin || await _permissionManager.IsAllowedAsync(RolesIds, resourceInstance, permissionEnum, token);
         }
 
         public virtual async Task<bool> IsAllowedAsync(Type resource, TKey resourceIdentifier, IConvertible permissionEnum,
             CancellationToken token = default(CancellationToken))
         {
-            return IsAdmin || await _authorizator.IsAllowedAsync(RolesIds, resource, resourceIdentifier, permissionEnum, token);
+            return IsAdmin || await _permissionManager.IsAllowedAsync(RolesIds, resource, resourceIdentifier, permissionEnum, token);
         }
 
         public virtual async Task<IEnumerable<TKey>> GetAllowedKeysAsync(Type resource, IConvertible permissionEnum,
@@ -163,7 +162,7 @@ namespace Pipaslot.Infrastructure.Security
                 throw new NotSupportedException(
                     $"Generic attribute TKey of type {typeof(TKey)} is not supported. Only int and string can be used");
             }
-            var allowed = await _authorizator.GetAllowedKeysAsync(RolesIds, resource, permissionEnum, token);
+            var allowed = await _permissionManager.GetAllowedKeysAsync(RolesIds, resource, permissionEnum, token);
             return allowed.ToList();
         }
     }

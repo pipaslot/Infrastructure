@@ -79,22 +79,22 @@ namespace Pipaslot.Demo
             });
 
             //Unit of work
-            services.AddScoped<IUnitOfWorkRegistry, UnitOfWorkRegistry>();
-            services.AddScoped<IUnitOfWorkFactory, EntityFrameworkUnitOfWorkFactory<AppDatabase>>();
+            services.AddSingleton<IUnitOfWorkRegistry, UnitOfWorkRegistry>();
+            services.AddSingleton<IUnitOfWorkFactory, EntityFrameworkUnitOfWorkFactory<AppDatabase>>();
 
             //Repositories
-            services.AddScoped<IRepository<Company, int>, EntityFrameworkRepository<AppDatabase, Company, int>>();
-            services.AddScoped<IRepository<Role<int>, int>, RoleStore<int, AppDatabase>>();
-            services.AddScoped<UserRepository>();
+            services.AddSingleton<IRepository<Company, int>, EntityFrameworkRepository<AppDatabase, Company, int>>();
+            services.AddSingleton<IRepository<Role<int>, int>, RoleStore<int, AppDatabase>>();
+            services.AddSingleton<UserRepository>();
 
             #region Security
             
             //Queries
-            services.AddScoped<IResourceInstanceProvider, ResourceInstanceProvider<AppDatabase>>();
+            services.AddSingleton<IResourceInstanceProvider, ResourceInstanceProvider<AppDatabase>>();
 
             //Configure own services for Permission Manager
-            services.AddScoped<IPermissionStore<int>, PermissionStore<int, AppDatabase>>();
-            services.AddScoped<IRoleStore, RoleStore<int, AppDatabase>>();
+            services.AddSingleton<IPermissionStore<int>, PermissionStore<int, AppDatabase>>();
+            services.AddSingleton<IRoleStore, RoleStore<int, AppDatabase>>();
 
             //Add default configuration for Permission Manager
             services.AddSecurityUI<int>();
