@@ -50,6 +50,8 @@ namespace Pipaslot.Demo
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
+            #region Mvc
+
             services.AddMvc(config =>
             {
                 //Handling exception
@@ -61,11 +63,14 @@ namespace Pipaslot.Demo
                     .Build();
                 config.Filters.Add(new AuthorizeFilter(policy));
             });
-               // .AddApplicationPart(typeof(Pipaslot.SecurityUI.HomeController).Assembly);
             services.Configure<RazorViewEngineOptions>(options =>
             {
                 options.ViewLocationExpanders.Add(new ControllerViewLocationExpander("App"));
             });
+
+            #endregion
+
+            #region Data access
 
             //Database migrations context
             services.AddDbContext<AppDatabase>(o => o.UseSqlServer(Configuration.GetSection("ConnectionString").Value));
@@ -87,8 +92,10 @@ namespace Pipaslot.Demo
             services.AddSingleton<IRepository<Role<int>, int>, RoleStore<int, AppDatabase>>();
             services.AddSingleton<UserRepository>();
 
+            #endregion
+
             #region Security
-            
+
             //Queries
             services.AddSingleton<IResourceInstanceProvider, ResourceInstanceProvider<AppDatabase>>();
 
@@ -156,7 +163,7 @@ namespace Pipaslot.Demo
 
             app.UseAuthentication();
 
-            //Add Middleware for Permission Manager
+            //Add Middleware for Permission Manager. Must be placed between Authentication and Mvc
             app.UseSecurityUI<int>(options =>
             {
                 options.RoutePrefix = "security";
