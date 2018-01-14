@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Text;
-using System.Threading.Tasks;
-using Pipaslot.Infrastructure.Security.Data;
 
-namespace Pipaslot.Infrastructure.Security
+namespace Pipaslot.Infrastructure.Security.Exceptions
 {
     public class AuthorizationException : UnauthorizedAccessException
     {

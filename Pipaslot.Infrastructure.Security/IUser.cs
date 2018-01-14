@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Pipaslot.Infrastructure.Security.Data;
+using Pipaslot.Infrastructure.Security.Exceptions;
 
 namespace Pipaslot.Infrastructure.Security
 {

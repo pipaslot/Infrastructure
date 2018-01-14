@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Pipaslot.Infrastructure.Security;
 using Pipaslot.Infrastructure.Security.Data;
+using Pipaslot.Infrastructure.Security.Exceptions;
 using Pipaslot.Infrastructure.SecurityTests.Models;
 
 namespace Pipaslot.Infrastructure.SecurityTests
