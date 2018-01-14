@@ -10,7 +10,7 @@ using Pipaslot.Infrastructure.Security.EntityFramework.Entities;
 namespace Pipaslot.Infrastructure.Security.EntityFramework
 {
     public class RoleStore<TKey, TDbContext> : EntityFrameworkRepository<TDbContext, Role<TKey>, TKey>, IRoleStore
-        where TDbContext : DbContext, ISecurityDbContext<TKey>
+        where TDbContext : DbContext, ISecurityRoleDbContext<TKey>
     {
         public RoleStore(IUnitOfWorkFactory uowFactory, IEntityFrameworkDbContextFactory dbContextFactory) : base(uowFactory, dbContextFactory)
         {

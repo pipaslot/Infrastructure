@@ -11,7 +11,7 @@ using Pipaslot.Infrastructure.Security.EntityFramework.Entities;
 namespace Pipaslot.Infrastructure.Security.EntityFramework
 {
     public class PermissionStore<TKey, TDbContext> : EntityFrameworkRepository<TDbContext, Privilege<TKey>, TKey>, IPermissionStore<TKey>
-    where TDbContext : DbContext, ISecurityDbContext<TKey>
+    where TDbContext : DbContext, ISecurityPrivilegeDbContext<TKey>
     {
         public PermissionStore(IUnitOfWorkFactory uowFactory, IEntityFrameworkDbContextFactory dbContextFactory) : base(uowFactory, dbContextFactory)
         {
