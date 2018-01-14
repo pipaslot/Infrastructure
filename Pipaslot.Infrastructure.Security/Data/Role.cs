@@ -8,6 +8,6 @@
 
         public string Description { get; set; }
 
-        public RoleType Type { get; set; } = RoleType.Guest;
+        public RoleType Type { get; set; } = RoleType.Custom;
     }
 }
