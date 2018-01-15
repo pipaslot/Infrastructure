@@ -1,5 +1,5 @@
 ﻿<div id="app">
-    <div v-if="!isDefaultAuthhentication">
+    <div v-if="!isAuthenticated">
         Authentication using sending authentication header
         <div class="row">
             <div class="col-9">
@@ -113,22 +113,26 @@
     </div>
 </div>
 <script type="text/javascript">
-    var defaultAuthentication = "{{authenticationToken}}";
     var data = {
-        isDefaultAuthhentication: !!defaultAuthentication,
-        authentication: defaultAuthentication ? defaultAuthentication : null,
+        authentication: "{{authenticationToken}}",
+        isAuthenticated: false,
         roles: [],
         activeRole: null,
         resources: []
     }
-    var getRequest = function (path, onSuccess, onError) {
+    var getRequest = function (path, onSuccess) {
         $.ajax({
             url: "{{routePrefix}}/" + path,
             type: 'GET',
             dataType: 'json',
             contentType: "application/json",
             success: onSuccess,
-            error: onError,
+            error: function (response) {
+                if (response.status == 401) {
+                    alert("Authentication failed");
+                    data.isAuthenticated = false;
+                }
+            },
             beforeSend: function (request) {
                 if (data.authentication) {
                     request.setRequestHeader("Authorization", data.authentication);
@@ -147,10 +151,8 @@
                 if (data.authentication) {
                     getRequest("api/role",
                         function (response) {
+                            data.isAuthenticated = true;
                             data.roles = response;
-                        },
-                        function () {
-                            alert("authentication failed");
                         });
                 }
             },
@@ -241,7 +243,7 @@
         }
     });
     
-    if(app.isDefaultAuthhentication) {
+    if (app.authentication) {
         app.authenticate();
     }
 </script>
