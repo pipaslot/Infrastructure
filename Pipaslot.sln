@@ -31,9 +31,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.SecurityUI", "Pipa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{969A21D1-B6DE-40B6-A2AA-64C427BC2BD0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.Security.Jwt", "Pipaslot.Infrastructure.Security.Jwt\Pipaslot.Infrastructure.Security.Jwt.csproj", "{6371320E-9931-478D-B0CD-C290F3670477}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Security.Jwt", "Pipaslot.Infrastructure.Security.Jwt\Pipaslot.Infrastructure.Security.Jwt.csproj", "{6371320E-9931-478D-B0CD-C290F3670477}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8B785901-E262-4F16-8498-D366DDB3F0D4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{96538040-3148-4B8E-95B6-12D9623A37BD}"
+	ProjectSection(SolutionItems) = preProject
+		instructions.txt = instructions.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

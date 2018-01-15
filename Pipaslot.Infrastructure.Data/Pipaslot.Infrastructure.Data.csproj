@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Version>1.1.0</Version>
+    <Company />
+    <Authors>Petr Stipek</Authors>
+    <Description>Basic structure providing data access with Repository and Unit of Work pattern</Description>
   </PropertyGroup>
 
 </Project>
