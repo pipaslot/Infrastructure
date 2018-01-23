@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2010
+VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Security", "Pipaslot.Infrastructure.Security\Pipaslot.Infrastructure.Security.csproj", "{DB13E6AD-761D-4459-9B06-A8FA1EBEBD25}"
 EndProject
@@ -39,6 +39,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		instructions.txt = instructions.txt
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.EntityFrameworkCore", "Pipaslot.Infrastructure.EntityFrameworkCore\Pipaslot.Infrastructure.EntityFrameworkCore.csproj", "{285EC14A-ECDC-4AA7-A599-820188AD2193}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.EntityFrameworkCoreTests", "Pipaslot.Infrastructure.EntityFrameworkCoreTests\Pipaslot.Infrastructure.EntityFrameworkCoreTests.csproj", "{7993B016-E286-4A1E-A6C6-4B1EBE6FE433}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -94,6 +98,14 @@ Global
 		{6371320E-9931-478D-B0CD-C290F3670477}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6371320E-9931-478D-B0CD-C290F3670477}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6371320E-9931-478D-B0CD-C290F3670477}.Release|Any CPU.Build.0 = Release|Any CPU
+		{285EC14A-ECDC-4AA7-A599-820188AD2193}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{285EC14A-ECDC-4AA7-A599-820188AD2193}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{285EC14A-ECDC-4AA7-A599-820188AD2193}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{285EC14A-ECDC-4AA7-A599-820188AD2193}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7993B016-E286-4A1E-A6C6-4B1EBE6FE433}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7993B016-E286-4A1E-A6C6-4B1EBE6FE433}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7993B016-E286-4A1E-A6C6-4B1EBE6FE433}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7993B016-E286-4A1E-A6C6-4B1EBE6FE433}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -111,6 +123,8 @@ Global
 		{1BE801F6-DDB5-4A5D-B038-824BDDE4BB5C} = {969A21D1-B6DE-40B6-A2AA-64C427BC2BD0}
 		{CED8940F-30B7-499F-B6BA-87A358F3037A} = {9222D47E-579F-4131-987A-5E708196ADFD}
 		{6371320E-9931-478D-B0CD-C290F3670477} = {9222D47E-579F-4131-987A-5E708196ADFD}
+		{285EC14A-ECDC-4AA7-A599-820188AD2193} = {969A21D1-B6DE-40B6-A2AA-64C427BC2BD0}
+		{7993B016-E286-4A1E-A6C6-4B1EBE6FE433} = {8B785901-E262-4F16-8498-D366DDB3F0D4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B7E45BFF-3BEB-4B8F-8D1A-4C8194399F1D}
