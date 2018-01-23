@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Pipaslot.Infrastructure.Data.EntityFramework
 {
-    public static class Extensions
+    public static class IUnitOfWorkFactoryExtensions
     {
         /// <summary>
         /// Get DbContext from Unit of work Using Entity Framework
