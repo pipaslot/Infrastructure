@@ -19,11 +19,11 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Pipaslot.Infrastructure.Data.EntityFramework\Pipaslot.Infrastructure.Data.EntityFramework.csproj" />
+    <ProjectReference Include="..\Pipaslot.Infrastructure.Data.EntityFrameworkCore\Pipaslot.Infrastructure.Data.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\Pipaslot.Infrastructure.Data.Mvc\Pipaslot.Infrastructure.Data.Mvc.csproj" />
     <ProjectReference Include="..\Pipaslot.Infrastructure.Data\Pipaslot.Infrastructure.Data.csproj" />
     <ProjectReference Include="..\Pipaslot.Infrastructure.Mvc\Pipaslot.Infrastructure.Mvc.csproj" />
-    <ProjectReference Include="..\Pipaslot.Infrastructure.Security.EntityFramework\Pipaslot.Infrastructure.Security.EntityFramework.csproj" />
+    <ProjectReference Include="..\Pipaslot.Infrastructure.Security.EntityFrameworkCore\Pipaslot.Infrastructure.Security.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\Pipaslot.Infrastructure.Security.Jwt\Pipaslot.Infrastructure.Security.Jwt.csproj" />
     <ProjectReference Include="..\Pipaslot.Infrastructure.Security\Pipaslot.Infrastructure.Security.csproj" />
     <ProjectReference Include="..\Pipaslot.SecurityUI\Pipaslot.SecurityUI.csproj" />

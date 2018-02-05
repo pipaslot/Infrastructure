@@ -10,7 +10,7 @@ using Pipaslot.Demo.Models.Entities;
 using Pipaslot.Infrastructure.Data;
 using Pipaslot.Infrastructure.Security;
 using Pipaslot.Infrastructure.Security.Data;
-using Pipaslot.Infrastructure.Security.EntityFramework.Entities;
+using Pipaslot.Infrastructure.Security.EntityFrameworkCore.Entities;
 using Pipaslot.Infrastructure.Security.JWT;
 
 namespace Pipaslot.Demo.Api

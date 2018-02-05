@@ -36,7 +36,7 @@ namespace Pipaslot.Infrastructure.EntityFrameworkCore
             return modelBuilder;
         }
 
-        internal static string GetTableNameWithNamespace(string entityName, string[] ignoredNamespaces)
+        public static string GetTableNameWithNamespace(string entityName, string[] ignoredNamespaces)
         {
             var parts = entityName.Split('.').Reverse().ToArray();
             //Do not rename classes without namespace

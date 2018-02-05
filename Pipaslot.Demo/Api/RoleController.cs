@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Pipaslot.Infrastructure.Data;
 using Pipaslot.Infrastructure.Data.Mvc;
-using Pipaslot.Infrastructure.Security.EntityFramework.Entities;
+using Pipaslot.Infrastructure.Security.EntityFrameworkCore.Entities;
 
 namespace Pipaslot.Demo.Api
 {

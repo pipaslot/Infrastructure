@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pipaslot.Demo.Models.Entities;
-using Pipaslot.Infrastructure.Security.EntityFramework;
-using Pipaslot.Infrastructure.Security.EntityFramework.Entities;
+using Pipaslot.Infrastructure.Security.EntityFrameworkCore;
+using Pipaslot.Infrastructure.Security.EntityFrameworkCore.Entities;
 
 namespace Pipaslot.Demo.Models
 {

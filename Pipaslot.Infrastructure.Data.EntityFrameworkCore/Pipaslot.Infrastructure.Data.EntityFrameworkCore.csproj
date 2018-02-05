@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Pipaslot.Infrastructure.Data.EntityFrameworkCore</AssemblyName>
+    <RootNamespace>Pipaslot.Infrastructure.Data.EntityFrameworkCore</RootNamespace>
+    <Version>1.1.0</Version>
+    <Authors>Petr Stipek</Authors>
+    <Company />
+    <Description>Basic data access structure for Entity Framework using Repository and Unit of Work pattern</Description>
+    <PackageId>Pipaslot.Infrastructure.Data.EntityFrameworkCore</PackageId>
+    <Product>Pipaslot.Infrastructure.Data.EntityFrameworkCore</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pipaslot.Infrastructure.Data\Pipaslot.Infrastructure.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.EntityFrameworkCore">
+      <HintPath>..\packages\Microsoft.EntityFrameworkCore.2.0.1\lib\netstandard2.0\Microsoft.EntityFrameworkCore.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

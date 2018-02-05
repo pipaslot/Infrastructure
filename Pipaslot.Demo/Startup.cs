@@ -11,15 +11,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
 using Pipaslot.Demo.Filters;
-using Pipaslot.Infrastructure.Data.EntityFramework;
+using Pipaslot.Infrastructure.Data.EntityFrameworkCore;
 using Pipaslot.Infrastructure.Mvc;
 using Pipaslot.Infrastructure.Security.Data;
-using Pipaslot.Infrastructure.Security.EntityFramework;
+using Pipaslot.Infrastructure.Security.EntityFrameworkCore;
 using Pipaslot.SecurityUI;
 using Pipaslot.Demo.Models;
 using Pipaslot.Demo.Models.Entities;
 using Pipaslot.Infrastructure.Data;
-using Pipaslot.Infrastructure.Security.EntityFramework.Entities;
+using Pipaslot.Infrastructure.Security.EntityFrameworkCore.Entities;
 using Pipaslot.Infrastructure.Security.Jwt;
 using Swashbuckle.AspNetCore.Swagger;
 

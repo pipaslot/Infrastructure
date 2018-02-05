@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Pipaslot.Infrastructure.Data;
-using Pipaslot.Infrastructure.Data.EntityFramework;
+using Pipaslot.Infrastructure.Data.EntityFrameworkCore;
 
 namespace Pipaslot.Demo.Models.Entities
 {

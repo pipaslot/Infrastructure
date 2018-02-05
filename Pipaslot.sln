@@ -1,19 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2020
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Security", "Pipaslot.Infrastructure.Security\Pipaslot.Infrastructure.Security.csproj", "{DB13E6AD-761D-4459-9B06-A8FA1EBEBD25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.SecurityTests", "Pipaslot.Infrastructure.SecurityUnitTests\Pipaslot.Infrastructure.SecurityTests.csproj", "{CF4B5713-58E2-448F-A5E8-E6006F5AF577}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.Security.Tests", "Pipaslot.Infrastructure.Security.UnitTests\Pipaslot.Infrastructure.Security.Tests.csproj", "{CF4B5713-58E2-448F-A5E8-E6006F5AF577}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Data", "Pipaslot.Infrastructure.Data\Pipaslot.Infrastructure.Data.csproj", "{C07E0F0B-0A21-43AB-BF5B-21D02C0B10D7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Data.EntityFramework", "Pipaslot.Infrastructure.Data.EntityFramework\Pipaslot.Infrastructure.Data.EntityFramework.csproj", "{424CB8C5-6C72-4323-9F91-EB14AB3D3007}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Data.EntityFrameworkCore", "Pipaslot.Infrastructure.Data.EntityFrameworkCore\Pipaslot.Infrastructure.Data.EntityFrameworkCore.csproj", "{424CB8C5-6C72-4323-9F91-EB14AB3D3007}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.Data.EntityFrameworkTests", "Pipaslot.Infrastructure.Data.EntityFrameworkTests\Pipaslot.Infrastructure.Data.EntityFrameworkTests.csproj", "{1A2BD436-72D2-4653-84C2-EDD8062C73FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.Data.EntityFrameworkCore.Tests", "Pipaslot.Infrastructure.Data.EntityFrameworkCore.Tests\Pipaslot.Infrastructure.Data.EntityFrameworkCore.Tests.csproj", "{1A2BD436-72D2-4653-84C2-EDD8062C73FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.DataTests", "Pipaslot.Infrastructure.DataTests\Pipaslot.Infrastructure.DataTests.csproj", "{4D05CAE3-15D3-499F-80A4-2493A2305E47}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.Data.Tests", "Pipaslot.Infrastructure.Data.Tests\Pipaslot.Infrastructure.Data.Tests.csproj", "{4D05CAE3-15D3-499F-80A4-2493A2305E47}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{659C7A9A-FE81-4FD5-B669-694B78719F15}"
 EndProject
@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Mvc", "Pipaslot.Infrastructure.Mvc\Pipaslot.Infrastructure.Mvc.csproj", "{1BE801F6-DDB5-4A5D-B038-824BDDE4BB5C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Security.EntityFramework", "Pipaslot.Infrastructure.Security.EntityFramework\Pipaslot.Infrastructure.Security.EntityFramework.csproj", "{CED8940F-30B7-499F-B6BA-87A358F3037A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Security.EntityFrameworkCore", "Pipaslot.Infrastructure.Security.EntityFrameworkCore\Pipaslot.Infrastructure.Security.EntityFrameworkCore.csproj", "{CED8940F-30B7-499F-B6BA-87A358F3037A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Demo", "Pipaslot.Demo\Pipaslot.Demo.csproj", "{F54059A5-2FAE-43D9-9EC3-87C10B00E335}"
 EndProject
@@ -40,9 +40,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		instructions.txt = instructions.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.EntityFrameworkCore", "Pipaslot.Infrastructure.EntityFrameworkCore\Pipaslot.Infrastructure.EntityFrameworkCore.csproj", "{285EC14A-ECDC-4AA7-A599-820188AD2193}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.EntityFrameworkCore", "Pipaslot.Infrastructure.EntityFrameworkCore\Pipaslot.Infrastructure.EntityFrameworkCore.csproj", "{285EC14A-ECDC-4AA7-A599-820188AD2193}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.EntityFrameworkCoreTests", "Pipaslot.Infrastructure.EntityFrameworkCoreTests\Pipaslot.Infrastructure.EntityFrameworkCoreTests.csproj", "{7993B016-E286-4A1E-A6C6-4B1EBE6FE433}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.EntityFrameworkCore.Tests", "Pipaslot.Infrastructure.EntityFrameworkCore.Tests\Pipaslot.Infrastructure.EntityFrameworkCore.Tests.csproj", "{7993B016-E286-4A1E-A6C6-4B1EBE6FE433}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
