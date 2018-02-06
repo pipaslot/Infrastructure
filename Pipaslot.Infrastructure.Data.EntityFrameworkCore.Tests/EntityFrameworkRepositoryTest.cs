@@ -47,5 +47,31 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCore.Tests
                 Assert.AreEqual(newBlogName, updatedBlog.Name);
             }
         }
+
+        [TestMethod]
+        public void InsertEntityWithKeyToBeNotEmptyInteger()
+        {
+            using (var dbFactory = new BloggingContextFactory("ReadFromOutsideOfUnitWOrkButUpdateInUnitOfWOrkCreatedLater"))
+            {
+                var uowFactory = new EntityFrameworkUnitOfWorkFactory<BloggingContext>(dbFactory, new UnitOfWorkRegistry());
+
+                var repository = new BlogRepository(uowFactory, dbFactory);
+                var blog = new Blog("Default name")
+                {
+                    Id = 100
+                };
+
+                //Create record
+                using (var uow = uowFactory.Create())
+                {
+                    var context = uow.Context;
+                    Assert.AreEqual(0, context.Blog.Count());
+                    repository.Insert(blog);
+                    uow.Commit();
+                    Assert.AreEqual(1, context.Blog.Count());
+                    Assert.AreEqual(1, context.Blog.First().Id);
+                }
+            }
+        }
     }
 }

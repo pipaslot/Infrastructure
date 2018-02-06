@@ -92,6 +92,7 @@ namespace Pipaslot.Infrastructure.Data.EntityFrameworkCore
         
         public virtual void Insert(TEntity entity)
         {
+            entity.Id = default(TKey);
             Context.Set<TEntity>().Add(entity);
         }
         
