@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Security.Authentication;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Pipaslot.Infrastructure.Security;
 using Pipaslot.Infrastructure.Security.Attributes;
 using Pipaslot.Infrastructure.Security.Exceptions;
-using Pipaslot.SecurityUI.Privileges;
 
 namespace Pipaslot.SecurityUI
 {
