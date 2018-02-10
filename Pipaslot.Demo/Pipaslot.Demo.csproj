@@ -25,6 +25,7 @@
     <ProjectReference Include="..\Pipaslot.Infrastructure.Mvc\Pipaslot.Infrastructure.Mvc.csproj" />
     <ProjectReference Include="..\Pipaslot.Infrastructure.Security.EntityFrameworkCore\Pipaslot.Infrastructure.Security.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\Pipaslot.Infrastructure.Security.Jwt\Pipaslot.Infrastructure.Security.Jwt.csproj" />
+    <ProjectReference Include="..\Pipaslot.Infrastructure.Security.Mvc\Pipaslot.Infrastructure.Security.Mvc.csproj" />
     <ProjectReference Include="..\Pipaslot.Infrastructure.Security\Pipaslot.Infrastructure.Security.csproj" />
     <ProjectReference Include="..\Pipaslot.SecurityUI\Pipaslot.SecurityUI.csproj" />
   </ItemGroup>

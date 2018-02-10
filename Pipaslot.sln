@@ -44,6 +44,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Ent
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipaslot.Infrastructure.EntityFrameworkCore.Tests", "Pipaslot.Infrastructure.EntityFrameworkCore.Tests\Pipaslot.Infrastructure.EntityFrameworkCore.Tests.csproj", "{7993B016-E286-4A1E-A6C6-4B1EBE6FE433}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pipaslot.Infrastructure.Security.Mvc", "Pipaslot.Infrastructure.Security.Mvc\Pipaslot.Infrastructure.Security.Mvc.csproj", "{A2DB15D9-1226-419C-B483-B33DF8AD0497}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -106,6 +108,10 @@ Global
 		{7993B016-E286-4A1E-A6C6-4B1EBE6FE433}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7993B016-E286-4A1E-A6C6-4B1EBE6FE433}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7993B016-E286-4A1E-A6C6-4B1EBE6FE433}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2DB15D9-1226-419C-B483-B33DF8AD0497}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2DB15D9-1226-419C-B483-B33DF8AD0497}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2DB15D9-1226-419C-B483-B33DF8AD0497}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2DB15D9-1226-419C-B483-B33DF8AD0497}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -125,6 +131,7 @@ Global
 		{6371320E-9931-478D-B0CD-C290F3670477} = {9222D47E-579F-4131-987A-5E708196ADFD}
 		{285EC14A-ECDC-4AA7-A599-820188AD2193} = {969A21D1-B6DE-40B6-A2AA-64C427BC2BD0}
 		{7993B016-E286-4A1E-A6C6-4B1EBE6FE433} = {8B785901-E262-4F16-8498-D366DDB3F0D4}
+		{A2DB15D9-1226-419C-B483-B33DF8AD0497} = {9222D47E-579F-4131-987A-5E708196ADFD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B7E45BFF-3BEB-4B8F-8D1A-4C8194399F1D}
