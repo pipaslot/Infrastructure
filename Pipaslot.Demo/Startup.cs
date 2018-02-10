@@ -111,7 +111,8 @@ namespace Pipaslot.Demo
             {
                 Issuer = Configuration["JwtSecurityToken:Issuer"],
                 Audience = Configuration["JwtSecurityToken:Audience"],
-                SigningKey = Configuration["JwtSecurityToken:Key"]
+                SigningKey = Configuration["JwtSecurityToken:SigningKey"],
+                ExpirationInMinutes = Configuration.GetValue<int>("JwtSecurityToken:ExpirationInMinutes")
             });
 
             #endregion
