@@ -20,7 +20,7 @@ namespace Pipaslot.SecurityUI
         {
             RegisterIfNotExists<IClaimsPrincipalProvider, ClaimsPrincipalProvider>(services, ServiceLifetime.Singleton);
             RegisterIfNotExists<ResourceRegistry>(services, ServiceLifetime.Singleton);
-            RegisterIfNotExists<INamingConvertor, DefaultNamingConvertor<TKey>>(services, ServiceLifetime.Singleton);
+            RegisterIfNotExists<INamingConvertor, DefaultNamingConvertor>(services, ServiceLifetime.Singleton);
             RegisterIfNotExists<IResourceInstanceProvider, NullResourceInstanceProvider>(services, ServiceLifetime.Singleton);
             RegisterIfNotExists<IPermissionManager<TKey>, PermissionManager<TKey>>(services, ServiceLifetime.Singleton);
             services.AddSingleton(s => (IPermissionManager)s.GetService(typeof(IPermissionManager<TKey>)));

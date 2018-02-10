@@ -4,7 +4,7 @@ using System.Reflection;
 namespace Pipaslot.Infrastructure.Security
 {
     /// <inheritdoc />
-    public class DefaultNamingConvertor<TKey> : INamingConvertor
+    public class DefaultNamingConvertor : INamingConvertor
     {
         private readonly ResourceRegistry _resourceRegistry;
 

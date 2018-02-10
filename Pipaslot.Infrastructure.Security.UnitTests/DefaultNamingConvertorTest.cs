@@ -16,7 +16,7 @@ namespace Pipaslot.Infrastructure.Security.Tests
             var resourceRegistry = new ResourceRegistry();
             resourceRegistry.Register(resourceType.Assembly);
 
-            var convertor = new DefaultNamingConvertor<int>(resourceRegistry);
+            var convertor = new DefaultNamingConvertor(resourceRegistry);
 
             var resourceName = convertor.GetResourceUniqueName(resourceType);
             Assert.IsFalse(string.IsNullOrWhiteSpace(resourceName));
@@ -30,7 +30,7 @@ namespace Pipaslot.Infrastructure.Security.Tests
         public void GetResourceTypeByUniqueName_ThrowExceptinIfTypeCanNotBeFound()
         {
             var resourceRegistry = new ResourceRegistry();
-            var convertor = new DefaultNamingConvertor<int>(resourceRegistry);
+            var convertor = new DefaultNamingConvertor(resourceRegistry);
 
             convertor.GetResourceTypeByUniqueName(typeof(FirstResource).FullName);
         }
