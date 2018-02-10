@@ -10,7 +10,7 @@ namespace Pipaslot.Demo.Api
     /// </summary>
     public class SecurityController : Infrastructure.Security.Mvc.SecurityController<int>
     {
-        public SecurityController(IRoleStore roleStore, IPermissionManager<int> permissionManager, IUnitOfWorkFactory unitOfWorkFactory) : base(roleStore, permissionManager, unitOfWorkFactory)
+        public SecurityController(IRoleStore roleStore, IPermissionManager<int> permissionManager, IUnitOfWorkFactory unitOfWorkFactory, IUser<int> user) : base(roleStore, permissionManager, unitOfWorkFactory, user)
         {
         }
     }

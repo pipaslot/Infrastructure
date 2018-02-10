@@ -214,5 +214,89 @@ namespace Pipaslot.Infrastructure.Security
 
 
         #endregion
+
+        #region Resource permissions for combination of roles
+
+        public async Task<IEnumerable<ResourcePermissions>> GetResourcePermissionsAsync(ICollection<TKey> roleIds, CancellationToken token = default(CancellationToken))
+        {
+            var resources = _resourceRegistry.ResourceTypes
+                .Select((r, i) => new
+                {
+                    Index = i,
+                    Name = _namingConvertor.GetResourceUniqueName(r.ResourceType),
+                    Type = r.ResourceType,
+                    Permissions = r.StaticPermissions
+                }).ToList();
+
+            var result = new ResourcePermissions[resources.Count];
+            foreach (var resource in resources)
+            {
+                var permissions = new List<Permission>();
+                foreach (var permissionType in resource.Permissions)
+                {
+                    var enumNames = Enum.GetNames(permissionType);
+                    foreach (var enumName in enumNames)
+                    {
+                        var memberInfo = permissionType.GetField(enumName);
+                        var permissionUniqueIdentifier =
+                            _namingConvertor.GetPermissionUniqueIdentifier(permissionType, memberInfo);
+                        permissions.Add(new Permission
+                        {
+                            Identifier = permissionUniqueIdentifier,
+                            IsAllowed = (await _permissionStore.IsAllowedAsync(roleIds, resource.Name, permissionUniqueIdentifier, token)) ?? false
+                        });
+                    }
+                }
+                result.SetValue(new ResourcePermissions
+                {
+                    UniqueName = resource.Name,
+                    Permissions = permissions
+                }, resource.Index);
+            }
+            return result;
+        }
+
+        public async Task<IEnumerable<ResourceInstancePermissions>> GetResourceInstancePermissionsAsync(ICollection<TKey> roleIds, string resource, ICollection<TKey> resourceIds,
+            CancellationToken token = default(CancellationToken))
+        {
+            var result = new List<ResourceInstancePermissions>();
+            var registeredResource = GetRegisteredResource(resource);
+            if (registeredResource == null) return result;
+            foreach (var resourceId in resourceIds)
+            {
+                var permission = await GetResourceInstancePermissionsAsync(roleIds, resource, resourceId, token);
+                result.Add(new ResourceInstancePermissions
+                {
+                    Identifier = resourceId,
+                    Permissions = permission
+                });
+            }
+            return result;
+        }
+
+        public async Task<IEnumerable<Permission>> GetResourceInstancePermissionsAsync(ICollection<TKey> roleIds, string resource, TKey resourceId, CancellationToken token = default(CancellationToken))
+        {
+            var result = new List<Permission>();
+            var registeredResource = GetRegisteredResource(resource);
+            if (registeredResource == null) return result;
+            foreach (var permissionType in registeredResource.InstancePermissions)
+            {
+                var enumNames = Enum.GetNames(permissionType);
+                foreach (var enumName in enumNames)
+                {
+                    var memberInfo = permissionType.GetField(enumName);
+                    var permissionUniqueIdentifier = _namingConvertor.GetPermissionUniqueIdentifier(permissionType, memberInfo);
+                    var convertible = (IConvertible)Enum.Parse(permissionType, memberInfo.Name);
+                    result.Add(new Permission
+                    {
+                        Identifier = permissionUniqueIdentifier,
+                        IsAllowed = await IsAllowedAsync(roleIds, registeredResource.ResourceType, resourceId, convertible, token)
+                    });
+                }
+            }
+            return result;
+        }
+
+        #endregion
     }
 }

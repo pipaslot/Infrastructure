@@ -76,6 +76,34 @@ namespace Pipaslot.Infrastructure.Security
         /// <param name="permission"></param>
         /// <param name="isEnabled"></param>
         void SetPermission(TKey role, string resource, TKey resourceId, string permission, bool? isEnabled);
+        
+        /// <summary>
+        /// Returns all static resource permissions for role combination assigned usually to users
+        /// </summary>
+        /// <param name="roleIds"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        Task<IEnumerable<ResourcePermissions>> GetResourcePermissionsAsync(ICollection<TKey> roleIds, CancellationToken token = default(CancellationToken));
+
+        /// <summary>
+        /// Returns all resource instance permissions for role combination (assigned usually to users)
+        /// </summary>
+        /// <param name="roleIds"></param>
+        /// <param name="resource"></param>
+        /// <param name="resourceIds"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        Task<IEnumerable<ResourceInstancePermissions>> GetResourceInstancePermissionsAsync(ICollection<TKey> roleIds, string resource, ICollection<TKey> resourceIds, CancellationToken token = default(CancellationToken));
+
+        /// <summary>
+        /// Returns all resource instance permissions for role combination (assigned usually to users)
+        /// </summary>
+        /// <param name="roleIds"></param>
+        /// <param name="resource"></param>
+        /// <param name="resourceId"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        Task<IEnumerable<Permission>> GetResourceInstancePermissionsAsync(ICollection<TKey> roleIds, string resource, TKey resourceId, CancellationToken token = default(CancellationToken));
 
     }
 
@@ -116,6 +144,6 @@ namespace Pipaslot.Infrastructure.Security
         /// <param name="token"></param>
         /// <returns></returns>
         Task<IEnumerable<PermissionInfo>> GetAllPermissionsAsync(object roleId, string resource, object resourceId, CancellationToken token = default(CancellationToken));
-
+        
     }
 }
