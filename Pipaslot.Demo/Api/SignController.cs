@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Authentication;
-using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pipaslot.Demo.Models.Entities;
 using Pipaslot.Infrastructure.Data;
-using Pipaslot.Infrastructure.Security;
 using Pipaslot.Infrastructure.Security.Data;
 using Pipaslot.Infrastructure.Security.EntityFrameworkCore.Entities;
 using Pipaslot.Infrastructure.Security.JWT;

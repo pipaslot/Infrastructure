@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Pipaslot.Demo.Models;
 using Pipaslot.Demo.Models.Entities;
 using Pipaslot.Demo.Models.Permissions;
 using Pipaslot.Infrastructure.Data;
 using Pipaslot.Infrastructure.Data.Mvc;
-using Pipaslot.Infrastructure.Security;
 
 namespace Pipaslot.Demo.Api
 {
@@ -17,10 +17,10 @@ namespace Pipaslot.Demo.Api
     [Route("api/[controller]")]
     public class CompanyController : RepositoryController<Company, int>
     {
-        private readonly IUser<int> _user;
+        private readonly IUser _user;
 
         /// <inheritdoc />
-        public CompanyController(IUnitOfWorkFactory unitOfWorkFactory, IRepository<Company, int> repository, IUser<int> user) : base(unitOfWorkFactory, repository)
+        public CompanyController(IUnitOfWorkFactory unitOfWorkFactory, IRepository<Company, int> repository, IUser user) : base(unitOfWorkFactory, repository)
         {
             _user = user;
         }

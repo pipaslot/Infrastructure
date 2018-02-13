@@ -4,8 +4,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Pipaslot.Infrastructure.Data;
 using Pipaslot.Infrastructure.Security.Data;
 using Pipaslot.Infrastructure.Security.Exceptions;
 

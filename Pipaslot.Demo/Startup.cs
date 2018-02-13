@@ -4,6 +4,7 @@ using System.IO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
@@ -19,9 +20,11 @@ using Pipaslot.SecurityUI;
 using Pipaslot.Demo.Models;
 using Pipaslot.Demo.Models.Entities;
 using Pipaslot.Infrastructure.Data;
+using Pipaslot.Infrastructure.Security;
 using Pipaslot.Infrastructure.Security.EntityFrameworkCore.Entities;
 using Pipaslot.Infrastructure.Security.Jwt;
 using Swashbuckle.AspNetCore.Swagger;
+using IUser = Pipaslot.Demo.Models.IUser;
 
 namespace Pipaslot.Demo
 {
@@ -104,7 +107,9 @@ namespace Pipaslot.Demo
             services.AddSingleton<IRoleStore, RoleStore<int, AppDatabase>>();
 
             //Add default configuration for Permission Manager
-            services.AddSecurityUI<int>();
+            services.AddSecurityUI<int, AppUser>();
+            //Register alias to IUser<int> from Security project
+            services.AddSingleton(s => (IUser)s.GetService(typeof(AppUser)));
 
             //Add Jwt token
             services.AddJwtAuthentication(new JwtTokenParameters

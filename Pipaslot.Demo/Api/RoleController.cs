@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Pipaslot.Infrastructure.Data;
 using Pipaslot.Infrastructure.Data.Mvc;
 using Pipaslot.Infrastructure.Security.EntityFrameworkCore.Entities;
