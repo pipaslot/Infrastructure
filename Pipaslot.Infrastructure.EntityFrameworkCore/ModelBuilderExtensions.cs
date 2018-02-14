@@ -43,6 +43,11 @@ namespace Pipaslot.Infrastructure.EntityFrameworkCore
             if (parts.Count() < 2) return entityName;
 
             var className = parts.First();
+            var genericDefinitionStartIndex = className.IndexOf('<');
+            if (genericDefinitionStartIndex >= 0)
+            {
+                className = className.Substring(0, genericDefinitionStartIndex);
+            }
             var namespaceName = GetLastNamespace(parts.Skip(1).ToArray(), ignoredNamespaces);
 
             //Namespace and class name must be set, otherwise default name will be used
