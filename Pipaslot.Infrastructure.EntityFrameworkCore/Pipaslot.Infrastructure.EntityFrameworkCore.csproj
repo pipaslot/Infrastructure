@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Petr Stipek</Authors>
+    <Company />
+    <Description>Extensions for Entity Framework Core</Description>
   </PropertyGroup>
 
   <ItemGroup>
