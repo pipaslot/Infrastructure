@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -122,6 +123,23 @@ namespace Pipaslot.Infrastructure.Security.Tests
             Assert.IsFalse(user.IsAllowedAsync(typeof(SecondResource), "123", SecondPermissions.Edit).Result);
             //Does not have any permissions for resourceInstance
             Assert.AreEqual(0, user.GetAllowedKeysAsync(typeof(SecondResource), SecondPermissions.Edit).Result.Count());
+        }
+
+        #endregion
+
+        #region ID conversion
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void ParseInvalidUserId()
+        {
+            var authorizatorMock = new Mock<IPermissionManager<int>>();
+            var resourceInstanceQueryFactory = new Mock<IResourceInstanceProvider>();
+            var user = new User<int>(authorizatorMock.Object, GetClaimsPrincipalProvider("nonsense"), resourceInstanceQueryFactory.Object, GetRoleStore());
+
+            //Act
+            var result = user.Id;
+            Assert.Fail($"Should not parse id {result}");
         }
 
         #endregion

@@ -48,9 +48,9 @@ namespace Pipaslot.Infrastructure.Security
                 {
                     foreach (var role in roles)
                     {
-                        role.Id = ParseIntFromString(role.Id?.ToString());
+                        role.Id = ParseIntFromString(role.Id?.ToString(),"User ID");
                     }
-                    return (Id: ParseIntFromString(name), Roles: roles);
+                    return (Id: ParseIntFromString(name, "Role ID"), Roles: roles);
                 }
                 if (typeof(TKey) == typeof(string))
                 {
@@ -71,9 +71,16 @@ namespace Pipaslot.Infrastructure.Security
         /// </summary>
         private List<IRole> SystemRoles => _systemRolesCache ?? (_systemRolesCache = _roleStore.GetSystemRoles<IRole>().ToList());
 
-        private TKey ParseIntFromString(string value)
+        private TKey ParseIntFromString(string value, string field)
         {
-            return string.IsNullOrWhiteSpace(value) ? default(TKey) : (TKey)(object)int.Parse(value);
+            try
+            {
+                return string.IsNullOrWhiteSpace(value) ? default(TKey) : (TKey) (object) int.Parse(value);
+            }
+            catch (FormatException)
+            {
+                throw new ArgumentOutOfRangeException($"{field}: Expected integer value but got '{value}'");
+            }
         }
 
         public User(IPermissionManager<TKey> permissionManager, IClaimsPrincipalProvider claimsPrincipalProvider, IResourceInstanceProvider resourceInstanceProvider, IRoleStore roleStore)
