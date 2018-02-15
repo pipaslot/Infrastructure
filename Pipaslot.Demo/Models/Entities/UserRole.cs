@@ -1,6 +1,4 @@
-﻿using Pipaslot.Infrastructure.Security.EntityFrameworkCore.Entities;
-
-namespace Pipaslot.Demo.Models.Entities
+﻿namespace Pipaslot.Demo.Models.Entities
 {
     public class UserRole
     {
@@ -8,13 +6,13 @@ namespace Pipaslot.Demo.Models.Entities
         public User User { get; set; }
 
         public int RoleId { get; set; }
-        public Role<int> Role { get; set; }
+        public Role Role { get; set; }
 
         public UserRole()
         {
         }
 
-        public UserRole(User user, Role<int> role)
+        public UserRole(User user, Role role)
         {
             User = user;
             UserId = user.Id;

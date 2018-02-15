@@ -43,7 +43,7 @@ namespace Pipaslot.Demo.Api
             }
             using (var uow = _unitOfWorkFactory.Create())
             {
-                var systemRoles = _roleStore.GetSystemRoles<Role<int>>();
+                var systemRoles = _roleStore.GetSystemRoles<Models.Entities.Role>();
 
                 user = new User()
                 {

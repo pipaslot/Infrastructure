@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
@@ -20,8 +18,6 @@ using Pipaslot.SecurityUI;
 using Pipaslot.Demo.Models;
 using Pipaslot.Demo.Models.Entities;
 using Pipaslot.Infrastructure.Data;
-using Pipaslot.Infrastructure.Security;
-using Pipaslot.Infrastructure.Security.EntityFrameworkCore.Entities;
 using Pipaslot.Infrastructure.Security.Jwt;
 using Swashbuckle.AspNetCore.Swagger;
 using IUser = Pipaslot.Demo.Models.IUser;
@@ -92,7 +88,7 @@ namespace Pipaslot.Demo
 
             //Repositories
             services.AddSingleton<IRepository<Company, int>, EntityFrameworkRepository<AppDatabase, Company, int>>();
-            services.AddSingleton<IRepository<Role<int>, int>, RoleStore<int, AppDatabase>>();
+            services.AddSingleton<IRepository<Models.Entities.Role, int>, RoleStore<int, AppDatabase, Models.Entities.Role>>();
             services.AddSingleton<UserRepository>();
 
             #endregion
@@ -104,7 +100,7 @@ namespace Pipaslot.Demo
 
             //Configure own services for Permission Manager
             services.AddSingleton<IPermissionStore<int>, PermissionStore<int, AppDatabase>>();
-            services.AddSingleton<IRoleStore, RoleStore<int, AppDatabase>>();
+            services.AddSingleton<IRoleStore, RoleStore<int, AppDatabase, Models.Entities.Role>>();
 
             //Add default configuration for Permission Manager
             services.AddSecurityUI<int, AppUser>();

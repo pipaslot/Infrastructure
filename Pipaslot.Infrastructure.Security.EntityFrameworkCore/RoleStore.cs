@@ -9,8 +9,17 @@ using Pipaslot.Infrastructure.Security.EntityFrameworkCore.Entities;
 
 namespace Pipaslot.Infrastructure.Security.EntityFrameworkCore
 {
-    public class RoleStore<TKey, TDbContext> : EntityFrameworkRepository<TDbContext, Role<TKey>, TKey>, IRoleStore
+    public class RoleStore<TKey, TDbContext> : RoleStore<TKey, TDbContext, Role<TKey>>
         where TDbContext : DbContext, ISecurityRoleDbContext<TKey>
+    {
+        public RoleStore(IUnitOfWorkFactory uowFactory, IEntityFrameworkDbContextFactory dbContextFactory) : base(uowFactory, dbContextFactory)
+        {
+        }
+    }
+
+    public class RoleStore<TKey, TDbContext, TTRole> : EntityFrameworkRepository<TDbContext, TTRole, TKey>, IRoleStore
+        where TDbContext : DbContext, ISecurityRoleDbContext<TKey, TTRole>
+        where TTRole : Role<TKey>, new()
     {
         public RoleStore(IUnitOfWorkFactory uowFactory, IEntityFrameworkDbContextFactory dbContextFactory) : base(uowFactory, dbContextFactory)
         {

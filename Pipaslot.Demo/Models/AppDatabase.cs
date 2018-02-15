@@ -9,7 +9,7 @@ namespace Pipaslot.Demo.Models
     /// <summary>
     /// Application database
     /// </summary>
-    public class AppDatabase : DbContext, ISecurityRoleDbContext<int>, ISecurityPrivilegeDbContext<int>
+    public class AppDatabase : DbContext, ISecurityRoleDbContext<int, Role>, ISecurityPrivilegeDbContext<int>
     {
         /// <inheritdoc />
         /// <summary>
@@ -55,7 +55,7 @@ namespace Pipaslot.Demo.Models
         /// <summary>
         /// Entity for ISecurityDbContext
         /// </summary>
-        public DbSet<Role<int>> SecurityRole { get; set; }
+        public DbSet<Role> SecurityRole { get; set; }
 
         /// <summary>
         /// Entity for ISecurityDbContext

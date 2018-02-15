@@ -35,6 +35,22 @@ namespace Pipaslot.Demo.Migrations
                     b.ToTable("Company");
                 });
 
+            modelBuilder.Entity("Pipaslot.Demo.Models.Entities.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("Name");
+
+                    b.Property<int>("Type");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SecurityRole");
+                });
+
             modelBuilder.Entity("Pipaslot.Demo.Models.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -62,7 +78,7 @@ namespace Pipaslot.Demo.Migrations
                     b.ToTable("UserRole");
                 });
 
-            modelBuilder.Entity("Pipaslot.Infrastructure.Security.EntityFramework.Entities.Privilege<int>", b =>
+            modelBuilder.Entity("Pipaslot.Infrastructure.Security.EntityFrameworkCore.Entities.Privilege<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -82,25 +98,9 @@ namespace Pipaslot.Demo.Migrations
                     b.ToTable("SecurityPrivilege");
                 });
 
-            modelBuilder.Entity("Pipaslot.Infrastructure.Security.EntityFramework.Entities.Role<int>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Name");
-
-                    b.Property<int>("Type");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SecurityRole");
-                });
-
             modelBuilder.Entity("Pipaslot.Demo.Models.Entities.UserRole", b =>
                 {
-                    b.HasOne("Pipaslot.Infrastructure.Security.EntityFramework.Entities.Role<int>", "Role")
+                    b.HasOne("Pipaslot.Demo.Models.Entities.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
