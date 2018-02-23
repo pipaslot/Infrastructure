@@ -29,7 +29,7 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// </summary>
         /// <returns></returns>
         [HttpGet("roles")]
-        public IEnumerable<RoleResult> GetRoles()
+        public virtual IEnumerable<RoleResult> GetRoles()
         {
             var result = new List<RoleResult>();
             foreach (var role in _roleStore.GetAll<IRole>())
@@ -53,7 +53,7 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// <param name="resourceUniqueName"></param>
         /// <returns></returns>
         [HttpGet("roles/{roleId}/resources/{resourceUniqueName}/permissions")]
-        public Task<IEnumerable<PermissionInfo>> GetAllPermissions(TKey roleId, string resourceUniqueName)
+        public virtual Task<IEnumerable<PermissionInfo>> GetAllPermissions(TKey roleId, string resourceUniqueName)
         {
             return _permissionManager.GetAllPermissionsAsync(roleId, resourceUniqueName);
         }
@@ -67,7 +67,7 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// <param name="isAllowed"></param>
         /// <returns></returns>
         [HttpPost("roles/{roleId}/resources/{resourceUniqueName}/permissions/{permissionUniqueIdentifier}")]
-        public bool SetPrivilege(TKey roleId, string resourceUniqueName, string permissionUniqueIdentifier, bool? isAllowed)
+        public virtual bool SetPrivilege(TKey roleId, string resourceUniqueName, string permissionUniqueIdentifier, bool? isAllowed)
         {
             using (var uow = _unitOfWorkFactory.Create())
             {
@@ -85,7 +85,7 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// <param name="resourceId"></param>
         /// <returns></returns>
         [HttpGet("roles/{roleId}/resources/{resourceUniqueName}/{resourceId}/permissions")]
-        public Task<IEnumerable<PermissionInfo>> GetAllPermissions(TKey roleId, string resourceUniqueName, TKey resourceId)
+        public virtual Task<IEnumerable<PermissionInfo>> GetAllPermissions(TKey roleId, string resourceUniqueName, TKey resourceId)
         {
             return _permissionManager.GetAllPermissionsAsync(roleId, resourceUniqueName, resourceId);
         }
@@ -100,7 +100,7 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// <param name="isAllowed"></param>
         /// <returns></returns>
         [HttpPost("roles/{roleId}/resources/{resourceUniqueName}/{resourceId}/permissions/{permissionUniqueIdentifier}")]
-        public bool SetPrivilege(TKey roleId, string resourceUniqueName, TKey resourceId, string permissionUniqueIdentifier, bool? isAllowed)
+        public virtual bool SetPrivilege(TKey roleId, string resourceUniqueName, TKey resourceId, string permissionUniqueIdentifier, bool? isAllowed)
         {
             using (var uow = _unitOfWorkFactory.Create())
             {
@@ -116,7 +116,7 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// <param name="token"></param>
         /// <returns></returns>
         [HttpGet("resources")]
-        public Task<IEnumerable<ResourceInfo>> GetAllResource(CancellationToken token)
+        public virtual Task<IEnumerable<ResourceInfo>> GetAllResource(CancellationToken token)
         {
             return _permissionManager.GetAllResourcesAsync(token);
         }
@@ -127,7 +127,7 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// <param name="resourceUniqueName"></param>
         /// <returns></returns>
         [HttpGet("resources/{resourceUniqueName}")]
-        public Task<IEnumerable<ResourceInstanceInfo>> GetResourceInstances(string resourceUniqueName)
+        public virtual Task<IEnumerable<ResourceInstanceInfo>> GetResourceInstances(string resourceUniqueName)
         {
             return _permissionManager.GetAllResourceInstancesAsync(resourceUniqueName);
         }
@@ -137,7 +137,7 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// </summary>
         /// <returns></returns>
         [HttpGet("user/roles")]
-        public Task<IEnumerable<string>> GetAllMyRoles(CancellationToken token)
+        public virtual Task<IEnumerable<string>> GetAllMyRoles(CancellationToken token)
         {
             var roles = _roleStore.GetAll<IRole>();
             var roleIds = _user.Roles.Select(r => r.Id).ToList();
@@ -150,7 +150,7 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// </summary>
         /// <returns></returns>
         [HttpGet("user/permissions")]
-        public Task<IEnumerable<ResourcePermissions>> GetAllResourcePermissions(CancellationToken token)
+        public virtual Task<IEnumerable<ResourcePermissions>> GetAllResourcePermissions(CancellationToken token)
         {
             var roles = _user.Roles.Select(r => (TKey)r.Id).ToList();
             return _permissionManager.GetResourcePermissionsAsync(roles, token);
@@ -161,7 +161,7 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// </summary>
         /// <returns></returns>
         [HttpGet("user/resources/{resourceUniqueName}/{resourceInstance}/permissions")]
-        public Task<IEnumerable<Permission>> GetResource(string resourceUniqueName, TKey resourceInstance, CancellationToken token)
+        public virtual Task<IEnumerable<Permission>> GetResource(string resourceUniqueName, TKey resourceInstance, CancellationToken token)
         {
             var roles = _user.Roles.Select(r => (TKey)r.Id).ToList();
             return _permissionManager.GetResourceInstancePermissionsAsync(roles, resourceUniqueName, resourceInstance, token);
@@ -172,7 +172,7 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// </summary>
         /// <returns></returns>
         [HttpGet("user/resources/{resourceUniqueName}/permissions")]
-        public Task<IEnumerable<ResourceInstancePermissions>> GetResourceInstancePermissionsAsync(string resourceUniqueName, ICollection<TKey> resourceInstances, CancellationToken token)
+        public virtual Task<IEnumerable<ResourceInstancePermissions>> GetResourceInstancePermissionsAsync(string resourceUniqueName, ICollection<TKey> resourceInstances, CancellationToken token)
         {
             var roles = _user.Roles.Select(r => (TKey)r.Id).ToList();
             return _permissionManager.GetResourceInstancePermissionsAsync(roles, resourceUniqueName, resourceInstances, token);
