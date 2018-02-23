@@ -23,6 +23,7 @@ namespace Pipaslot.Infrastructure.Security.Mvc
             _unitOfWorkFactory = unitOfWorkFactory;
             _user = user;
         }
+
         /// <summary>
         /// Returns all registered roles
         /// </summary>
@@ -38,18 +39,33 @@ namespace Pipaslot.Infrastructure.Security.Mvc
                     Id = role.Id,
                     Name = role.Name,
                     Description = role.Description,
-                    ShowResources = role.Type != RoleType.Admin,
-                    IsSystem = role.Type != RoleType.Custom
+                    IsEditable = role.Type != RoleType.Admin,
+                    IsDeletable = role.Type == RoleType.Custom
                 });
             }
             return result;
         }
+
+        /// <summary>
+        /// Get resource permissions
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <param name="resourceUniqueName"></param>
+        /// <returns></returns>
         [HttpGet("roles/{roleId}/resources/{resourceUniqueName}/permissions")]
         public Task<IEnumerable<PermissionInfo>> GetAllPermissions(TKey roleId, string resourceUniqueName)
         {
             return _permissionManager.GetAllPermissionsAsync(roleId, resourceUniqueName);
         }
 
+        /// <summary>
+        /// Set Resource permission
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <param name="resourceUniqueName"></param>
+        /// <param name="permissionUniqueIdentifier"></param>
+        /// <param name="isAllowed"></param>
+        /// <returns></returns>
         [HttpPost("roles/{roleId}/resources/{resourceUniqueName}/permissions/{permissionUniqueIdentifier}")]
         public bool SetPrivilege(TKey roleId, string resourceUniqueName, string permissionUniqueIdentifier, bool? isAllowed)
         {
@@ -61,12 +77,28 @@ namespace Pipaslot.Infrastructure.Security.Mvc
             return true;
         }
 
+        /// <summary>
+        /// Get all Resource instance permissions
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <param name="resourceUniqueName"></param>
+        /// <param name="resourceId"></param>
+        /// <returns></returns>
         [HttpGet("roles/{roleId}/resources/{resourceUniqueName}/{resourceId}/permissions")]
         public Task<IEnumerable<PermissionInfo>> GetAllPermissions(TKey roleId, string resourceUniqueName, TKey resourceId)
         {
             return _permissionManager.GetAllPermissionsAsync(roleId, resourceUniqueName, resourceId);
         }
 
+        /// <summary>
+        /// Set permission for resource instance
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <param name="resourceUniqueName"></param>
+        /// <param name="resourceId"></param>
+        /// <param name="permissionUniqueIdentifier"></param>
+        /// <param name="isAllowed"></param>
+        /// <returns></returns>
         [HttpPost("roles/{roleId}/resources/{resourceUniqueName}/{resourceId}/permissions/{permissionUniqueIdentifier}")]
         public bool SetPrivilege(TKey roleId, string resourceUniqueName, TKey resourceId, string permissionUniqueIdentifier, bool? isAllowed)
         {
@@ -78,11 +110,28 @@ namespace Pipaslot.Infrastructure.Security.Mvc
             return true;
         }
 
+        /// <summary>
+        /// Get all secured resources
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         [HttpGet("resources")]
         public Task<IEnumerable<ResourceInfo>> GetAllResource(CancellationToken token)
         {
             return _permissionManager.GetAllResourcesAsync(token);
         }
+
+        /// <summary>
+        /// Get all instances for resource
+        /// </summary>
+        /// <param name="resourceUniqueName"></param>
+        /// <returns></returns>
+        [HttpGet("resources/{resourceUniqueName}")]
+        public Task<IEnumerable<ResourceInstanceInfo>> GetResourceInstances(string resourceUniqueName)
+        {
+            return _permissionManager.GetAllResourceInstancesAsync(resourceUniqueName);
+        }
+
         /// <summary>
         /// Permissions available to current user
         /// </summary>
@@ -136,8 +185,8 @@ namespace Pipaslot.Infrastructure.Security.Mvc
             public object Id { get; set; }
             public string Name { get; set; }
             public string Description { get; set; }
-            public bool ShowResources { get; set; }
-            public bool IsSystem { get; set; }
+            public bool IsEditable { get; set; }
+            public bool IsDeletable { get; set; }
         }
 
         #endregion

@@ -3,7 +3,7 @@ using Pipaslot.Infrastructure.Security.Data;
 
 namespace Pipaslot.Infrastructure.Security.EntityFrameworkCore.Entities
 {
-    public class Role<TKey> : IRole, IEntity<TKey>
+    public class Role<TKey> : IRole<TKey>, IEntity<TKey>
     {
         public TKey Id { get; set; }
 
