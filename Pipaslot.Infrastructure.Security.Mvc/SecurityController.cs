@@ -29,7 +29,7 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// </summary>
         /// <returns></returns>
         [HttpGet("roles")]
-        public virtual IEnumerable<RoleResult> GetRoles()
+        public virtual Task<IEnumerable<RoleResult>> GetRolesAsync(CancellationToken token)
         {
             var result = new List<RoleResult>();
             foreach (var role in _roleStore.GetAll<IRole>())
@@ -43,7 +43,7 @@ namespace Pipaslot.Infrastructure.Security.Mvc
                     IsDeletable = role.Type == RoleType.Custom
                 });
             }
-            return result;
+            return Task.FromResult((IEnumerable<RoleResult>)result);
         }
 
         /// <summary>
@@ -51,11 +51,12 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// </summary>
         /// <param name="roleId"></param>
         /// <param name="resourceUniqueName"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
         [HttpGet("roles/{roleId}/resources/{resourceUniqueName}/permissions")]
-        public virtual Task<IEnumerable<PermissionInfo>> GetAllPermissions(TKey roleId, string resourceUniqueName)
+        public virtual Task<IEnumerable<PermissionInfo>> GetAllPermissionsAsync(TKey roleId, string resourceUniqueName, CancellationToken token)
         {
-            return _permissionManager.GetAllPermissionsAsync(roleId, resourceUniqueName);
+            return _permissionManager.GetAllPermissionsAsync(roleId, resourceUniqueName, token);
         }
 
         /// <summary>
@@ -65,14 +66,15 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// <param name="resourceUniqueName"></param>
         /// <param name="permissionUniqueIdentifier"></param>
         /// <param name="isAllowed"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
         [HttpPost("roles/{roleId}/resources/{resourceUniqueName}/permissions/{permissionUniqueIdentifier}")]
-        public virtual bool SetPrivilege(TKey roleId, string resourceUniqueName, string permissionUniqueIdentifier, bool? isAllowed)
+        public virtual async Task<bool> SetPrivilegeAsync(TKey roleId, string resourceUniqueName, string permissionUniqueIdentifier, bool? isAllowed, CancellationToken token)
         {
             using (var uow = _unitOfWorkFactory.Create())
             {
                 _permissionManager.SetPermission(roleId, resourceUniqueName, permissionUniqueIdentifier, isAllowed);
-                uow.Commit();
+                await uow.CommitAsync(token);
             }
             return true;
         }
@@ -83,11 +85,12 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// <param name="roleId"></param>
         /// <param name="resourceUniqueName"></param>
         /// <param name="resourceId"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
         [HttpGet("roles/{roleId}/resources/{resourceUniqueName}/{resourceId}/permissions")]
-        public virtual Task<IEnumerable<PermissionInfo>> GetAllPermissions(TKey roleId, string resourceUniqueName, TKey resourceId)
+        public virtual Task<IEnumerable<PermissionInfo>> GetAllPermissionsAsync(TKey roleId, string resourceUniqueName, TKey resourceId, CancellationToken token)
         {
-            return _permissionManager.GetAllPermissionsAsync(roleId, resourceUniqueName, resourceId);
+            return _permissionManager.GetAllPermissionsAsync(roleId, resourceUniqueName, resourceId, token);
         }
 
         /// <summary>
@@ -98,14 +101,15 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// <param name="resourceId"></param>
         /// <param name="permissionUniqueIdentifier"></param>
         /// <param name="isAllowed"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
         [HttpPost("roles/{roleId}/resources/{resourceUniqueName}/{resourceId}/permissions/{permissionUniqueIdentifier}")]
-        public virtual bool SetPrivilege(TKey roleId, string resourceUniqueName, TKey resourceId, string permissionUniqueIdentifier, bool? isAllowed)
+        public virtual async Task<bool> SetPrivilegeAsync(TKey roleId, string resourceUniqueName, TKey resourceId, string permissionUniqueIdentifier, bool? isAllowed, CancellationToken token)
         {
             using (var uow = _unitOfWorkFactory.Create())
             {
                 _permissionManager.SetPermission(roleId, resourceUniqueName, resourceId, permissionUniqueIdentifier, isAllowed);
-                uow.Commit();
+                await uow.CommitAsync(token);
             }
             return true;
         }
@@ -116,7 +120,7 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// <param name="token"></param>
         /// <returns></returns>
         [HttpGet("resources")]
-        public virtual Task<IEnumerable<ResourceInfo>> GetAllResource(CancellationToken token)
+        public virtual Task<IEnumerable<ResourceInfo>> GetAllResourceAsync(CancellationToken token)
         {
             return _permissionManager.GetAllResourcesAsync(token);
         }
@@ -127,9 +131,9 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// <param name="resourceUniqueName"></param>
         /// <returns></returns>
         [HttpGet("resources/{resourceUniqueName}")]
-        public virtual Task<IEnumerable<ResourceInstanceInfo>> GetResourceInstances(string resourceUniqueName)
+        public virtual Task<IEnumerable<ResourceInstanceInfo>> GetResourceInstancesAsync(string resourceUniqueName, CancellationToken token)
         {
-            return _permissionManager.GetAllResourceInstancesAsync(resourceUniqueName);
+            return _permissionManager.GetAllResourceInstancesAsync(resourceUniqueName, 1, 10, token);
         }
 
         /// <summary>
@@ -137,7 +141,7 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// </summary>
         /// <returns></returns>
         [HttpGet("user/roles")]
-        public virtual Task<IEnumerable<string>> GetAllMyRoles(CancellationToken token)
+        public virtual Task<IEnumerable<string>> GetAllMyRolesAsync(CancellationToken token)
         {
             var roles = _roleStore.GetAll<IRole>();
             var roleIds = _user.Roles.Select(r => r.Id).ToList();
@@ -150,7 +154,7 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// </summary>
         /// <returns></returns>
         [HttpGet("user/permissions")]
-        public virtual Task<IEnumerable<ResourcePermissions>> GetAllResourcePermissions(CancellationToken token)
+        public virtual Task<IEnumerable<ResourcePermissions>> GetAllResourcePermissionsAsync(CancellationToken token)
         {
             var roles = _user.Roles.Select(r => (TKey)r.Id).ToList();
             return _permissionManager.GetResourcePermissionsAsync(roles, token);
@@ -161,7 +165,7 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// </summary>
         /// <returns></returns>
         [HttpGet("user/resources/{resourceUniqueName}/{resourceInstance}/permissions")]
-        public virtual Task<IEnumerable<Permission>> GetResource(string resourceUniqueName, TKey resourceInstance, CancellationToken token)
+        public virtual Task<IEnumerable<Permission>> GetResourceAsync(string resourceUniqueName, TKey resourceInstance, CancellationToken token)
         {
             var roles = _user.Roles.Select(r => (TKey)r.Id).ToList();
             return _permissionManager.GetResourceInstancePermissionsAsync(roles, resourceUniqueName, resourceInstance, token);
