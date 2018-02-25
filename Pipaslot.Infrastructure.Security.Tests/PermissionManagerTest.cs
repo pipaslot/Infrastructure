@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -21,11 +22,9 @@ namespace Pipaslot.Infrastructure.Security.Tests
         public void Allow_PermissionIsNotAllowedForResource_ShouldFail()
         {
             //Init
-            var permissionStore = new Mock<IPermissionStore<int>>();
             var resourceRegistry = GetRegistry();
-            var resourceInstanceQueryFactory = new Mock<IResourceInstanceProvider>();
             var namigConvertor = new DefaultNamingConvertor(resourceRegistry);
-            var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry, resourceInstanceQueryFactory.Object, new DefaultNamingConvertor(resourceRegistry));
+            var manager = CreateManager(resourceRegistry);
 
             //Act
             manager.SetPermission(1, typeof(FirstResource).FullName, default(int), namigConvertor.GetPermissionUniqueIdentifier(SecondPermissions.Edit), true);
@@ -36,12 +35,10 @@ namespace Pipaslot.Infrastructure.Security.Tests
         public void Deny_PermissionIsNotAllowedForResource_ShouldFail()
         {
             //Init
-            var permissionStore = new Mock<IPermissionStore<int>>();
             var resourceRegistry = new ResourceRegistry();
             resourceRegistry.Register(GetType().Assembly);
-            var resourceInstanceQueryFactory = new Mock<IResourceInstanceProvider>();
             var namigConvertor = new DefaultNamingConvertor(resourceRegistry);
-            var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry, resourceInstanceQueryFactory.Object, new DefaultNamingConvertor(resourceRegistry));
+            var manager = CreateManager(resourceRegistry, namigConvertor);
 
             //Act
             manager.SetPermission(1, typeof(FirstResource).FullName, default(int), namigConvertor.GetPermissionUniqueIdentifier(SecondPermissions.Edit), false);
@@ -52,7 +49,6 @@ namespace Pipaslot.Infrastructure.Security.Tests
         {
             var instanceCount = 3;
             var resourceType = typeof(FirstResource);
-            var permissionStore = new Mock<IPermissionStore<int>>();
             var tokenSource = new CancellationTokenSource();
             var resourceRegistry = new ResourceRegistry();
             resourceRegistry
@@ -61,7 +57,7 @@ namespace Pipaslot.Infrastructure.Security.Tests
             resourceInstanceProvider
                 .Setup(q => q.GetInstanceCountAsync(resourceType, tokenSource.Token))
                 .Returns(Task.FromResult(instanceCount));
-            var manager = new PermissionManager<int>(permissionStore.Object, resourceRegistry, resourceInstanceProvider.Object, new DefaultNamingConvertor(resourceRegistry));
+            var manager = CreateManager(resourceRegistry,null,null, resourceInstanceProvider);
 
             var resources = manager.GetAllResourcesAsync(tokenSource.Token).Result;
             var firstResource = resources.First(r => r.UniqueName == resourceType.FullName);
@@ -79,8 +75,6 @@ namespace Pipaslot.Infrastructure.Security.Tests
             var queryResult = new List<IResourceInstance> { providerResult };
             var tokenSource = new CancellationTokenSource();
 
-            var permissionStoreMock = new Mock<IPermissionStore<int>>();
-
             var resourceRegistry = new ResourceRegistry();
             resourceRegistry.Register(resourceType.Assembly);
 
@@ -90,7 +84,7 @@ namespace Pipaslot.Infrastructure.Security.Tests
                 .Returns(Task.FromResult(queryResult));
 
             //Act
-            var manager = new PermissionManager<int>(permissionStoreMock.Object, resourceRegistry, resourceInstanceProvider.Object, new DefaultNamingConvertor(resourceRegistry));
+            var manager = CreateManager(resourceRegistry, null, null, resourceInstanceProvider);
             var resources = manager.GetAllResourceInstancesAsync(resourceType.FullName, 1, 10, tokenSource.Token).Result;
             var firstResource = resources.First();
 
@@ -122,7 +116,6 @@ namespace Pipaslot.Infrastructure.Security.Tests
             var tokenSource = new CancellationTokenSource();
 
             var namingConvertor = new DefaultNamingConvertor(resourceRegistry);
-            var resourceInstanceQueryFactory = new Mock<IResourceInstanceProvider>();
 
             var permissionStoreMock = new Mock<IPermissionStore<int>>();
             permissionStoreMock
@@ -130,7 +123,7 @@ namespace Pipaslot.Infrastructure.Security.Tests
                 .Returns(Task.FromResult((bool?)isAllowed));
 
             //Act
-            var manager = new PermissionManager<int>(permissionStoreMock.Object, resourceRegistry, resourceInstanceQueryFactory.Object, new DefaultNamingConvertor(resourceRegistry));
+            var manager = CreateManager(resourceRegistry, namingConvertor, permissionStoreMock);
             var permissions = manager.GetAllPermissionsAsync(roleId, resourceName, tokenSource.Token).Result.ToList();
 
             Assert.AreEqual(3, permissions.Count());
@@ -160,13 +153,11 @@ namespace Pipaslot.Infrastructure.Security.Tests
             var resourceName = typeof(FirstResource).FullName;
             var resourceId = 1;
 
-
             var resourceRegistry = new ResourceRegistry();
             resourceRegistry.Register(resourceType.Assembly);
             var tokenSource = new CancellationTokenSource();
 
             var namingConvertor = new DefaultNamingConvertor(resourceRegistry);
-            var resourceInstanceQueryFactory = new Mock<IResourceInstanceProvider>();
 
             var permissionStoreMock = new Mock<IPermissionStore<int>>();
             permissionStoreMock
@@ -174,7 +165,7 @@ namespace Pipaslot.Infrastructure.Security.Tests
                 .Returns(Task.FromResult((bool?)isAllowed));
 
             //Act
-            var manager = new PermissionManager<int>(permissionStoreMock.Object, resourceRegistry, resourceInstanceQueryFactory.Object, new DefaultNamingConvertor(resourceRegistry));
+            var manager = CreateManager(resourceRegistry, namingConvertor, permissionStoreMock);
             var permissions = manager.GetAllPermissionsAsync(roleId, resourceName, resourceId, tokenSource.Token).Result.ToList();
 
             Assert.AreEqual(2, permissions.Count());
@@ -197,8 +188,8 @@ namespace Pipaslot.Infrastructure.Security.Tests
 
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertor = new ConstantNamingConvertor();
-            var auth = new PermissionManager<int>(permissionStore.Object, GetRegistry(), new Mock<IResourceInstanceProvider>().Object, convertor);
+
+            var manager = CreateManager(GetRegistry(), null, permissionStore);
 
             var resource = new FirstResource(resourceId);
             var tokenSource = new CancellationTokenSource();
@@ -208,7 +199,7 @@ namespace Pipaslot.Infrastructure.Security.Tests
                 .Returns(Task.FromResult((bool?)true));
 
             //Act
-            await auth.IsAllowedAsync(new[] { roleId }, resource, permission, tokenSource.Token);
+            await manager.IsAllowedAsync(new[] { roleId }, resource, permission, tokenSource.Token);
 
             //Assertion
             permissionStore.VerifyAll();
@@ -222,8 +213,9 @@ namespace Pipaslot.Infrastructure.Security.Tests
 
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertor = new DefaultNamingConvertor(new ResourceRegistry());
-            var auth = new PermissionManager<int>(permissionStore.Object, GetRegistry(), new Mock<IResourceInstanceProvider>().Object, convertor);
+            var registry = GetRegistry();
+            var convertor = new DefaultNamingConvertor(registry);
+            var manager = CreateManager(registry, convertor, permissionStore);
 
             var tokenSource = new CancellationTokenSource();
 
@@ -233,7 +225,7 @@ namespace Pipaslot.Infrastructure.Security.Tests
                 .Returns(Task.FromResult((bool?)true));
 
             //Act
-            Assert.IsTrue(auth.IsAllowedAsync(new[] { roleId }, permission, tokenSource.Token).Result);
+            Assert.IsTrue(manager.IsAllowedAsync(new[] { roleId }, permission, tokenSource.Token).Result);
 
             //Assertion
             permissionStore.VerifyAll();
@@ -247,8 +239,9 @@ namespace Pipaslot.Infrastructure.Security.Tests
 
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertor = new DefaultNamingConvertor(new ResourceRegistry());
-            var auth = new PermissionManager<int>(permissionStore.Object, GetRegistry(), new Mock<IResourceInstanceProvider>().Object, convertor);
+            var registry = GetRegistry();
+            var convertor = new DefaultNamingConvertor(registry);
+            var manager = CreateManager(registry, convertor, permissionStore);
 
             var tokenSource = new CancellationTokenSource();
 
@@ -259,7 +252,7 @@ namespace Pipaslot.Infrastructure.Security.Tests
                 .Returns(Task.FromResult((bool?)true));
 
             //Act
-            Assert.IsTrue(auth.IsAllowedAsync(new[] { roleId }, typeof(FirstResource), permission, tokenSource.Token).Result);
+            Assert.IsTrue(manager.IsAllowedAsync(new[] { roleId }, typeof(FirstResource), permission, tokenSource.Token).Result);
 
             //Assertion
             permissionStore.VerifyAll();
@@ -270,12 +263,10 @@ namespace Pipaslot.Infrastructure.Security.Tests
         public async Task StaticResourcePermission_PermissionIsNotAllowedForResource_ShouldFail()
         {
             //Init
-            var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertorMock = new Mock<INamingConvertor>();
-            var auth = new PermissionManager<int>(permissionStore.Object, GetRegistry(), new Mock<IResourceInstanceProvider>().Object, convertorMock.Object);
+            var manager = CreateManager();
 
             //Act
-            await auth.IsAllowedAsync(new[] { 1 }, typeof(FirstResource), SecondPermissions.Edit);
+            await manager.IsAllowedAsync(new[] { 1 }, typeof(FirstResource), SecondPermissions.Edit);
         }
 
         [TestMethod]
@@ -287,8 +278,9 @@ namespace Pipaslot.Infrastructure.Security.Tests
 
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertor = new DefaultNamingConvertor(new ResourceRegistry());
-            var auth = new PermissionManager<int>(permissionStore.Object, GetRegistry(), new Mock<IResourceInstanceProvider>().Object, convertor);
+            var registry = GetRegistry();
+            var convertor = new DefaultNamingConvertor(registry);
+            var auth = CreateManager(registry, convertor, permissionStore);
 
             var resource = new FirstResource(resourceId);
             var tokenSource = new CancellationTokenSource();
@@ -314,9 +306,10 @@ namespace Pipaslot.Infrastructure.Security.Tests
             var permission = FirstPermissions.Edit;
 
             //Init
+            var registry = GetRegistry();
+            var convertor = new DefaultNamingConvertor(registry);
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertor = new DefaultNamingConvertor(new ResourceRegistry());
-            var auth = new PermissionManager<int>(permissionStore.Object, GetRegistry(), new Mock<IResourceInstanceProvider>().Object, convertor);
+            var auth = CreateManager(registry, convertor, permissionStore);
 
             var tokenSource = new CancellationTokenSource();
 
@@ -338,10 +331,8 @@ namespace Pipaslot.Infrastructure.Security.Tests
         public async Task ResourceTypeAndIdPermission_PermissionIsNotAllowedForResource_ShouldFail()
         {
             //Init
-            var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertorMock = new Mock<INamingConvertor>();
-            var auth = new PermissionManager<int>(permissionStore.Object, GetRegistry(), new Mock<IResourceInstanceProvider>().Object, convertorMock.Object);
-
+            var auth = CreateManager();
+           
             //Act
             await auth.IsAllowedAsync(new[] { 1 }, typeof(FirstResource), 1, SecondPermissions.Edit);
         }
@@ -354,8 +345,9 @@ namespace Pipaslot.Infrastructure.Security.Tests
 
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertor = new DefaultNamingConvertor(new ResourceRegistry());
-            var auth = new PermissionManager<int>(permissionStore.Object, GetRegistry(), new Mock<IResourceInstanceProvider>().Object, convertor);
+            var registry = GetRegistry();
+            var convertor = new DefaultNamingConvertor(registry);
+            var auth = CreateManager(registry,convertor,permissionStore);
             var allowed = new List<int> { 1, 3, 5 };
             var tokenSource = new CancellationTokenSource();
 
@@ -378,10 +370,7 @@ namespace Pipaslot.Infrastructure.Security.Tests
         public async Task GetAllowedKeys_PermissionIsNotAllowedForResource_ShouldFail()
         {
             //Init
-            var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertorMock = new Mock<INamingConvertor>();
-            var auth = new PermissionManager<int>(permissionStore.Object, GetRegistry(), new Mock<IResourceInstanceProvider>().Object, convertorMock.Object);
-
+            var auth = CreateManager();
             //Act
             await auth.GetAllowedKeysAsync(new[] { 1 }, typeof(FirstResource), SecondPermissions.Edit);
         }
@@ -394,8 +383,9 @@ namespace Pipaslot.Infrastructure.Security.Tests
 
             //Init
             var permissionStore = new Mock<IPermissionStore<int>>();
-            var convertor = new DefaultNamingConvertor(new ResourceRegistry());
-            var auth = new PermissionManager<int>(permissionStore.Object, GetRegistry(), new Mock<IResourceInstanceProvider>().Object, convertor);
+            var registry = GetRegistry();
+            var convertor = new DefaultNamingConvertor(registry);
+            var auth = CreateManager(registry, convertor, permissionStore);
 
             var tokenSource = new CancellationTokenSource();
 
@@ -451,6 +441,20 @@ namespace Pipaslot.Infrastructure.Security.Tests
         #endregion
 
         #endregion
+
+        private PermissionManager<int> CreateManager(
+            ResourceRegistry resourceRegistry = null,
+            DefaultNamingConvertor namigConvertor = null,
+            Mock<IPermissionStore<int>> permStore = null,
+            Mock<IResourceInstanceProvider> resProvider = null)
+        {
+            var registry = resourceRegistry ?? GetRegistry();
+            var permissionStore = permStore ?? new Mock<IPermissionStore<int>>();
+            var resourceInstanceQueryFactory = resProvider ?? new Mock<IResourceInstanceProvider>();
+            var convertor = namigConvertor ?? new DefaultNamingConvertor(registry);
+            return new PermissionManager<int>(permissionStore.Object, registry, resourceInstanceQueryFactory.Object, convertor);
+
+        }
 
         ResourceRegistry GetRegistry()
         {
