@@ -5,7 +5,7 @@
     <Version>1.1.0</Version>
     <Authors>Petr Stipek</Authors>
     <Company />
-    <Description>Base data providing Controller implementation for rapid development. Provides CRUD operations on Controllers. Controller pass data through data access layer with Entity object. Provides direct data change without business logic. This tool is recomended to use only in early stage of product development.</Description>
+    <Description>Base data providing Controller implementation for rapid development. Provides CRUD operations on Controllers. Controller pass data through data access layer with Entity object. Provides direct data change without business logic.</Description>
   </PropertyGroup>
 
   <ItemGroup>
