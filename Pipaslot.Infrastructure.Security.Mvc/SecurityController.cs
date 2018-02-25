@@ -150,14 +150,13 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         }
 
         /// <summary>
-        /// Permissions available to current user
+        /// Permissions allowed to current user. Returns resources and all allowed static permissions
         /// </summary>
         /// <returns></returns>
         [HttpGet("user/permissions")]
-        public virtual Task<IEnumerable<ResourcePermissions>> GetAllResourcePermissionsAsync(CancellationToken token)
+        public virtual Task<Dictionary<string, List<string>>> GetStaticPermissionsAsync(CancellationToken token)
         {
-            var roles = _user.Roles.Select(r => (TKey)r.Id).ToList();
-            return _permissionManager.GetResourcePermissionsAsync(roles, token);
+            return _user.GetStaticPermissionsAsync(token);
         }
 
         /// <summary>
@@ -165,10 +164,9 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// </summary>
         /// <returns></returns>
         [HttpGet("user/resources/{resourceUniqueName}/{resourceInstance}/permissions")]
-        public virtual Task<IEnumerable<Permission>> GetResourceAsync(string resourceUniqueName, TKey resourceInstance, CancellationToken token)
+        public virtual Task<IEnumerable<string>> GetResourcePermissionsAsync(string resourceUniqueName, TKey resourceInstance, CancellationToken token)
         {
-            var roles = _user.Roles.Select(r => (TKey)r.Id).ToList();
-            return _permissionManager.GetResourceInstancePermissionsAsync(roles, resourceUniqueName, resourceInstance, token);
+            return _user.GetResourcePermissionsAsync(resourceUniqueName, resourceInstance, token);
         }
 
         /// <summary>
@@ -176,10 +174,36 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         /// </summary>
         /// <returns></returns>
         [HttpGet("user/resources/{resourceUniqueName}/permissions")]
-        public virtual Task<IEnumerable<ResourceInstancePermissions>> GetResourceInstancePermissionsAsync(string resourceUniqueName, ICollection<TKey> resourceInstances, CancellationToken token)
+        public virtual Task<Dictionary<TKey, List<string>>> GetResourcePermissionsAsync(string resourceUniqueName, List<TKey> resourceInstances, CancellationToken token)
         {
-            var roles = _user.Roles.Select(r => (TKey)r.Id).ToList();
-            return _permissionManager.GetResourceInstancePermissionsAsync(roles, resourceUniqueName, resourceInstances, token);
+            if (!resourceInstances.Any() && Request.Query.ContainsKey(nameof(resourceInstances)))
+            {
+                var instances = Request.Query[nameof(resourceInstances)];
+                var stringIds = instances.ToString().Split(',');
+                if (typeof(TKey) == typeof(string))
+                {
+                    resourceInstances = stringIds.Select(s => (TKey)(object)s).ToList();
+                }
+                else if (typeof(TKey) == typeof(int))
+                {
+                    foreach (var strId in stringIds)
+                    {
+                        if (int.TryParse(strId, out var intId))
+                        {
+                            resourceInstances.Add((TKey)(object)intId);
+                        }
+                        else
+                        {
+                            throw new InvalidCastException("Can not convert parameter "+nameof(resourceInstances)+" to list of integers.");
+                        }
+                    }
+                }
+                else
+                {
+                    throw new NotSupportedException("Method is not supported for key with type "+ typeof(TKey));
+                }
+            }
+            return _user.GetResourcePermissionsAsync(resourceUniqueName, resourceInstances, token);
         }
 
         #region Output objects

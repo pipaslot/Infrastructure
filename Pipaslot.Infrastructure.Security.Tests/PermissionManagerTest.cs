@@ -187,10 +187,11 @@ namespace Pipaslot.Infrastructure.Security.Tests
             var permission = FirstPermissions.Edit;
 
             //Init
+            var registry = GetRegistry();
+            var convertor = new ConstantNamingConvertor();
             var permissionStore = new Mock<IPermissionStore<int>>();
-
-            var manager = CreateManager(GetRegistry(), null, permissionStore);
-
+            var resourceInstanceQueryFactory = new Mock<IResourceInstanceProvider>();
+            var manager = new PermissionManager<int>(permissionStore.Object, registry, resourceInstanceQueryFactory.Object, convertor);
             var resource = new FirstResource(resourceId);
             var tokenSource = new CancellationTokenSource();
 

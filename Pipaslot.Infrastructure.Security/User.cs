@@ -171,5 +171,66 @@ namespace Pipaslot.Infrastructure.Security
             var allowed = await _permissionManager.GetAllowedKeysAsync(RolesIds, resource, permissionEnum, token);
             return allowed.ToList();
         }
+
+        public async Task<Dictionary<string, List<string>>> GetStaticPermissionsAsync(CancellationToken token)
+        {
+            var isAdmin = IsAdmin;
+            var resources = await _permissionManager.GetResourcePermissionsAsync(RolesIds, token);
+            var result = new Dictionary<string, List<string>>();
+            foreach (var res in resources)
+            {
+                var permissions = new List<string>();
+                foreach (var permission in res.Permissions)
+                {
+                    if (permission.IsAllowed || isAdmin)
+                    {
+                        permissions.Add(permission.Identifier);
+                    }
+                }
+                if (permissions.Any())
+                {
+                    result.Add(res.UniqueName,permissions);
+                }
+            }
+            return result;
+        }
+
+        public async Task<IEnumerable<string>> GetResourcePermissionsAsync(string resourceUniqueName, TKey resourceInstance, CancellationToken token)
+        {
+            var isAdmin = IsAdmin;
+            var permissions = await _permissionManager.GetResourceInstancePermissionsAsync(RolesIds, resourceUniqueName, resourceInstance, token);
+            var result = new List<string>();
+            foreach (var permission in permissions)
+            {
+                if (permission.IsAllowed || isAdmin)
+                {
+                    result.Add(permission.Identifier);
+                }
+            }
+            return result;
+        }
+
+        public async Task<Dictionary<TKey, List<string>>> GetResourcePermissionsAsync(string resourceUniqueName, ICollection<TKey> resourceInstances, CancellationToken token)
+        {
+            var isAdmin = IsAdmin;
+            var instances = await _permissionManager.GetResourceInstancePermissionsAsync(RolesIds, resourceUniqueName, resourceInstances, token);
+            var result = new Dictionary<TKey, List<string>>();
+            foreach (var res in instances)
+            {
+                var permissions = new List<string>();
+                foreach (var permission in res.Permissions)
+                {
+                    if (permission.IsAllowed || isAdmin)
+                    {
+                        permissions.Add(permission.Identifier);
+                    }
+                }
+                if (permissions.Any())
+                {
+                    result.Add((TKey)res.Identifier, permissions);
+                }
+            }
+            return result;
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Pipaslot.Infrastructure.Security.Data;
+using Pipaslot.Infrastructure.Security.Exceptions;
 
 namespace Pipaslot.Infrastructure.Security
 {
@@ -46,6 +47,31 @@ namespace Pipaslot.Infrastructure.Security
         /// <param name="token"></param>
         /// <returns></returns>
         Task<IEnumerable<TKey>> GetAllowedKeysAsync(Type resource, IConvertible permissionEnum, CancellationToken token = default(CancellationToken));
+
+        /// <summary>
+        /// Returns all static allowed permissions for all existing resources 
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns>Returns resource names as keys and permissions as values</returns>
+        Task<Dictionary<string, List<string>>> GetStaticPermissionsAsync(CancellationToken token);
+
+        /// <summary>
+        /// Returns all allowed permission for one resource instance
+        /// </summary>
+        /// <param name="resourceUniqueName"></param>
+        /// <param name="resourceInstance"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        Task<IEnumerable<string>> GetResourcePermissionsAsync(string resourceUniqueName, TKey resourceInstance, CancellationToken token);
+
+        /// <summary>
+        /// Returns all allowed permission for multiple resource instances. 
+        /// </summary>
+        /// <param name="resourceUniqueName"></param>
+        /// <param name="resourceInstances"></param>
+        /// <param name="token"></param>
+        /// <returns>Key is instance identifier and values are allowed permissions</returns>
+        Task<Dictionary<TKey, List<string>>> GetResourcePermissionsAsync(string resourceUniqueName, ICollection<TKey> resourceInstances, CancellationToken token);
     }
 
     /// <summary>
