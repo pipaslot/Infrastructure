@@ -5,6 +5,7 @@
     <Authors>Petr Stipek</Authors>
     <Company />
     <Description>Extensions for Entity Framework Core</Description>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
