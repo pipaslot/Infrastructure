@@ -4,12 +4,16 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Pipaslot.Infrastructure.Data.EntityFrameworkCore</AssemblyName>
     <RootNamespace>Pipaslot.Infrastructure.Data.EntityFrameworkCore</RootNamespace>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <Authors>Petr Stipek</Authors>
     <Company />
     <Description>Basic data access structure for Entity Framework using Repository and Unit of Work pattern</Description>
     <PackageId>Pipaslot.Infrastructure.Data.EntityFrameworkCore</PackageId>
     <Product>Pipaslot.Infrastructure.Data.EntityFrameworkCore</Product>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netstandard2.0\Pipaslot.Infrastructure.Data.EntityFrameworkCore.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
