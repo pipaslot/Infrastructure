@@ -22,6 +22,6 @@ TODO
 [Pipaslot.Infrastructure.Security.Mvc](Pipaslot.Infrastructure.Security.Mvc/README.md)
 
 ## 3 Another Tools
-[Entity Framework Core Tools](Pipaslot.Infrastructure.EntityFrameworkCore/README.md) - namespacing database table names
+[Entity Framework Core Tools](Pipaslot.Infrastructure.EntityFrameworkCore/README.md) - Prefixing database table names by class namespace
 
-[ASP.NET Core MVC Tools](Pipaslot.Infrastructure.Mvc/README.md)
+[ASP.NET Core MVC Tools](Pipaslot.Infrastructure.Mvc/README.md) - Re-structuring controllers
