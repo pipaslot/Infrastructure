@@ -1,4 +1,4 @@
-﻿# Unit or Work and Repository patter n
+﻿# Unit or Work and Repository pattern
 ######  Entity Framework Core Integration
 
 ## Introduction
