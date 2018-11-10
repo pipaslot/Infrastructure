@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Pipaslot.Infrastructure.Security.Mvc
 {
@@ -13,7 +14,9 @@ namespace Pipaslot.Infrastructure.Security.Mvc
         public static IServiceCollection AddSecurity<TKey, TUser>(this IServiceCollection services)
             where TUser: IUser<TKey>
         {
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSecurity<TKey, TUser, ClaimsPrincipalProvider>();
+
             return services;
         }
     }
