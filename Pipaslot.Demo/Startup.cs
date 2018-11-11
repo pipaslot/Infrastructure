@@ -71,20 +71,8 @@ namespace Pipaslot.Demo
 
             #region Data access
 
-            //Database migrations context
-            services.AddDbContext<AppDatabase>(o => o.UseSqlServer(Configuration.GetSection("ConnectionString").Value));
-
-            //Database factories
-            services.AddSingleton<IEntityFrameworkDbContextFactory>(_ =>
-            {
-                var options = new DbContextOptionsBuilder<AppDatabase>();
-                options.UseSqlServer(Configuration.GetSection("ConnectionString").Value);
-                return new EntityFrameworkDbContextFactory<AppDatabase>(options.Options);
-            });
-
-            //Unit of work
-            services.AddSingleton<IUnitOfWorkRegistry, UnitOfWorkRegistry>();
-            services.AddSingleton<IUnitOfWorkFactory, EntityFrameworkUnitOfWorkFactory<AppDatabase>>();
+            // Database and Unit of Work
+            services.AddUnitOfWork<AppDatabase>(o => o.UseSqlServer(Configuration.GetSection("ConnectionString").Value));
 
             //Repositories
             services.AddSingleton<IRepository<Company, int>, EntityFrameworkRepository<AppDatabase, Company, int>>();
