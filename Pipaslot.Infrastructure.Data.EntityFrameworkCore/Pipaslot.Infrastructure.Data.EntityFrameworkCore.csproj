@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Pipaslot.Infrastructure.Data.EntityFrameworkCore</AssemblyName>
     <RootNamespace>Pipaslot.Infrastructure.Data.EntityFrameworkCore</RootNamespace>
-    <Version>1.1.3</Version>
+    <Version>1.1.4</Version>
     <Authors>Petr Stipek</Authors>
     <Company />
     <Description>Basic data access structure for Entity Framework using Repository and Unit of Work pattern</Description>
