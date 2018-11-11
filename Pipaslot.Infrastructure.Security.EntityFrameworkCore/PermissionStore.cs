@@ -10,8 +10,18 @@ using Pipaslot.Infrastructure.Security.EntityFrameworkCore.Entities;
 
 namespace Pipaslot.Infrastructure.Security.EntityFrameworkCore
 {
-    public class PermissionStore<TKey, TDbContext> : EntityFrameworkRepository<TDbContext, Privilege<TKey>, TKey>, IPermissionStore<TKey>
-    where TDbContext : DbContext, ISecurityPrivilegeDbContext<TKey>
+    public class PermissionStore<TKey, TDbContext> : PermissionStore<TKey, TDbContext, Privilege<TKey>>
+        where TDbContext : DbContext, ISecurityPrivilegeDbContext<TKey, Privilege<TKey>>
+    {
+        public PermissionStore(IUnitOfWorkFactory uowFactory, IEntityFrameworkDbContextFactory dbContextFactory) : base(uowFactory, dbContextFactory)
+        {
+        }
+    }
+
+    public class PermissionStore<TKey, TDbContext, TPrivilege>
+        : EntityFrameworkRepository<TDbContext, TPrivilege, TKey>, IPermissionStore<TKey>
+        where TDbContext : DbContext, ISecurityPrivilegeDbContext<TKey, TPrivilege>
+        where TPrivilege : Privilege<TKey>, new()
     {
         public PermissionStore(IUnitOfWorkFactory uowFactory, IEntityFrameworkDbContextFactory dbContextFactory) : base(uowFactory, dbContextFactory)
         {
@@ -80,7 +90,7 @@ namespace Pipaslot.Infrastructure.Security.EntityFrameworkCore
             }
             if (existing == null)
             {
-                existing = new Privilege<TKey>()
+                existing = new TPrivilege()
                 {
                     Role = roleId,
                     Resource = resource,

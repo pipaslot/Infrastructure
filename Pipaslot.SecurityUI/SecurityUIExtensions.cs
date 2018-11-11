@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Pipaslot.Infrastructure.Security;
 
@@ -23,6 +24,7 @@ namespace Pipaslot.SecurityUI
         public static IServiceCollection AddSecurityUI<TKey, TUser>(this IServiceCollection services)
             where TUser : IUser<TKey>
         {
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSecurity<TKey, TUser, ClaimsPrincipalProvider>();
             return services;
         }

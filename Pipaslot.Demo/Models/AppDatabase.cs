@@ -9,7 +9,7 @@ namespace Pipaslot.Demo.Models
     /// <summary>
     /// Application database
     /// </summary>
-    public class AppDatabase : DbContext, ISecurityRoleDbContext<int, Role>, ISecurityPrivilegeDbContext<int>
+    public class AppDatabase : DbContext, ISecurityRoleDbContext<int, Role>, ISecurityPrivilegeDbContext<int, Privilege<int>>
     {
         /// <inheritdoc />
         /// <summary>

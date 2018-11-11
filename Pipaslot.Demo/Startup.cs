@@ -12,7 +12,6 @@ using Microsoft.Extensions.PlatformAbstractions;
 using Pipaslot.Demo.Filters;
 using Pipaslot.Infrastructure.Data.EntityFrameworkCore;
 using Pipaslot.Infrastructure.Mvc;
-using Pipaslot.Infrastructure.Security.Data;
 using Pipaslot.Infrastructure.Security.EntityFrameworkCore;
 using Pipaslot.SecurityUI;
 using Pipaslot.Demo.Models;
@@ -76,22 +75,23 @@ namespace Pipaslot.Demo
 
             //Repositories
             services.AddSingleton<IRepository<Company, int>, EntityFrameworkRepository<AppDatabase, Company, int>>();
-            services.AddSingleton<IRepository<Models.Entities.Role, int>, RoleStore<int, AppDatabase, Models.Entities.Role>>();
+            services.AddSingleton<IRepository<Role, int>, RoleStore<int, AppDatabase, Role>>();
             services.AddSingleton<UserRepository>();
 
             #endregion
 
             #region Security
 
-            //Queries
-            services.AddSingleton<IResourceInstanceProvider, ResourceInstanceProvider<AppDatabase>>();
+            ////Queries
+            //services.AddSingleton<IResourceInstanceProvider, ResourceInstanceProvider<AppDatabase>>();
 
-            //Configure own services for Permission Manager
-            services.AddSingleton<IPermissionStore<int>, PermissionStore<int, AppDatabase>>();
-            services.AddSingleton<IRoleStore, RoleStore<int, AppDatabase, Models.Entities.Role>>();
+            ////Configure own services for Permission Manager
+            //services.AddSingleton<IPermissionStore<int>, PermissionStore<int, AppDatabase>>();
+            //services.AddSingleton<IRoleStore, RoleStore<int, AppDatabase, Models.Entities.Role>>();
 
             //Add default configuration for Permission Manager
             services.AddSecurityUI<int, AppUser>();
+            services.AddSecurityDatabase<int, AppDatabase, Role>();
             //Register alias to IUser<int> from Security project
             services.AddSingleton(s => (IUser)s.GetService(typeof(AppUser)));
 
